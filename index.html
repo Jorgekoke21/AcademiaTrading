@@ -1,0 +1,2447 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Leer el gráfico — Análisis técnico aplicado a XAUUSD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#0A0C10;
+  --bg-2:#0E1117;
+  --panel:#12161D;
+  --panel-2:#171C25;
+  --line:#232A35;
+  --line-2:#2E3746;
+  --tx:#DDE3EC;
+  --tx-2:#9AA6B8;
+  --tx-3:#6B7686;
+  --gold:#E8B44A;
+  --gold-dim:#8A6C2A;
+  --bull:#2BBF7B;
+  --bear:#E5484D;
+  --liq:#8B7BF0;
+  --info:#4CC2E0;
+  --warn:#F0983C;
+  --r-s:6px; --r-m:10px; --r-l:16px;
+  --rail:266px;
+  --ff-d:"Space Grotesk",system-ui,sans-serif;
+  --ff-b:"Inter",system-ui,-apple-system,sans-serif;
+  --ff-m:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+:root:not([data-theme="light"]){ color-scheme: dark; }
+:root[data-theme="dark"]{ color-scheme: dark; }
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--tx);
+  font-family:var(--ff-b);
+  font-size:15.5px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4,h5{font-family:var(--ff-d);font-weight:600;line-height:1.18;letter-spacing:-.015em;margin:0}
+p{margin:0 0 .9em}
+a{color:var(--gold);text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+.mono{font-family:var(--ff-m)}
+.mut{color:var(--tx-2)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#242c38;border-radius:8px;border:2px solid var(--bg)}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- LAYOUT ---------- */
+.app{display:flex;min-height:100vh}
+.rail{
+  width:var(--rail);flex:0 0 var(--rail);
+  background:var(--bg-2);border-right:1px solid var(--line);
+  position:fixed;inset:0 auto 0 0;height:100vh;display:flex;flex-direction:column;z-index:60;
+}
+.brand{padding:20px 20px 14px;border-bottom:1px solid var(--line)}
+.brand .tick{display:flex;align-items:baseline;gap:8px;font-family:var(--ff-m);font-size:12px;color:var(--tx-3);letter-spacing:.06em}
+.brand .tick b{color:var(--gold);font-weight:700}
+.brand h1{font-size:19px;margin:6px 0 2px;letter-spacing:-.02em}
+.brand p{margin:0;font-size:12.5px;color:var(--tx-3);line-height:1.4}
+.prog{padding:12px 20px;border-bottom:1px solid var(--line)}
+.prog .row{display:flex;justify-content:space-between;font-size:11.5px;color:var(--tx-3);font-family:var(--ff-m);margin-bottom:7px}
+.prog .row b{color:var(--gold);font-weight:500}
+.bar{height:4px;background:#1C2230;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:99px;transition:width .5s cubic-bezier(.2,.7,.3,1)}
+.nav{flex:1;overflow-y:auto;padding:10px 12px 28px}
+.nav .grp{font-family:var(--ff-m);font-size:10.5px;letter-spacing:.14em;color:var(--tx-3);padding:14px 8px 7px}
+.nav a{
+  display:grid;grid-template-columns:26px 1fr;gap:9px;align-items:center;
+  padding:7px 9px;border-radius:8px;color:var(--tx-2);font-size:13.8px;line-height:1.3;
+  transition:background .16s,color .16s;position:relative
+}
+.nav a .n{font-family:var(--ff-m);font-size:11px;color:var(--tx-3);text-align:right}
+.nav a:hover{background:#181E28;color:var(--tx)}
+.nav a.on{background:#1B222E;color:var(--tx)}
+.nav a.on .n{color:var(--gold)}
+.nav a.on::before{content:"";position:absolute;left:-12px;top:6px;bottom:6px;width:2px;background:var(--gold);border-radius:0 2px 2px 0}
+.nav a.done .n::after{content:"✓";color:var(--bull);margin-left:3px;font-size:10px}
+
+.main{flex:1;margin-left:var(--rail);min-width:0}
+.topbar{
+  position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;
+  padding:0 26px;height:54px;background:rgba(10,12,16,.86);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line)
+}
+.topbar .crumb{font-family:var(--ff-m);font-size:11.5px;color:var(--tx-3);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar .crumb b{color:var(--tx-2);font-weight:500}
+.topbar .sp{flex:1}
+.burger{display:none;width:34px;height:34px;border:1px solid var(--line);border-radius:8px;align-items:center;justify-content:center}
+.burger span,.burger span::before,.burger span::after{content:"";display:block;width:15px;height:1.5px;background:var(--tx-2);position:relative}
+.burger span::before{position:absolute;top:-5px}
+.burger span::after{position:absolute;top:5px}
+.ghost{border:1px solid var(--line);padding:6px 12px;border-radius:99px;font-size:12.5px;color:var(--tx-2);transition:.16s}
+.ghost:hover{border-color:var(--line-2);color:var(--tx)}
+.ghost.pin{border-color:var(--gold-dim);color:var(--gold)}
+
+.wrap{max-width:1080px;padding:38px 26px 120px;margin:0 auto}
+.chapfoot{display:flex;justify-content:space-between;gap:12px;margin-top:56px;padding-top:22px;border-top:1px solid var(--line)}
+.chapfoot button{display:flex;flex-direction:column;gap:2px;padding:12px 16px;border:1px solid var(--line);border-radius:var(--r-m);max-width:46%;text-align:left;transition:.18s}
+.chapfoot button:hover{border-color:var(--gold-dim);background:var(--panel)}
+.chapfoot button:last-child{text-align:right;align-items:flex-end}
+.chapfoot small{font-family:var(--ff-m);font-size:10.5px;color:var(--tx-3)}
+.chapfoot b{font-family:var(--ff-d);font-weight:600;font-size:14px}
+
+/* ---------- HEADERS ---------- */
+.chead{margin-bottom:30px}
+.chead .kick{display:flex;align-items:center;gap:10px;font-family:var(--ff-m);font-size:11.5px;color:var(--gold);letter-spacing:.1em;margin-bottom:12px}
+.chead .kick i{display:block;width:26px;height:1px;background:var(--gold-dim);font-style:normal}
+.chead h2{font-size:clamp(28px,4.4vw,40px);letter-spacing:-.03em;margin-bottom:10px}
+.chead .lede{font-size:17px;color:var(--tx-2);max-width:66ch;margin:0}
+h3.sec{font-size:22px;margin:52px 0 6px;letter-spacing:-.02em;scroll-margin-top:70px}
+h3.sec + .sub{color:var(--tx-2);margin:0 0 20px;max-width:70ch;font-size:15px}
+h4.min{font-size:15.5px;font-family:var(--ff-d);margin:0 0 6px}
+.body{max-width:72ch}
+.body p{color:var(--tx-2)}
+.body strong{color:var(--tx);font-weight:600}
+
+/* ---------- CHART ---------- */
+.chart{margin:22px 0 10px;border:1px solid var(--line);border-radius:var(--r-l);background:var(--panel);overflow:hidden}
+.chart-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.chart-head .t{font-family:var(--ff-d);font-weight:600;font-size:14.5px}
+.chart-head .tf{font-family:var(--ff-m);font-size:10.5px;color:var(--tx-3);border:1px solid var(--line);padding:2px 7px;border-radius:99px}
+.chart-head .sp{flex:1;min-width:8px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.tgl{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel-2);padding:5px 11px 5px 8px;border-radius:99px;font-size:12.3px;color:var(--tx-2);transition:.18s;user-select:none}
+.tgl .sw{width:26px;height:15px;border-radius:99px;background:#2A3240;position:relative;transition:background .2s;flex:0 0 auto}
+.tgl .sw::after{content:"";position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:#7A8698;transition:transform .2s,background .2s}
+.tgl.on{color:var(--tx);border-color:var(--gold-dim)}
+.tgl.on .sw{background:#4A3A17}
+.tgl.on .sw::after{transform:translateX(11px);background:var(--gold)}
+.chart-svg{position:relative;padding:4px 6px 2px}
+.chart-svg svg{display:block;width:100%;height:auto;overflow:visible}
+.chart figcaption{padding:0 16px 14px;color:var(--tx-2);font-size:13.6px;line-height:1.55;max-width:80ch}
+.chart figcaption b{color:var(--tx)}
+.chart.flat{background:transparent;border-color:var(--line)}
+
+@keyframes cdlIn{from{opacity:0;transform:translateY(10px) scaleY(.5)}to{opacity:1;transform:none}}
+@keyframes ovIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.cdl{transform-box:fill-box;transform-origin:center;animation:cdlIn .34s cubic-bezier(.2,.8,.3,1) both}
+.ovg{animation:ovIn .4s ease both}
+.pulse{animation:pl 1.9s ease-in-out infinite}
+@keyframes pl{0%,100%{opacity:.35}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.cdl,.ovg,.pulse{animation:none!important}*{transition-duration:.01ms!important}}
+
+.xh{position:absolute;inset:0;pointer-events:none}
+.readout{
+  position:absolute;pointer-events:none;background:#080A0E;border:1px solid var(--line-2);
+  border-radius:8px;padding:7px 9px;font-family:var(--ff-m);font-size:11px;line-height:1.5;
+  color:var(--tx-2);white-space:nowrap;opacity:0;transition:opacity .12s;z-index:5
+}
+.readout b{color:var(--tx);font-weight:500}
+.readout .u{color:var(--bull)}.readout .d{color:var(--bear)}
+
+/* ---------- STEPPER ---------- */
+.stepper{border-top:1px solid var(--line);background:var(--panel-2)}
+.step-nav{display:flex;align-items:center;gap:12px;padding:10px 14px}
+.step-nav button{display:flex;align-items:center;gap:6px;border:1px solid var(--line);padding:6px 13px;border-radius:99px;font-size:12.8px;color:var(--tx-2);transition:.16s}
+.step-nav button:hover:not(:disabled){border-color:var(--gold-dim);color:var(--tx)}
+.step-nav button:disabled{opacity:.34;cursor:default}
+.dots{flex:1;display:flex;gap:5px;justify-content:center;flex-wrap:wrap}
+.dots i{width:22px;height:3px;border-radius:99px;background:#2A3240;cursor:pointer;transition:background .2s,transform .2s}
+.dots i.on{background:var(--gold)}
+.dots i.past{background:var(--gold-dim)}
+.step-txt{padding:2px 16px 15px;display:flex;gap:12px;align-items:flex-start}
+.step-txt .num{font-family:var(--ff-m);font-size:11px;color:var(--gold);border:1px solid var(--gold-dim);border-radius:99px;padding:2px 8px;flex:0 0 auto;margin-top:2px}
+.step-txt h5{font-family:var(--ff-d);font-size:15px;font-weight:600;margin:0 0 3px}
+.step-txt p{margin:0;font-size:13.8px;color:var(--tx-2);max-width:74ch}
+
+/* ---------- QA TABS ---------- */
+.qa{border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden;margin:18px 0 8px;background:var(--bg-2)}
+.qa-tabs{display:flex;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:none}
+.qa-tabs::-webkit-scrollbar{display:none}
+.qa-tabs button{
+  padding:11px 14px;font-size:12.6px;color:var(--tx-3);white-space:nowrap;border-bottom:2px solid transparent;
+  transition:.16s;display:flex;gap:7px;align-items:center
+}
+.qa-tabs button:hover{color:var(--tx-2)}
+.qa-tabs button.on{color:var(--tx);border-bottom-color:var(--gold);background:#141922}
+.qa-tabs .dg{color:var(--tx-3);font-family:var(--ff-m);font-size:10.5px}
+.qa-body{padding:15px 18px;font-size:14.6px;color:var(--tx-2);min-height:78px;max-width:84ch}
+.qa-body b{color:var(--tx)}
+.qa-body .k{font-family:var(--ff-d);color:var(--tx);display:block;margin-bottom:3px;font-size:13px}
+
+/* ---------- CARDS / GRIDS ---------- */
+.grid{display:grid;gap:14px;margin:20px 0}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{border:1px solid var(--line);border-radius:var(--r-m);padding:16px 17px;background:var(--panel)}
+.card h4{font-family:var(--ff-d);font-size:14.5px;margin:0 0 7px;display:flex;align-items:center;gap:8px}
+.card p{margin:0;font-size:13.7px;color:var(--tx-2)}
+.card p+p{margin-top:8px}
+.card .dot{width:8px;height:8px;border-radius:2px;flex:0 0 auto}
+.card.bull{border-color:#1E4A38}.card.bull h4{color:var(--bull)}
+.card.bear{border-color:#4E2427}.card.bear h4{color:var(--bear)}
+.card.liq{border-color:#3A3468}.card.liq h4{color:var(--liq)}
+.card.gold{border-color:var(--gold-dim)}.card.gold h4{color:var(--gold)}
+
+.note{border-left:2px solid var(--line-2);padding:12px 16px;background:var(--bg-2);border-radius:0 var(--r-m) var(--r-m) 0;margin:20px 0;font-size:14.2px;color:var(--tx-2)}
+.note b{color:var(--tx)}
+.note.warn{border-left-color:var(--warn)}
+.note.warn b{color:var(--warn)}
+.note.key{border-left-color:var(--gold)}
+.note.key b{color:var(--gold)}
+.note.no{border-left-color:var(--bear)}
+.note.no b{color:var(--bear)}
+.note p:last-child{margin-bottom:0}
+
+.term{border-bottom:1px dotted var(--tx-3);cursor:help;position:relative;color:var(--tx)}
+.term:hover::after,.term:focus::after{
+  content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:#080A0E;border:1px solid var(--line-2);border-radius:8px;padding:8px 11px;width:max-content;max-width:270px;
+  font-size:12.4px;line-height:1.45;color:var(--tx-2);font-family:var(--ff-b);z-index:40;white-space:normal;box-shadow:0 8px 24px rgba(0,0,0,.6)
+}
+.tag{font-family:var(--ff-m);font-size:11px;padding:2px 7px;border-radius:5px;border:1px solid var(--line);color:var(--tx-2);display:inline-block}
+.tag.b{border-color:#1E4A38;color:var(--bull)}
+.tag.s{border-color:#4E2427;color:var(--bear)}
+.tag.l{border-color:#3A3468;color:var(--liq)}
+.tag.g{border-color:var(--gold-dim);color:var(--gold)}
+
+.flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:24px 0}
+.flow .st{flex:1;min-width:132px;border:1px solid var(--line);border-radius:var(--r-m);padding:13px 14px;position:relative;background:var(--panel)}
+.flow .st + .st{margin-left:10px}
+.flow .st .i{font-family:var(--ff-m);font-size:10.5px;color:var(--tx-3)}
+.flow .st h5{font-family:var(--ff-d);font-size:14px;margin:3px 0 4px}
+.flow .st p{margin:0;font-size:12.6px;color:var(--tx-2);line-height:1.45}
+
+ul.ticks{list-style:none;padding:0;margin:14px 0}
+ul.ticks li{padding:7px 0 7px 26px;position:relative;font-size:14.2px;color:var(--tx-2);border-bottom:1px solid var(--line)}
+ul.ticks li:last-child{border-bottom:none}
+ul.ticks li::before{content:"";position:absolute;left:6px;top:15px;width:6px;height:6px;border-radius:50%;background:var(--gold-dim)}
+ul.ticks li b{color:var(--tx)}
+ul.ticks.yes li::before{background:var(--bull)}
+ul.ticks.no li::before{background:var(--bear)}
+
+/* ---------- PRACTICE ---------- */
+.quiz{border:1px solid var(--line);border-radius:var(--r-l);background:var(--panel);overflow:hidden;margin:20px 0}
+.quiz-top{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+.quiz-top .q{font-family:var(--ff-m);font-size:11px;color:var(--tx-3)}
+.quiz-q{padding:16px 18px 6px;font-family:var(--ff-d);font-size:17.5px;font-weight:600}
+.quiz-hint{padding:0 18px 12px;font-size:13.4px;color:var(--tx-3)}
+.opts{display:grid;gap:9px;padding:12px 18px 18px}
+.opts button{
+  text-align:left;border:1px solid var(--line);border-radius:var(--r-m);padding:12px 14px;
+  font-size:14.2px;color:var(--tx-2);transition:.16s;display:flex;gap:11px;align-items:flex-start
+}
+.opts button .k{font-family:var(--ff-m);font-size:11.5px;color:var(--tx-3);border:1px solid var(--line);border-radius:5px;width:20px;height:20px;display:grid;place-items:center;flex:0 0 auto;margin-top:1px}
+.opts button:hover:not(:disabled){border-color:var(--line-2);color:var(--tx);background:var(--panel-2)}
+.opts button.ok{border-color:var(--bull);color:var(--tx);background:rgba(43,191,123,.07)}
+.opts button.ko{border-color:var(--bear);color:var(--tx);background:rgba(229,72,77,.07)}
+.opts button:disabled{cursor:default}
+.quiz-sol{padding:0 18px 18px}
+.solbox{border:1px solid var(--line);border-left:2px solid var(--gold);border-radius:0 var(--r-m) var(--r-m) 0;padding:13px 16px;background:var(--bg-2);font-size:14.2px;color:var(--tx-2)}
+.solbox b{color:var(--tx)}
+.quiz-act{display:flex;gap:10px;padding:0 18px 18px;flex-wrap:wrap}
+.btn{border:1px solid var(--gold-dim);color:var(--gold);padding:9px 17px;border-radius:99px;font-size:13.4px;transition:.16s}
+.btn:hover{background:rgba(232,180,74,.1)}
+.btn.plain{border-color:var(--line);color:var(--tx-2)}
+.btn.plain:hover{background:var(--panel-2);color:var(--tx)}
+.score{display:flex;gap:16px;align-items:center;font-family:var(--ff-m);font-size:12px;color:var(--tx-3)}
+.score b{color:var(--gold);font-weight:500}
+.clickable{cursor:crosshair}
+
+/* ---------- CHECKLIST ---------- */
+.ck{display:grid;gap:10px;margin:26px 0}
+.ck-item{border:1px solid var(--line);border-radius:var(--r-m);background:var(--panel);overflow:hidden;transition:border-color .2s}
+.ck-item.on{border-color:#1E4A38}
+.ck-head{display:grid;grid-template-columns:auto 34px 1fr auto;gap:12px;align-items:center;padding:13px 15px;width:100%;text-align:left}
+.ck-box{width:20px;height:20px;border:1.5px solid var(--line-2);border-radius:6px;display:grid;place-items:center;flex:0 0 auto;transition:.18s}
+.ck-item.on .ck-box{background:var(--bull);border-color:var(--bull)}
+.ck-box svg{opacity:0;transition:opacity .18s}
+.ck-item.on .ck-box svg{opacity:1}
+.ck-n{font-family:var(--ff-m);font-size:11px;color:var(--gold);text-align:center}
+.ck-t{font-family:var(--ff-d);font-size:15.5px;font-weight:600}
+.ck-t span{display:block;font-family:var(--ff-b);font-weight:400;font-size:13px;color:var(--tx-2);margin-top:1px}
+.ck-caret{color:var(--tx-3);transition:transform .2s}
+.ck-item.open .ck-caret{transform:rotate(90deg)}
+.ck-body{display:none;padding:0 15px 15px 61px}
+.ck-item.open .ck-body{display:block}
+.ck-body li{font-size:13.8px;color:var(--tx-2);margin-bottom:5px}
+.ck-body .bad{color:var(--bear)}
+
+.panel-float{position:fixed;right:18px;bottom:18px;width:330px;max-height:70vh;overflow:auto;background:var(--bg-2);border:1px solid var(--line-2);border-radius:var(--r-l);box-shadow:0 20px 60px rgba(0,0,0,.66);z-index:80;display:none}
+.panel-float.on{display:block}
+.panel-float .pf-h{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg-2)}
+.panel-float .pf-h b{font-family:var(--ff-d);font-size:13.5px;flex:1}
+.panel-float ol{margin:0;padding:10px 14px 14px 30px}
+.panel-float li{font-size:13px;color:var(--tx-2);margin-bottom:9px;line-height:1.45}
+.panel-float li b{color:var(--tx);font-family:var(--ff-d);display:block;font-size:13px}
+
+.hero-mantra{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 8px}
+.hero-mantra div{
+  flex:1;min-width:104px;border:1px solid var(--line);border-radius:var(--r-m);padding:12px 12px 13px;background:var(--panel);
+  position:relative;overflow:hidden
+}
+.hero-mantra div::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--c,var(--gold));opacity:.6}
+.hero-mantra .l{font-family:var(--ff-m);font-size:10px;color:var(--tx-3);letter-spacing:.08em}
+.hero-mantra .v{font-family:var(--ff-d);font-size:14.5px;font-weight:600;margin-top:4px}
+.hero-mantra .d{font-size:12px;color:var(--tx-2);margin-top:3px;line-height:1.4}
+
+.tl{margin:22px 0}
+.tl-bar{display:flex;height:46px;border-radius:var(--r-m);overflow:hidden;border:1px solid var(--line)}
+.tl-bar div{display:flex;flex-direction:column;justify-content:center;padding:0 13px;font-size:12.6px;transition:flex .3s}
+.tl-bar .s{font-family:var(--ff-m);font-size:10px;opacity:.75}
+.tl-asia{background:linear-gradient(180deg,rgba(76,194,224,.16),rgba(76,194,224,.05));border-right:1px solid var(--line);color:var(--info)}
+.tl-lon{background:linear-gradient(180deg,rgba(232,180,74,.16),rgba(232,180,74,.05));border-right:1px solid var(--line);color:var(--gold)}
+.tl-ny{background:linear-gradient(180deg,rgba(139,123,240,.16),rgba(139,123,240,.05));color:var(--liq)}
+
+.mtf{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr));margin:20px 0}
+.mtf .chart{margin:0}
+.tfpick{display:flex;gap:7px;flex-wrap:wrap;margin:16px 0 4px}
+.tfpick button{border:1px solid var(--line);padding:7px 14px;border-radius:99px;font-family:var(--ff-m);font-size:12.5px;color:var(--tx-2);transition:.16s}
+.tfpick button.on{border-color:var(--gold);color:var(--gold);background:rgba(232,180,74,.07)}
+
+.gal{display:flex;gap:7px;flex-wrap:wrap;margin:18px 0 6px}
+.gal button{border:1px solid var(--line);padding:7px 13px;border-radius:8px;font-size:12.8px;color:var(--tx-2);transition:.16s}
+.gal button:hover{border-color:var(--line-2);color:var(--tx)}
+.gal button.on{border-color:var(--gold);color:var(--gold);background:rgba(232,180,74,.07)}
+
+.layerlist{display:grid;gap:7px}
+.layerlist .li{display:grid;grid-template-columns:22px 1fr;gap:9px;align-items:center;padding:8px 11px;border:1px solid var(--line);border-radius:8px;font-size:13.3px;color:var(--tx-3);transition:.25s;background:var(--panel)}
+.layerlist .li .ic{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--line-2);display:grid;place-items:center;font-size:10px}
+.layerlist .li.on{color:var(--tx);border-color:#1E4A38;background:rgba(43,191,123,.05)}
+.layerlist .li.on .ic{background:var(--bull);border-color:var(--bull);color:#06170F}
+.conf-wrap{display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start}
+
+@media (max-width:1000px){
+  .conf-wrap{grid-template-columns:1fr}
+  .g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:860px){
+  :root{--rail:280px}
+  .rail{transform:translateX(-100%);transition:transform .28s cubic-bezier(.3,.8,.3,1)}
+  body.menu .rail{transform:none;box-shadow:0 0 80px rgba(0,0,0,.7)}
+  .main{margin-left:0}
+  .burger{display:flex}
+  .wrap{padding:26px 16px 110px}
+  .topbar{padding:0 14px}
+  .g2,.g3,.mtf{grid-template-columns:1fr}
+  .flow .st + .st{margin-left:0;margin-top:8px}
+  .flow{flex-direction:column}
+  .panel-float{right:10px;left:10px;width:auto;bottom:10px}
+  .scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:55;display:none}
+  body.menu .scrim{display:block}
+}
+@media (max-width:520px){
+  body{font-size:15px}
+  .g4{grid-template-columns:1fr}
+  .qa-body{font-size:14px}
+}
+</style>
+</head>
+<body>
+<div class="scrim" data-close-menu></div>
+<div class="app">
+  <aside class="rail" id="rail">
+    <div class="brand">
+      <div class="tick"><b>XAU/USD</b><span>ORO · SPOT</span></div>
+      <h1>Leer el gráfico</h1>
+      <p>Curso visual de análisis técnico</p>
+    </div>
+    <div class="prog">
+      <div class="row"><span>Progreso</span><b id="progTxt">0 / 15</b></div>
+      <div class="bar"><i id="progBar" style="width:0%"></i></div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button class="burger" id="burger" aria-label="Abrir capítulos"><span></span></button>
+      <div class="crumb" id="crumb"></div>
+      <div class="sp"></div>
+      <button class="ghost pin" id="pinBtn" title="Abrir el checklist flotante">Checklist</button>
+    </header>
+    <main class="wrap" id="view"></main>
+  </div>
+</div>
+<div class="panel-float" id="pfloat"></div>
+<script>
+/* ============================================================
+   MOTOR DE GRÁFICOS — velas SVG, overlays, pasos y toggles
+   ============================================================ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const el = h => { const d = document.createElement('div'); d.innerHTML = h.trim(); return d.firstElementChild; };
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const C = { bull: '#2BBF7B', bear: '#E5484D', gold: '#E8B44A', liq: '#8B7BF0', info: '#4CC2E0', warn: '#F0983C', mut: '#6B7686', tx: '#DDE3EC', line: '#232A35' };
+
+/* ---------- generador determinista de series ---------- */
+function rnd(seed) { let s = (Math.abs(seed) * 9301 + 49297) % 233280 || 7; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; }
+
+function legOf(i, pts) {
+  for (let k = 0; k < pts.length - 1; k++) if (i >= pts[k][0] && i <= pts[k + 1][0]) return { a: pts[k][1], b: pts[k + 1][1] };
+  return { a: pts[0][1], b: pts[pts.length - 1][1] };
+}
+
+/* S(pts, seed, opt) — pts: [[índice, precio, 'H'|'L'|null], ...] */
+function S(pts, seed = 3, opt = {}) {
+  const r = rnd(seed), n = pts[pts.length - 1][0] + 1, path = new Array(n);
+  for (let k = 0; k < pts.length - 1; k++) {
+    const [ia, pa] = pts[k], [ib, pb] = pts[k + 1], span = (ib - ia) || 1;
+    for (let i = ia; i <= ib; i++) {
+      const t = (i - ia) / span;
+      const e = opt.linear ? t : (t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+      path[i] = pa + (pb - pa) * e;
+    }
+  }
+  let lo = Infinity, hi = -Infinity;
+  pts.forEach(p => { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); });
+  const amp = (hi - lo) || 1;
+  const nz = (opt.noise ?? .16) * amp, wk = (opt.wick ?? .10) * amp, m = (opt.pad ?? .025) * amp;
+  const mk = {}; pts.forEach(p => { if (p[2]) mk[p[0]] = { p: p[1], k: p[2] }; });
+  const out = []; let prev = path[0];
+  for (let i = 0; i < n; i++) {
+    const leg = legOf(i, pts), cap = Math.max(leg.a, leg.b), flo = Math.min(leg.a, leg.b);
+    let c = path[i] + (r() - .5) * nz, o = prev, h, l;
+    const w = mk[i];
+    if (w && w.k === 'H') {
+      h = w.p; c = w.p - (.2 + r() * .5) * wk; o = clamp(o, c - wk, w.p - .1 * wk); l = Math.min(o, c) - r() * wk * .6;
+    } else if (w && w.k === 'L') {
+      l = w.p; c = w.p + (.2 + r() * .5) * wk; o = clamp(o, w.p + .1 * wk, c + wk); h = Math.max(o, c) + r() * wk * .6;
+    } else {
+      c = clamp(c, flo + m, cap - m); o = clamp(o, flo + m, cap - m);
+      h = Math.max(o, c) + r() * wk; l = Math.min(o, c) - r() * wk;
+      h = Math.min(h, cap - m * .4); l = Math.max(l, flo + m * .4);
+      h = Math.max(h, Math.max(o, c) + amp * .004); l = Math.min(l, Math.min(o, c) - amp * .004);
+    }
+    out.push({ o, h, l, c }); prev = c;
+  }
+  return out;
+}
+/* X(rows) — velas explícitas [o,h,l,c] */
+const X = rows => rows.map(([o, h, l, c]) => ({ o, h, l, c }));
+/* concatena series encadenando el precio */
+function join(a, b) { const d = a[a.length - 1].c - b[0].o; return a.concat(b.map(k => ({ o: k.o + d, h: k.h + d, l: k.l + d, c: k.c + d }))); }
+
+/* ---------- helpers SVG ---------- */
+function pill(x, y, text, color, anchor = 'start', o = {}) {
+  const fs = o.fs || 11, w = String(text).length * fs * .6 + 12, h = fs + 9;
+  const rx = anchor === 'start' ? x : anchor === 'end' ? x - w : x - w / 2;
+  return `<g class="${o.cls || ''}"><rect x="${rx.toFixed(1)}" y="${(y - h / 2).toFixed(1)}" width="${w.toFixed(1)}" height="${h}" rx="5" fill="${o.bg || '#0B0E14'}" stroke="${color}" stroke-opacity="${o.so ?? .5}"/><text x="${(rx + w / 2).toFixed(1)}" y="${y.toFixed(1)}" fill="${color}" font-size="${fs}" text-anchor="middle" dominant-baseline="central" font-family="JetBrains Mono, monospace" font-weight="500">${esc(text)}</text></g>`;
+}
+function txt(x, y, t, color, anchor = 'start', o = {}) {
+  return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" fill="${color}" font-size="${o.fs || 11.5}" text-anchor="${anchor}" dominant-baseline="${o.bl || 'central'}" font-family="${o.ff || 'JetBrains Mono, monospace'}" font-weight="${o.fw || 500}" opacity="${o.op ?? 1}">${esc(t)}</text>`;
+}
+
+/* ---------- gráfico ---------- */
+const REG = [];
+function mkChart(spec) {
+  const id = 'c' + Math.random().toString(36).slice(2, 8);
+  const groups = spec.groups || [];
+  const st = { step: 0, off: new Set(groups.filter(g => g.on === false).map(g => g.id)), prevUpto: 0, first: true };
+
+  const fig = el(`<figure class="chart ${spec.flat ? 'flat' : ''}">
+    ${spec.title || spec.tf || groups.length ? `<div class="chart-head">
+      ${spec.title ? `<span class="t">${esc(spec.title)}</span>` : ''}
+      ${spec.tf ? `<span class="tf">${esc(spec.tf)}</span>` : ''}
+      <span class="sp"></span>
+      <div class="tools">${groups.map(g => `<button class="tgl ${g.on === false ? '' : 'on'}" data-g="${g.id}"><span class="sw"></span>${esc(g.label)}</button>`).join('')}</div>
+    </div>` : ''}
+    <div class="chart-svg" id="${id}"><div class="readout"></div></div>
+    ${spec.caption ? `<figcaption>${spec.caption}</figcaption>` : ''}
+    ${spec.steps ? `<div class="stepper">
+      <div class="step-nav">
+        <button data-prev>← Anterior</button>
+        <div class="dots">${spec.steps.map((_, i) => `<i data-d="${i}"></i>`).join('')}</div>
+        <button data-next>Siguiente →</button>
+      </div>
+      <div class="step-txt"><span class="num"></span><div><h5></h5><p></p></div></div>
+    </div>` : ''}
+  </figure>`);
+
+  const box = fig.querySelector('.chart-svg');
+  const readout = box.querySelector('.readout');
+  let cross = null, sc = null;
+
+  function visible(o) {
+    if (o.g && st.off.has(o.g)) return false;
+    if (spec.steps) {
+      if (o.only) return o.only.includes(st.step);
+      if (o.s != null && st.step < o.s) return false;
+      if (o.e != null && st.step > o.e) return false;
+    }
+    return true;
+  }
+
+  function render(anim) {
+    const W = Math.max(280, box.clientWidth - 12);
+    const H = spec.h || Math.round(clamp(W * .5, 235, 400));
+    const cd = spec.candles, n = cd.length;
+    const padL = spec.padL ?? 10, padR = spec.padR ?? (W < 460 ? 54 : 88), padT = spec.padT ?? 22, padB = 20;
+    let lo = Infinity, hi = -Infinity;
+    cd.forEach(k => { lo = Math.min(lo, k.l); hi = Math.max(hi, k.h); });
+    (spec.ov || []).forEach(o => {
+      [o.p, o.p1, o.p2, o.py].forEach(v => { if (typeof v === 'number') { lo = Math.min(lo, v); hi = Math.max(hi, v); } });
+    });
+    const rg = (hi - lo) || 1;
+    lo -= rg * (spec.padLo ?? .10); hi += rg * (spec.padHi ?? .12);
+    const R = hi - lo;
+    const iw = (W - padL - padR) / n;
+    const x = i => padL + (i + .5) * iw;
+    const y = p => padT + (hi - p) / R * (H - padT - padB);
+    const px2i = px => clamp(Math.round((px - padL) / iw - .5), 0, n - 1);
+    const py2p = py => hi - (py - padT) / (H - padT - padB) * R;
+    sc = { x, y, px2i, py2p, W, H, padR, iw };
+    const prec = R > 150 ? 0 : R > 25 ? 1 : 2;
+    const cur = spec.steps ? (spec.steps[st.step].upto ?? n) : n;
+    const from = anim === 'all' ? 0 : (anim === 'new' ? st.prevUpto : cur);
+
+    let g = '';
+    /* rejilla */
+    const gridN = 4;
+    for (let k = 0; k <= gridN; k++) {
+      const p = lo + R * k / gridN, yy = y(p);
+      g += `<line x1="${padL}" y1="${yy.toFixed(1)}" x2="${(W - padR + 2).toFixed(1)}" y2="${yy.toFixed(1)}" stroke="#1A202B" stroke-width="1"/>`;
+      if (padR > 40) g += txt(W - padR + 8, yy, p.toFixed(prec), '#4E586A', 'start', { fs: 10 });
+    }
+    g += `<line x1="${(W - padR + 2).toFixed(1)}" y1="${padT - 8}" x2="${(W - padR + 2).toFixed(1)}" y2="${H - padB + 6}" stroke="#1A202B"/>`;
+
+    /* overlays de fondo */
+    const ovs = (spec.ov || []).filter(visible);
+    const bw = Math.max(2.4, Math.min(15, iw * .62));
+    ovs.filter(o => ['zone', 'vzone', 'hi', 'fvg'].includes(o.k)).forEach(o => { g += drawOv(o, true); });
+    /* velas */
+    for (let i = 0; i < cur; i++) {
+      const k = cd[i], up = k.c >= k.o, col = up ? C.bull : C.bear;
+      const bodyY = y(Math.max(k.o, k.c)), bodyH = Math.max(1.4, Math.abs(y(k.o) - y(k.c)));
+      const an = i >= from ? `class="cdl" style="animation-delay:${Math.min(900, (i - from) * 34)}ms"` : '';
+      g += `<g ${an} opacity="${o_dim(i)}"><line x1="${x(i).toFixed(1)}" y1="${y(k.h).toFixed(1)}" x2="${x(i).toFixed(1)}" y2="${y(k.l).toFixed(1)}" stroke="${col}" stroke-width="1.3"/><rect x="${(x(i) - bw / 2).toFixed(1)}" y="${bodyY.toFixed(1)}" width="${bw.toFixed(1)}" height="${bodyH.toFixed(1)}" fill="${col}" rx="${bw > 6 ? 1.3 : .6}"/></g>`;
+    }
+    function o_dim(i) { const d = spec.dim; return d && i >= d[0] && i <= d[1] ? .28 : 1; }
+    /* overlays delanteros */
+    const delay = Math.min(900, Math.max(0, (cur - from)) * 34) + 60;
+    ovs.filter(o => !['zone', 'vzone', 'hi', 'fvg'].includes(o.k)).forEach(o => {
+      g += `<g class="ovg" style="animation-delay:${o.s != null && o.s === st.step ? 120 : delay}ms">${drawOv(o)}</g>`;
+    });
+
+    function drawOv(o) {
+      const A = o.color || C.gold;
+      switch (o.k) {
+        case 'level': {
+          const x1 = o.from != null ? x(o.from) : padL, x2 = o.to != null ? x(o.to) : W - padR + 2;
+          let s = `<line x1="${x1.toFixed(1)}" y1="${y(o.p).toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y(o.p).toFixed(1)}" stroke="${A}" stroke-width="${o.lw || 1.4}" ${o.dash ? `stroke-dasharray="${o.dash}"` : ''} opacity="${o.op ?? .9}"/>`;
+          if (o.label) s += padR > 40 && o.lab !== 'in'
+            ? pill(W - padR + 6, y(o.p), o.label, A, 'start', { fs: o.fs || 10 })
+            : pill(x1 + 6, y(o.p) - 11, o.label, A, 'start', { fs: o.fs || 10 });
+          return s;
+        }
+        case 'zone': {
+          const x1 = o.from != null ? x(o.from) - iw / 2 : padL, x2 = o.to != null ? x(o.to) + iw / 2 : W - padR + 2;
+          const ya = y(Math.max(o.p1, o.p2)), yb = y(Math.min(o.p1, o.p2));
+          let s = `<rect x="${x1.toFixed(1)}" y="${ya.toFixed(1)}" width="${(x2 - x1).toFixed(1)}" height="${Math.max(2, yb - ya).toFixed(1)}" fill="${A}" fill-opacity="${o.fo ?? .11}" stroke="${A}" stroke-opacity=".45" stroke-width="1" ${o.dash ? `stroke-dasharray="${o.dash}"` : ''} rx="2"/>`;
+          if (o.label) s += txt(x1 + 7, ya + 10, o.label, A, 'start', { fs: o.fs || 10.5 });
+          return s;
+        }
+        case 'fvg': {
+          const x1 = x(o.from) - iw / 2, x2 = (o.to != null ? x(o.to) + iw / 2 : W - padR + 2);
+          const ya = y(Math.max(o.p1, o.p2)), yb = y(Math.min(o.p1, o.p2));
+          let s = `<rect x="${x1.toFixed(1)}" y="${ya.toFixed(1)}" width="${(x2 - x1).toFixed(1)}" height="${Math.max(2, yb - ya).toFixed(1)}" fill="${A}" fill-opacity=".17" stroke="${A}" stroke-opacity=".6" stroke-dasharray="3 3" rx="2"/>`;
+          if (o.label) s += pill(x1 + 5, ya - 9, o.label, A, 'start', { fs: 10 });
+          return s;
+        }
+        case 'vzone': {
+          const x1 = x(o.from) - iw / 2, x2 = x(o.to) + iw / 2;
+          let s = `<rect x="${x1.toFixed(1)}" y="${padT - 14}" width="${(x2 - x1).toFixed(1)}" height="${(H - padB - padT + 18).toFixed(1)}" fill="${A}" fill-opacity="${o.fo ?? .07}"/>`;
+          s += `<line x1="${x1.toFixed(1)}" y1="${padT - 14}" x2="${x1.toFixed(1)}" y2="${H - padB + 4}" stroke="${A}" stroke-opacity=".3" stroke-dasharray="2 4"/>`;
+          if (o.label) s += txt((x1 + x2) / 2, padT - 9, o.label, A, 'middle', { fs: 10.5 });
+          return s;
+        }
+        case 'hi': {
+          const x1 = x(o.from) - iw / 2, x2 = x(o.to) + iw / 2;
+          return `<rect x="${x1.toFixed(1)}" y="${padT - 10}" width="${(x2 - x1).toFixed(1)}" height="${(H - padB - padT + 14).toFixed(1)}" fill="${A}" fill-opacity="${o.fo ?? .09}" stroke="${A}" stroke-opacity=".35" stroke-dasharray="4 4" rx="4"/>`;
+        }
+        case 'swing': {
+          const c = spec.candles[o.i], up = o.side === 'H';
+          const py = up ? y(c.h) - (o.off ?? 12) : y(c.l) + (o.off ?? 12);
+          let s = `<circle cx="${x(o.i).toFixed(1)}" cy="${(up ? y(c.h) - 3 : y(c.l) + 3).toFixed(1)}" r="2.6" fill="${A}"/>`;
+          s += pill(x(o.i), py, o.text, A, 'middle', { fs: o.fs || 10.5 });
+          return s;
+        }
+        case 'zig': {
+          const d = o.pts.map(([i, sd]) => `${x(i).toFixed(1)},${(sd === 'H' ? y(spec.candles[i].h) - 2 : y(spec.candles[i].l) + 2).toFixed(1)}`).join(' ');
+          return `<polyline points="${d}" fill="none" stroke="${A}" stroke-width="${o.lw || 1.5}" stroke-opacity="${o.op ?? .75}" ${o.dash ? `stroke-dasharray="${o.dash}"` : ''} stroke-linejoin="round"/>`;
+        }
+        case 'trend': {
+          return `<line x1="${x(o.i1).toFixed(1)}" y1="${y(o.p1).toFixed(1)}" x2="${x(o.i2).toFixed(1)}" y2="${y(o.p2).toFixed(1)}" stroke="${A}" stroke-width="${o.lw || 1.4}" ${o.dash ? `stroke-dasharray="${o.dash}"` : ''} opacity="${o.op ?? .85}"/>`;
+        }
+        case 'note': {
+          const c = spec.candles[o.i];
+          const py = o.py != null ? y(o.py) : (o.side === 'H' ? y(c.h) - (o.off ?? 26) : y(c.l) + (o.off ?? 26));
+          let s = '';
+          if (o.arrow !== false) {
+            const ty = o.side === 'H' ? y(c.h) - 6 : y(c.l) + 6;
+            s += `<line x1="${x(o.i).toFixed(1)}" y1="${py + (o.side === 'H' ? 8 : -8)}" x2="${x(o.i).toFixed(1)}" y2="${ty.toFixed(1)}" stroke="${A}" stroke-width="1" stroke-dasharray="2 2" opacity=".7"/>`;
+          }
+          s += pill(clamp(x(o.i) + (o.dx || 0), 40, W - padR - 20), py, o.text, A, 'middle', { fs: o.fs || 10.5 });
+          return s;
+        }
+        case 'mark': {
+          const c = spec.candles[o.i], up = o.side !== 'H';
+          const ty = up ? y(c.l) + 9 : y(c.h) - 9;
+          const d = up ? `${x(o.i)},${ty} ${x(o.i) - 4.5},${ty + 8} ${x(o.i) + 4.5},${ty + 8}` : `${x(o.i)},${ty} ${x(o.i) - 4.5},${ty - 8} ${x(o.i) + 4.5},${ty - 8}`;
+          let s = `<polygon points="${d}" fill="${A}"/>`;
+          if (o.text) s += pill(clamp(x(o.i) + (o.dx || 0), 44, W - padR - 24), up ? ty + 22 : ty - 22, o.text, A, 'middle', { fs: o.fs || 10.5 });
+          return s;
+        }
+        case 'stops': {
+          const x1 = x(o.from), x2 = x(o.to), cnt = o.n || 7, yy = y(o.p);
+          let s = '';
+          for (let k = 0; k < cnt; k++) {
+            const xx = x1 + (x2 - x1) * k / (cnt - 1);
+            s += `<line x1="${xx.toFixed(1)}" y1="${(yy - 26).toFixed(1)}" x2="${xx.toFixed(1)}" y2="${(yy - 9).toFixed(1)}" stroke="${A}" stroke-width="1.2" opacity=".75"/><polygon points="${xx},${yy - 5} ${xx - 3.4},${yy - 12} ${xx + 3.4},${yy - 12}" fill="${A}" opacity=".85"/>`;
+          }
+          if (o.text) s += txt((x1 + x2) / 2, yy - 35, o.text, A, 'middle', { fs: 10 });
+          return s;
+        }
+        case 'txt': return txt(o.i != null ? x(o.i) : (o.xp ?? padL + 8), o.py != null ? y(o.py) : (o.yp ?? padT), o.text, A, o.anchor || 'start', { fs: o.fs || 11, ff: o.ff });
+        case 'band': { /* etiqueta grande centrada arriba */
+          return pill(o.i != null ? x(o.i) : (W - padR) / 2, padT - 10, o.text, A, 'middle', { fs: o.fs || 11 });
+        }
+        case 'bracket': {
+          const x1 = x(o.from) - iw / 2, x2 = x(o.to) + iw / 2, yy = o.yp ?? (H - padB + 8);
+          return `<path d="M${x1},${yy - 5} L${x1},${yy} L${x2},${yy} L${x2},${yy - 5}" fill="none" stroke="${A}" stroke-width="1" opacity=".6"/>` + txt((x1 + x2) / 2, yy + 9, o.text, A, 'middle', { fs: 10 });
+        }
+      }
+      return '';
+    }
+
+    box.querySelectorAll('svg').forEach(s => s.remove());
+    box.insertAdjacentHTML('afterbegin', `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(spec.title || 'gráfico de velas')}">${g}</svg>`);
+    st.prevUpto = cur;
+  }
+
+  /* interacción: crosshair + lectura OHLC */
+  if (spec.hover !== false) {
+    box.addEventListener('pointermove', e => {
+      if (!sc) return;
+      const r = box.getBoundingClientRect(), px = e.clientX - r.left - 6;
+      const i = sc.px2i(px), k = spec.candles[i];
+      const cur = spec.steps ? (spec.steps[st.step].upto ?? spec.candles.length) : spec.candles.length;
+      if (!k || i >= cur) { readout.style.opacity = 0; return; }
+      const up = k.c >= k.o, pr = (hiLoRange() > 150 ? 0 : hiLoRange() > 25 ? 1 : 2);
+      readout.innerHTML = `<b>#${i + 1}</b> · <span class="${up ? 'u' : 'd'}">${up ? '▲' : '▼'}</span><br>A ${k.o.toFixed(pr)} · M ${k.h.toFixed(pr)}<br>m ${k.l.toFixed(pr)} · C <b>${k.c.toFixed(pr)}</b>`;
+      readout.style.opacity = 1;
+      const rx = sc.x(i) + 14, flip = rx + 122 > sc.W - sc.padR;
+      readout.style.left = (flip ? sc.x(i) - 110 : rx) + 'px';
+      readout.style.top = clamp(sc.y(k.h) - 18, 4, sc.H - 76) + 'px';
+    });
+    box.addEventListener('pointerleave', () => { readout.style.opacity = 0; });
+  }
+  function hiLoRange() { let lo = Infinity, hi = -Infinity; spec.candles.forEach(k => { lo = Math.min(lo, k.l); hi = Math.max(hi, k.h); }); return hi - lo; }
+
+  if (spec.onPick) {
+    box.classList.add('clickable');
+    box.addEventListener('click', e => {
+      if (!sc) return;
+      const r = box.getBoundingClientRect();
+      spec.onPick({ i: sc.px2i(e.clientX - r.left - 6), p: sc.py2p(e.clientY - r.top - 4) }, api);
+    });
+  }
+
+  /* toggles */
+  fig.querySelectorAll('.tgl').forEach(b => b.addEventListener('click', () => {
+    const g = b.dataset.g;
+    if (st.off.has(g)) { st.off.delete(g); b.classList.add('on'); } else { st.off.add(g); b.classList.remove('on'); }
+    render(false);
+  }));
+
+  /* pasos */
+  function syncStep() {
+    if (!spec.steps) return;
+    const s = spec.steps[st.step];
+    fig.querySelector('.step-txt .num').textContent = (st.step + 1) + '/' + spec.steps.length;
+    fig.querySelector('.step-txt h5').textContent = s.t || '';
+    fig.querySelector('.step-txt p').innerHTML = s.d || '';
+    fig.querySelector('[data-prev]').disabled = st.step === 0;
+    fig.querySelector('[data-next]').disabled = st.step === spec.steps.length - 1;
+    fig.querySelectorAll('.dots i').forEach((d, i) => { d.className = i === st.step ? 'on' : (i < st.step ? 'past' : ''); });
+  }
+  if (spec.steps) {
+    fig.querySelector('[data-prev]').addEventListener('click', () => { if (st.step > 0) { st.step--; st.prevUpto = 0; syncStep(); render('all'); } });
+    fig.querySelector('[data-next]').addEventListener('click', () => { if (st.step < spec.steps.length - 1) { st.step++; syncStep(); render('new'); } });
+    fig.querySelectorAll('.dots i').forEach(d => d.addEventListener('click', () => { const t = +d.dataset.d; const fw = t > st.step; st.step = t; if (!fw) st.prevUpto = 0; syncStep(); render(fw ? 'new' : 'all'); }));
+    syncStep();
+  }
+
+  const api = {
+    node: fig,
+    render,
+    setOv(ov) { spec.ov = ov; render(false); },
+    setCandles(c) { spec.candles = c; st.prevUpto = 0; render('all'); },
+    on(g) { st.off.delete(g); render(false); },
+    offAll(gs) { gs.forEach(g => st.off.add(g)); render(false); },
+    toggle(g, v) { v ? st.off.delete(g) : st.off.add(g); render(false); },
+    step(i) { if (spec.steps) { st.step = i; syncStep(); render('all'); } }
+  };
+  REG.push({ box, render });
+  requestAnimationFrame(() => render('all'));
+  return api;
+}
+
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => REG.forEach(r => { if (r.box.isConnected) r.render(false); }), 160); });
+
+/* ---------- bloque de 6 preguntas ---------- */
+const QK = [
+  ['Qué veo', '01'], ['Cómo lo detecto', '02'], ['Qué significa', '03'],
+  ['Dónde importa', '04'], ['Qué NO significa', '05'], ['Qué observo después', '06']
+];
+function qa(items) {
+  const n = el(`<div class="qa">
+    <div class="qa-tabs">${QK.map((k, i) => `<button data-i="${i}" class="${i === 0 ? 'on' : ''}"><span class="dg">${k[1]}</span>${k[0]}</button>`).join('')}</div>
+    <div class="qa-body"></div></div>`);
+  const body = n.querySelector('.qa-body');
+  const show = i => { body.innerHTML = `<span class="k">${QK[i][0]}</span>${items[i] || '—'}`; };
+  n.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    n.querySelectorAll('button').forEach(x => x.classList.remove('on')); b.classList.add('on'); show(+b.dataset.i);
+  }));
+  show(0); return n;
+}
+
+/* ---------- bloques declarativos ---------- */
+function build(blocks) {
+  const frag = document.createDocumentFragment();
+  blocks.forEach(b => {
+    if (!b) return;
+    if (b.nodeType) { frag.appendChild(b); return; }
+    switch (b.k) {
+      case 'h': frag.appendChild(el(`<h3 class="sec">${b.t}</h3>`)); if (b.d) frag.appendChild(el(`<p class="sub">${b.d}</p>`)); break;
+      case 'p': frag.appendChild(el(`<div class="body"><p>${b.t}</p></div>`)); break;
+      case 'chart': frag.appendChild(mkChart(b).node); break;
+      case 'qa': frag.appendChild(qa(b.items)); break;
+      case 'note': frag.appendChild(el(`<div class="note ${b.t2 || ''}">${b.t}</div>`)); break;
+      case 'cards': frag.appendChild(el(`<div class="grid g${b.n || 3}">${b.items.map(c => `<div class="card ${c.c || ''}"><h4>${c.t}</h4>${c.d.map(p => `<p>${p}</p>`).join('')}</div>`).join('')}</div>`)); break;
+      case 'flow': frag.appendChild(el(`<div class="flow">${b.items.map((s, i) => `<div class="st"><span class="i">${String(i + 1).padStart(2, '0')}</span><h5>${s.t}</h5><p>${s.d}</p></div>`).join('')}</div>`)); break;
+      case 'ticks': frag.appendChild(el(`<ul class="ticks ${b.t2 || ''}">${b.items.map(i => `<li>${i}</li>`).join('')}</ul>`)); break;
+      case 'grid': { const g = el(`<div class="grid g${b.n || 2}"></div>`); b.items.forEach(x => g.appendChild(x.nodeType ? x : mkChart(x).node)); frag.appendChild(g); break; }
+      case 'raw': frag.appendChild(el(b.t)); break;
+    }
+  });
+  return frag;
+}
+const T = (s, tip) => `<span class="term" tabindex="0" data-tip="${esc(tip)}">${s}</span>`;
+/* ============================================================
+   CAPÍTULOS
+   ============================================================ */
+const CH = [];
+const chapter = o => CH.push(o);
+
+/* ---------------- 00 · INTRO ---------------- */
+chapter({
+  id: 'inicio', grp: 'Empezar', n: '00', nav: 'Cómo leer esto', t: 'Leer un gráfico no es reconocer dibujos',
+  lede: 'Es responder, en orden, a seis preguntas sobre lo que el precio está haciendo. Este curso entrena ese orden aplicado al oro.',
+  build: () => build([
+    { k: 'raw', t: `<div class="hero-mantra">
+      <div style="--c:#4CC2E0"><div class="l">01</div><div class="v">Contexto</div><div class="d">¿Dónde estamos en H4 y H1?</div></div>
+      <div style="--c:#2BBF7B"><div class="l">02</div><div class="v">Estructura</div><div class="d">¿Máximos y mínimos crecientes o decrecientes?</div></div>
+      <div style="--c:#E8B44A"><div class="l">03</div><div class="v">Nivel</div><div class="d">¿El precio está en un sitio que importa?</div></div>
+      <div style="--c:#8B7BF0"><div class="l">04</div><div class="v">Liquidez</div><div class="d">¿Qué extremos pueden atraer al precio?</div></div>
+      <div style="--c:#F0983C"><div class="l">05</div><div class="v">Reacción</div><div class="d">¿Qué hace el precio al llegar ahí?</div></div>
+      <div style="--c:#E5484D"><div class="l">06</div><div class="v">Confirmación</div><div class="d">¿Lo respalda el timeframe inferior?</div></div>
+    </div>` },
+    {
+      k: 'chart', title: 'La misma vela, dos lecturas distintas', tf: 'XAUUSD · M15',
+      candles: S([[0, 4292, 'L'], [8, 4344, 'H'], [14, 4318, 'L'], [21, 4346, 'H'], [27, 4324, 'L'], [33, 4347, 'H'], [38, 4328, 'L'], [43, 4366, 'H'], [47, 4332], [54, 4286, 'L']], 41, { noise: .14 }),
+      ov: [
+        { k: 'zone', p1: 4342, p2: 4350, color: C.bear, label: 'Zona de máximos', from: 5, to: 45, g: 'z' },
+        { k: 'stops', p: 4352, from: 8, to: 33, n: 6, text: 'Órdenes acumuladas sobre los máximos', color: C.liq, g: 'z' },
+        { k: 'mark', i: 43, side: 'H', text: 'Barrido y vuelta dentro', color: C.liq, g: 'z' },
+        { k: 'note', i: 51, side: 'L', text: 'Consecuencia', color: C.bear, off: 30, g: 'z' }
+      ],
+      groups: [{ id: 'z', label: 'Mostrar la lectura', on: false }],
+      caption: 'Sin anotaciones solo ves velas verdes y rojas. Activa la lectura: el mismo tramo pasa a ser <b>“el precio ataca por cuarta vez una zona de máximos, la supera un instante y vuelve dentro”</b>. Esa frase es análisis técnico. “Hay una vela roja” no lo es.'
+    },
+    { k: 'h', t: 'Cómo está montado el curso', d: 'Cada concepto tiene su gráfico. Los gráficos son interactivos: pasa el ratón para ver apertura, máximo, mínimo y cierre; usa los interruptores para esconder o mostrar las anotaciones; avanza paso a paso en las secuencias animadas.' },
+    {
+      k: 'cards', n: 3, items: [
+        { c: 'gold', t: 'Interruptores', d: ['Casi todos los gráficos traen un interruptor tipo <b>Mostrar estructura</b>. Apágalo e intenta leer el gráfico tú solo antes de encenderlo. Ese ejercicio es el que entrena el ojo.'] },
+        { t: 'Seis preguntas', d: ['Bajo los conceptos clave hay seis pestañas: qué veo, cómo lo detecto, qué significa, dónde importa, qué <b>no</b> significa y qué observo después. La quinta es la más importante.'] },
+        { t: 'Orden recomendado', d: ['Capítulos 1 a 5 en orden, sin saltar. El resto puedes leerlo suelto. Al final tienes el modo <b>Entrena tu ojo</b> y la checklist flotante para usar mientras miras el oro en vivo.'] }
+      ]
+    },
+    {
+      k: 'note', t2: 'warn', t: `<p><b>Antes de seguir.</b> Esto es material educativo sobre lectura de gráficos, no asesoramiento financiero ni un sistema de señales. Nada de lo que verás aquí predice el precio: solo describe escenarios, evidencias a favor y en contra, y las condiciones que invalidan cada lectura.</p><p style="margin:0">El lenguaje importa. En todo el curso leerás <i>“esto aumenta la evidencia de…”</i> y <i>“este escenario queda invalidado si…”</i>, nunca <i>“cuando aparece X el precio sube”</i>.</p>` }
+  ])
+});
+
+/* ---------------- 01 · ESTRUCTURA ---------------- */
+chapter({
+  id: 'estructura', grp: 'Fundamentos', n: '01', nav: 'Estructura de mercado', t: 'Estructura: el esqueleto del gráfico',
+  lede: 'Si solo pudieras aprender una cosa, sería esta. La estructura es la secuencia de máximos y mínimos que deja el precio, y define el marco dentro del cual todo lo demás tiene o no tiene sentido.',
+  build: () => build([
+    { k: 'h', t: 'Swing high y swing low', d: 'Un swing es un giro. No todo máximo cuenta: buscamos puntos donde el precio claramente dejó de subir y se dio la vuelta.' },
+    {
+      k: 'chart', title: 'Los giros del precio', tf: 'XAUUSD · M15',
+      candles: S([[0, 4302], [5, 4340, 'H'], [11, 4308, 'L'], [17, 4346, 'H'], [24, 4300, 'L'], [30, 4328]], 12),
+      ov: [
+        { k: 'swing', i: 5, side: 'H', text: 'Swing High', color: C.bear, g: 's' },
+        { k: 'swing', i: 11, side: 'L', text: 'Swing Low', color: C.bull, g: 's' },
+        { k: 'swing', i: 17, side: 'H', text: 'Swing High', color: C.bear, g: 's' },
+        { k: 'swing', i: 24, side: 'L', text: 'Swing Low', color: C.bull, g: 's' },
+        { k: 'zig', pts: [[0, 'L'], [5, 'H'], [11, 'L'], [17, 'H'], [24, 'L'], [30, 'H']], color: '#5A6478', dash: '4 4', g: 's' }
+      ],
+      groups: [{ id: 's', label: 'Mostrar giros' }],
+      caption: 'Regla práctica: un <b>swing high</b> es una vela cuyo máximo es superior al de varias velas a izquierda y derecha. El <b>swing low</b>, lo mismo con los mínimos. Si tienes que forzar la vista para verlo, probablemente no es un swing relevante.'
+    },
+    {
+      k: 'qa', items: [
+        'Puntos donde el precio giró: picos y valles. La línea discontinua une esos giros y resume el movimiento en un zigzag.',
+        'Miro las velas de alrededor. Si el máximo de una vela es más alto que el de las 2–3 velas a cada lado, ahí hay un swing high. Igual con los mínimos, al revés.',
+        'Cada swing es una decisión del mercado: hasta aquí llegó la presión compradora (o vendedora) antes de agotarse.',
+        'En todos los marcos temporales, pero los swings de H1 y H4 pesan mucho más que los de M1. Un swing solo importa si otros participantes también lo ven.',
+        '<b>No</b> significa que el precio no pueda volver a ese punto. Un swing high no es un techo definitivo: es una referencia y, muy a menudo, un imán (lo verás en el capítulo de liquidez).',
+        'Cómo se relaciona el siguiente swing con este: ¿queda por encima o por debajo? Esa comparación es literalmente toda la estructura de mercado.'
+      ]
+    },
+
+    { k: 'h', t: 'Estructura alcista: HL → HH → HL → HH', d: 'Cada máximo supera al anterior y cada mínimo queda por encima del anterior. El precio no sube en línea recta: sube haciendo escalones.' },
+    {
+      k: 'chart', title: 'Secuencia alcista', tf: 'XAUUSD · H1',
+      candles: S([[0, 4262, 'L'], [7, 4308, 'H'], [13, 4286, 'L'], [21, 4348, 'H'], [28, 4319, 'L'], [36, 4392, 'H']], 22),
+      ov: [
+        { k: 'zig', pts: [[0, 'L'], [7, 'H'], [13, 'L'], [21, 'H'], [28, 'L'], [36, 'H']], color: C.bull, g: 'st' },
+        { k: 'swing', i: 0, side: 'L', text: 'mínimo', color: C.mut, g: 'st' },
+        { k: 'swing', i: 7, side: 'H', text: 'máximo', color: C.mut, g: 'st' },
+        { k: 'swing', i: 13, side: 'L', text: 'HL', color: C.bull, g: 'st' },
+        { k: 'swing', i: 21, side: 'H', text: 'HH', color: C.bull, g: 'st' },
+        { k: 'swing', i: 28, side: 'L', text: 'HL', color: C.bull, g: 'st' },
+        { k: 'swing', i: 36, side: 'H', text: 'HH', color: C.bull, g: 'st' },
+        { k: 'level', p: 4308, from: 7, to: 21, color: '#3E4A5C', dash: '3 4', label: 'máximo previo', g: 'st' },
+        { k: 'level', p: 4286, from: 13, to: 28, color: '#3E4A5C', dash: '3 4', label: 'mínimo previo', g: 'st' }
+      ],
+      groups: [{ id: 'st', label: 'Mostrar estructura' }],
+      caption: `${T('HH', 'Higher High — máximo creciente: un máximo por encima del máximo anterior')} = máximo creciente. ${T('HL', 'Higher Low — mínimo creciente: un mínimo por encima del mínimo anterior')} = mínimo creciente. Mientras la secuencia se repita, la lectura por defecto es <b>tendencia alcista</b>: los retrocesos se están comprando antes de llegar al mínimo anterior.`
+    },
+
+    { k: 'h', t: 'Estructura bajista: LH → LL → LH → LL', d: 'La imagen invertida. Cada rebote se queda más abajo que el anterior y cada caída marca un mínimo nuevo.' },
+    {
+      k: 'chart', title: 'Secuencia bajista', tf: 'XAUUSD · H1',
+      candles: S([[0, 4392, 'H'], [7, 4344, 'L'], [14, 4371, 'H'], [22, 4306, 'L'], [29, 4333, 'H'], [37, 4258, 'L']], 31),
+      ov: [
+        { k: 'zig', pts: [[0, 'H'], [7, 'L'], [14, 'H'], [22, 'L'], [29, 'H'], [37, 'L']], color: C.bear, g: 'st' },
+        { k: 'swing', i: 0, side: 'H', text: 'máximo', color: C.mut, g: 'st' },
+        { k: 'swing', i: 7, side: 'L', text: 'mínimo', color: C.mut, g: 'st' },
+        { k: 'swing', i: 14, side: 'H', text: 'LH', color: C.bear, g: 'st' },
+        { k: 'swing', i: 22, side: 'L', text: 'LL', color: C.bear, g: 'st' },
+        { k: 'swing', i: 29, side: 'H', text: 'LH', color: C.bear, g: 'st' },
+        { k: 'swing', i: 37, side: 'L', text: 'LL', color: C.bear, g: 'st' }
+      ],
+      groups: [{ id: 'st', label: 'Mostrar estructura' }],
+      caption: `${T('LH', 'Lower High — máximo decreciente')} = máximo decreciente. ${T('LL', 'Lower Low — mínimo decreciente')} = mínimo decreciente. Cada rebote encuentra vendedores antes de alcanzar el máximo anterior. Ese es el dato, no el color de las velas.`
+    },
+    {
+      k: 'qa', items: [
+        'Una escalera. En la alcista los escalones suben; en la bajista bajan. Las etiquetas HH/HL/LH/LL solo nombran cada escalón.',
+        'Comparo cada swing con el swing del mismo tipo anterior: máximo contra máximo, mínimo contra mínimo. Dos comparaciones y ya tienes la estructura.',
+        'Que el desequilibrio entre compradores y vendedores se mantiene en una dirección. Los retrocesos no consiguen deshacer el movimiento previo.',
+        'En el marco que vas a operar y en el inmediatamente superior. Una estructura alcista en M5 dentro de una bajista en H1 es un retroceso, no una tendencia.',
+        '<b>No</b> significa que debas comprar ahora ni que el movimiento vaya a continuar. Una estructura alcista madura puede estar a una vela de romperse. Describe lo que ha pasado, no lo que pasará.',
+        'El siguiente mínimo. Es el que decide si la secuencia continúa (HL) o si empieza a deteriorarse.'
+      ]
+    },
+
+    { k: 'h', t: 'Rango: ni una cosa ni otra', d: 'Cuando los máximos dejan de crecer y los mínimos dejan de caer, el precio está contenido. Es el estado más frecuente del oro fuera de las horas activas.' },
+    {
+      k: 'chart', title: 'Precio contenido entre dos extremos', tf: 'XAUUSD · M15',
+      candles: S([[0, 4302, 'L'], [5, 4348, 'H'], [10, 4301, 'L'], [16, 4345, 'H'], [22, 4298, 'L'], [28, 4350, 'H'], [34, 4304, 'L']], 8, { noise: .2 }),
+      ov: [
+        { k: 'zone', p1: 4342, p2: 4353, color: C.bear, label: 'Techo del rango', g: 'st' },
+        { k: 'zone', p1: 4295, p2: 4308, color: C.bull, label: 'Suelo del rango', g: 'st' },
+        { k: 'txt', i: 17, py: 4325, text: 'Sin máximos ni mínimos crecientes', color: C.mut, anchor: 'middle', g: 'st' }
+      ],
+      groups: [{ id: 'st', label: 'Mostrar rango' }],
+      caption: 'Dentro de un rango, las herramientas de tendencia funcionan mal: cada “ruptura” tiende a devolverse. Lo útil aquí no es adivinar la dirección, sino <b>marcar los dos extremos</b> y esperar a ver cómo se resuelven.'
+    },
+
+    { k: 'h', t: 'Transición: cuando la secuencia deja de cumplirse', d: 'El momento más informativo del gráfico no es cuando la tendencia funciona, sino cuando empieza a fallar.' },
+    {
+      k: 'chart', title: 'Una estructura alcista que se deteriora', tf: 'XAUUSD · H1',
+      candles: S([[0, 4270, 'L'], [6, 4322, 'H'], [12, 4298, 'L'], [19, 4358, 'H'], [26, 4331, 'L'], [32, 4368, 'H'], [40, 4310, 'L'], [46, 4339, 'H'], [54, 4282, 'L']], 17),
+      ov: [
+        { k: 'swing', i: 12, side: 'L', text: 'HL', color: C.bull, e: 0 },
+        { k: 'swing', i: 19, side: 'H', text: 'HH', color: C.bull },
+        { k: 'swing', i: 26, side: 'L', text: 'HL', color: C.bull },
+        { k: 'swing', i: 32, side: 'H', text: 'HH', color: C.bull },
+        { k: 'zig', pts: [[0, 'L'], [6, 'H'], [12, 'L'], [19, 'H'], [26, 'L'], [32, 'H']], color: C.bull, op: .5 },
+        { k: 'level', p: 4331, color: C.warn, dash: '5 4', label: 'último HL', s: 1 },
+        { k: 'mark', i: 38, side: 'L', text: 'rompe el último mínimo creciente', color: C.bear, s: 2 },
+        { k: 'swing', i: 46, side: 'H', text: 'LH', color: C.bear, s: 3 },
+        { k: 'swing', i: 54, side: 'L', text: 'LL', color: C.bear, s: 3 },
+        { k: 'zig', pts: [[32, 'H'], [40, 'L'], [46, 'H'], [54, 'L']], color: C.bear, s: 3 }
+      ],
+      steps: [
+        { t: 'Antes', upto: 34, d: 'Secuencia limpia: HL → HH → HL → HH. La lectura por defecto es alcista y los retrocesos han sido oportunidades de compra para el mercado.' },
+        { t: 'La referencia', upto: 34, d: 'El nivel que hay que vigilar es <b>el último mínimo creciente</b> (4331). Mientras el precio no lo pierda, la estructura alcista sigue intacta.' },
+        { t: 'El cambio', upto: 41, d: 'El precio pierde ese mínimo. La secuencia HL→HH se ha roto: <b>la estructura alcista ya no se cumple</b>. Ojo: esto no es una orden de venta, es una pérdida de evidencia alcista.' },
+        { t: 'Ahora', upto: 55, d: 'El siguiente rebote se queda por debajo (LH) y aparece un nuevo mínimo inferior (LL). Solo <b>ahora</b> la estructura bajista está confirmada. Antes era una hipótesis.' }
+      ],
+      caption: 'Antes → Cambio → Ahora. Entre “se rompió la estructura” y “hay estructura contraria” suele haber varias velas de incertidumbre. La mayoría de errores caros viven en ese hueco.'
+    },
+    {
+      k: 'note', t2: 'no', t: `<p style="margin:0"><b>Lo que la rotura de un HL NO dice:</b> no dice que haya que vender, ni que el mínimo anterior se vaya a alcanzar, ni que la tendencia alcista haya terminado para siempre. Dice exactamente esto: <i>la condición que sostenía la lectura alcista ha dejado de cumplirse y necesito ver qué construye el precio a continuación.</i></p>` },
+
+    { k: 'h', t: 'Pruébalo con el interruptor apagado', d: 'Este gráfico empieza sin anotaciones. Decide primero si la estructura es alcista, bajista o un rango, señala mentalmente los swings y luego enciende la respuesta.' },
+    {
+      k: 'chart', title: '¿Qué estructura ves aquí?', tf: 'XAUUSD · M15',
+      candles: S([[0, 4366, 'H'], [8, 4320, 'L'], [15, 4351, 'H'], [23, 4292, 'L'], [30, 4326, 'H'], [38, 4268, 'L'], [44, 4300, 'H']], 55),
+      ov: [
+        { k: 'swing', i: 0, side: 'H', text: 'máximo', color: C.mut, g: 'st' },
+        { k: 'swing', i: 8, side: 'L', text: 'mínimo', color: C.mut, g: 'st' },
+        { k: 'swing', i: 15, side: 'H', text: 'LH', color: C.bear, g: 'st' },
+        { k: 'swing', i: 23, side: 'L', text: 'LL', color: C.bear, g: 'st' },
+        { k: 'swing', i: 30, side: 'H', text: 'LH', color: C.bear, g: 'st' },
+        { k: 'swing', i: 38, side: 'L', text: 'LL', color: C.bear, g: 'st' },
+        { k: 'zig', pts: [[0, 'H'], [8, 'L'], [15, 'H'], [23, 'L'], [30, 'H'], [38, 'L'], [44, 'H']], color: C.bear, g: 'st' },
+        { k: 'note', i: 44, side: 'H', text: '¿LH otra vez? aún no lo sabemos', color: C.warn, off: 24, g: 'st' }
+      ],
+      groups: [{ id: 'st', label: 'Ver solución', on: false }],
+      caption: 'Fíjate en el último tramo: el precio sube, pero eso no cambia nada mientras no supere el máximo decreciente anterior. <b>Subir no es lo mismo que ser alcista.</b>'
+    }
+  ])
+});
+
+/* ---------------- 02 · NIVELES ---------------- */
+chapter({
+  id: 'niveles', grp: 'Fundamentos', n: '02', nav: 'Niveles y zonas', t: 'Niveles: dónde el precio ya reaccionó antes',
+  lede: 'Un nivel no es una línea mágica. Es una zona donde en el pasado apareció suficiente oferta o demanda como para girar el precio, y donde es razonable que vuelva a haber interés.',
+  build: () => build([
+    { k: 'h', t: 'Zonas, no líneas', d: 'El oro se mueve rápido y deja mechas largas. Si marcas un precio exacto, el mercado lo perforará constantemente y creerás que “el nivel no funciona”.' },
+    {
+      k: 'grid', n: 2, items: [
+        {
+          title: 'Línea exacta', tf: 'la mecha la atraviesa tres veces', padR: 40, h: 250,
+          candles: S([[0, 4300, 'L'], [6, 4342, 'H'], [12, 4312, 'L'], [18, 4347, 'H'], [24, 4318, 'L'], [30, 4339, 'H'], [36, 4296, 'L']], 19),
+          ov: [
+            { k: 'level', p: 4342, color: C.bear, lw: 1.6, label: '4342', lab: 'in' },
+            { k: 'mark', i: 18, side: 'H', text: 'perforado', color: C.bear, fs: 9.5 }
+          ],
+          caption: 'Con una línea fija acabas pensando que el nivel “falló”.'
+        },
+        {
+          title: 'Zona', tf: 'la reacción es la misma', padR: 40, h: 250,
+          candles: S([[0, 4300, 'L'], [6, 4342, 'H'], [12, 4312, 'L'], [18, 4347, 'H'], [24, 4318, 'L'], [30, 4339, 'H'], [36, 4296, 'L']], 19),
+          ov: [
+            { k: 'zone', p1: 4335, p2: 4350, color: C.bear, label: 'zona de oferta' },
+            { k: 'mark', i: 30, side: 'H', text: 'tercer rechazo', color: C.bear, fs: 9.5 }
+          ],
+          caption: 'Con una zona ves lo que de verdad ocurrió: tres rechazos en el mismo sitio.'
+        }
+      ]
+    },
+    { k: 'note', t2: 'key', t: `<b>Cómo dibujar la zona.</b> Toma el cuerpo de las velas de giro como núcleo y extiende hasta englobar las mechas más largas de esa misma reacción. En XAUUSD intradía suele salir una zona de 3 a 8 dólares; en H4, de 10 a 25.` },
+
+    { k: 'h', t: 'Soporte, resistencia y el intercambio de papeles', d: 'Los nombres son solo la posición del precio respecto a la zona. Lo interesante ocurre cuando una zona cambia de bando.' },
+    {
+      k: 'chart', title: 'Resistencia que pasa a ser soporte', tf: 'XAUUSD · H1',
+      candles: S([[0, 4288, 'L'], [7, 4336, 'H'], [14, 4302, 'L'], [21, 4340, 'H'], [27, 4314, 'L'], [34, 4382, 'H'], [41, 4346, 'L'], [50, 4416, 'H']], 27),
+      ov: [
+        { k: 'zone', p1: 4332, p2: 4346, color: C.gold, label: 'la misma zona', g: 'z' },
+        { k: 'note', i: 7, side: 'H', text: 'resistencia', color: C.bear, off: 22, g: 'z' },
+        { k: 'note', i: 21, side: 'H', text: 'resistencia', color: C.bear, off: 22, g: 'z' },
+        { k: 'note', i: 41, side: 'L', text: 'ahora soporte', color: C.bull, off: 26, g: 'z' }
+      ],
+      groups: [{ id: 'z', label: 'Mostrar zona' }],
+      caption: 'La zona no cambió: cambió el lado desde el que el precio la visita. Quien vendía ahí arriba y se equivocó tiene ahora un motivo para cerrar en ese mismo precio; quien no compró, una segunda oportunidad. Eso es lo que hace que las zonas se respeten.'
+    },
+    {
+      k: 'qa', items: [
+        'Un rectángulo que el precio toca por arriba dos veces y, tras superarlo, apoya por abajo.',
+        'Busco dónde el precio giró con claridad —no con dudas— y extiendo ese rectángulo hacia la derecha. Si dos o más giros caen dentro del mismo rectángulo, la zona existe.',
+        'Que en ese precio hubo desequilibrio suficiente para frenar al mercado. Es memoria del gráfico, no física.',
+        'Sobre todo cuando la zona viene de H1 o H4. Una zona de M1 se consume en minutos; una de H4 puede seguir condicionando el precio días después.',
+        '<b>No</b> significa que el precio vaya a girar ahí. Significa que si va a girar, es un sitio probable para hacerlo. Y también que si lo atraviesa con decisión, esa información es igual de valiosa.',
+        'Qué tipo de reacción aparece al tocarla: rechazo rápido con mecha, aceptación con cierres dentro, o atravesado sin frenar. Cada una cuenta una historia distinta.'
+      ]
+    },
+
+    { k: 'h', t: 'Los niveles que el oro mira todos los días', d: 'No hace falta llenar el gráfico. Con estos cinco tienes cubierto el 90% del contexto intradía.' },
+    {
+      k: 'chart', title: 'Máximo y mínimo del día anterior sobre el día actual', tf: 'XAUUSD · M15',
+      candles: S([[0, 4318, 'L'], [7, 4362, 'H'], [14, 4330, 'L'], [20, 4356, 'H'], [26, 4312, 'L'], [33, 4340, 'H'], [40, 4318, 'L'], [46, 4364, 'H'], [52, 4334, 'L'], [60, 4300, 'L']], 44, { noise: .15 }),
+      padHi: .06,
+      ov: [
+        { k: 'vzone', from: 0, to: 26, color: '#4E586A', label: 'día anterior', fo: .05 },
+        { k: 'vzone', from: 27, to: 60, color: C.gold, label: 'hoy', fo: .03 },
+        { k: 'level', p: 4362, color: C.bear, dash: '6 4', label: 'PDH', g: 'p' },
+        { k: 'level', p: 4312, color: C.bull, dash: '6 4', label: 'PDL', g: 'p' },
+        { k: 'mark', i: 46, side: 'H', text: 'ataca el PDH y falla', color: C.bear, g: 'p', dx: -30 }
+      ],
+      groups: [{ id: 'p', label: 'Mostrar niveles del día previo' }],
+      caption: `${T('PDH', 'Previous Day High — máximo del día anterior')} y ${T('PDL', 'Previous Day Low — mínimo del día anterior')} son de los niveles más observados en XAUUSD, porque los ve todo el mundo: cierre de Nueva York, apertura de Asia, algoritmos de rango diario. Marcarlos cuesta cinco segundos.`
+    },
+    {
+      k: 'ticks', items: [
+        '<b>Máximo y mínimo del día anterior</b> — el rango que todo el mercado tiene marcado.',
+        '<b>Máximo y mínimo del día actual</b> — se van formando en vivo y funcionan como extremos de referencia.',
+        '<b>Máximo y mínimo de la sesión asiática</b> — capítulo 11; en oro son especialmente relevantes.',
+        '<b>Zonas de H1 y H4</b> — las que aguantan varios días.',
+        `<b>Números redondos</b> — 4300, 4350, 4400. No tienen magia: tienen órdenes. La gente pone stops y objetivos en cifras redondas, y eso concentra actividad.`
+      ]
+    },
+    {
+      k: 'chart', title: 'Número psicológico: 4300', tf: 'XAUUSD · M15',
+      candles: S([[0, 4344, 'H'], [8, 4302, 'L'], [14, 4330, 'H'], [22, 4299, 'L'], [28, 4327, 'H'], [36, 4301, 'L'], [44, 4352, 'H']], 63),
+      ov: [
+        { k: 'level', p: 4300, color: C.gold, lw: 1.8, label: '4300', g: 'n' },
+        { k: 'zone', p1: 4296, p2: 4306, color: C.gold, fo: .07, g: 'n' },
+        { k: 'note', i: 22, side: 'L', text: 'tres apoyos alrededor de la cifra redonda', color: C.gold, off: 28, g: 'n', dx: 60 }
+      ],
+      groups: [{ id: 'n', label: 'Mostrar nivel' }],
+      caption: 'Trátalo como una zona estrecha alrededor de la cifra, no como el precio exacto. Y recuerda que un número redondo <b>solo</b> es interesante si además coincide con algo: estructura, extremo de sesión, zona previa.'
+    },
+
+    { k: 'h', t: 'Nivel poco relevante contra nivel importante', d: 'La diferencia no está en el dibujo, está en la historia que hay detrás del nivel.' },
+    {
+      k: 'grid', n: 2, items: [
+        {
+          title: 'Poco relevante', tf: 'un toque, sin reacción', padR: 42, h: 250,
+          candles: S([[0, 4292, 'L'], [9, 4330, 'H'], [14, 4318, 'L'], [24, 4372, 'H']], 71, { noise: .2 }),
+          ov: [
+            { k: 'level', p: 4330, color: '#5A6478', dash: '4 4', label: 'máximo suelto', lab: 'in', fs: 9.5 },
+            { k: 'note', i: 18, side: 'H', text: 'lo atraviesa sin frenar', color: '#5A6478', off: 20, fs: 9.5 }
+          ],
+          caption: 'Un máximo puntual, tocado una vez, sin rechazo. Marcarlo solo ensucia el gráfico.'
+        },
+        {
+          title: 'Importante', tf: 'tres rechazos + coincide con PDH', padR: 42, h: 250,
+          candles: S([[0, 4292, 'L'], [6, 4344, 'H'], [11, 4316, 'L'], [17, 4346, 'H'], [23, 4322, 'L'], [29, 4345, 'H'], [36, 4288, 'L']], 5),
+          ov: [
+            { k: 'zone', p1: 4340, p2: 4350, color: C.bear, label: 'PDH + 3 rechazos' },
+            { k: 'mark', i: 29, side: 'H', text: 'y otra vez', color: C.bear, fs: 9.5 }
+          ],
+          caption: 'Varios giros en el mismo sitio y coincidencia con un nivel que mira todo el mercado.'
+        }
+      ]
+    },
+    {
+      k: 'ticks', t2: 'yes', items: [
+        '¿El precio ha girado ahí <b>más de una vez</b>?',
+        '¿La reacción fue <b>rápida y amplia</b>, o el precio se quedó pegado dando vueltas?',
+        '¿El nivel coincide con algo que ve <b>todo el mercado</b> (PDH/PDL, extremo de sesión, cifra redonda)?',
+        '¿Procede de un <b>marco temporal superior</b>?',
+        '¿Se ve igual de claro si te alejas y miras el gráfico entero, o solo con mucho zoom?'
+      ]
+    },
+    { k: 'note', t2: 'warn', t: `<b>Cuidado con el exceso.</b> Un gráfico con quince zonas no es un gráfico analizado: es uno en el que siempre habrá una excusa para justificar cualquier movimiento. Si el precio está “siempre en un nivel”, tus niveles no informan de nada.` }
+  ])
+});
+
+/* ---------------- 03 · RUPTURAS ---------------- */
+chapter({
+  id: 'rupturas', grp: 'Fundamentos', n: '03', nav: 'Rupturas y retests', t: 'Romper no es lo mismo que confirmar',
+  lede: 'El precio atraviesa niveles constantemente. Lo que distingue una ruptura real de un pinchazo es lo que ocurre justo después: si el mercado acepta los precios nuevos o los rechaza.',
+  build: () => build([
+    { k: 'h', t: 'Ruptura + retest, paso a paso', d: 'Avanza con los botones y observa cómo se construye la secuencia vela a vela.' },
+    {
+      k: 'chart', title: 'La secuencia completa', tf: 'XAUUSD · M15',
+      candles: S([[0, 4292, 'L'], [8, 4338, 'H'], [14, 4312, 'L'], [21, 4341, 'H'], [25, 4324, 'L'], [31, 4374, 'H'], [38, 4346, 'L'], [46, 4402, 'H']], 9),
+      ov: [
+        { k: 'zone', p1: 4334, p2: 4346, color: C.bear, label: 'resistencia', e: 3 },
+        { k: 'zone', p1: 4334, p2: 4346, color: C.bull, label: 'ahora soporte', s: 4 },
+        { k: 'mark', i: 21, side: 'H', text: 'segundo ataque', color: C.mut, only: [1] },
+        { k: 'mark', i: 29, side: 'L', text: 'rompe con velas amplias', color: C.bull, s: 2, e: 2 },
+        { k: 'note', i: 31, side: 'H', text: 'cierre claramente por encima', color: C.bull, s: 3, e: 3, off: 22 },
+        { k: 'mark', i: 38, side: 'L', text: 'retest', color: C.gold, s: 4, e: 5 },
+        { k: 'note', i: 42, side: 'L', text: 'la zona aguanta', color: C.bull, s: 5, off: 30, e: 5 },
+        { k: 'note', i: 46, side: 'H', text: 'continuación', color: C.bull, s: 6, off: 20 }
+      ],
+      steps: [
+        { t: 'Hay una resistencia', upto: 15, d: 'El precio ya fue rechazado una vez en esta zona. Todavía no hay nada que hacer: solo una referencia marcada.' },
+        { t: 'Segundo ataque', upto: 26, d: 'El precio vuelve a la zona y vuelve a ser rechazado, pero el retroceso es <b>menor</b> que el anterior. Los vendedores defienden con menos margen.' },
+        { t: 'Rompe', upto: 30, d: 'El precio atraviesa la zona. Atención: en este momento todavía <b>no</b> sabemos nada. Miles de rupturas se deshacen en las dos velas siguientes.' },
+        { t: 'Cierra fuera', upto: 33, d: 'Una o más velas <b>cierran</b> por encima de la zona, con cuerpo amplio. Eso es aceptación: hay participantes dispuestos a comprar a precios que antes rechazaban.' },
+        { t: 'Vuelve a la zona', upto: 40, d: 'El retroceso lleva al precio otra vez al nivel roto. Es el momento de la verdad: se comprueba si la zona ha cambiado de papel.' },
+        { t: 'Reacción', upto: 44, d: 'La zona aguanta y el precio rebota desde ella. Ahora sí hay evidencia acumulada: ruptura + cierre + retest respetado. <b>Queda invalidado si</b> el precio vuelve a cerrar por debajo de la zona.' },
+        { t: 'Continuación', upto: 47, d: 'El precio marca un máximo superior. La estructura alcista se reanuda con un nuevo HH. Fíjate en que la confirmación llegó después, no durante la ruptura.' }
+      ],
+      caption: 'Resistencia → ruptura → cierre → retest → reacción → continuación. Cada paso <b>añade evidencia</b>; ninguno la garantiza.'
+    },
+
+    { k: 'h', t: 'La misma historia que sale mal: fakeout', d: 'Mismo inicio, desenlace opuesto. Compara dónde se rompe el guion.' },
+    {
+      k: 'chart', title: 'Ruptura falsa', tf: 'XAUUSD · M15',
+      candles: S([[0, 4296, 'L'], [8, 4338, 'H'], [15, 4314, 'L'], [22, 4342, 'H'], [27, 4326, 'L'], [33, 4358, 'H'], [39, 4320], [47, 4282, 'L']], 87),
+      ov: [
+        { k: 'zone', p1: 4334, p2: 4346, color: C.bear, label: 'resistencia' },
+        { k: 'mark', i: 33, side: 'H', text: 'supera la zona', color: C.warn, s: 1, e: 1 },
+        { k: 'note', i: 34, side: 'H', text: 'mechas largas, cuerpos pequeños', color: C.warn, s: 2, e: 2, off: 24 },
+        { k: 'mark', i: 38, side: 'H', text: 'vuelve dentro en pocas velas', color: C.bear, s: 3, dx: -20 },
+        { k: 'note', i: 47, side: 'L', text: 'los compradores de la ruptura quedan atrapados', color: C.bear, s: 4, off: 26, dx: -40 }
+      ],
+      steps: [
+        { t: 'Misma resistencia', upto: 28, d: 'Idéntico punto de partida: una zona que ya rechazó al precio.' },
+        { t: 'La supera', upto: 35, d: 'El precio sale por encima. Aquí es donde mucha gente entra “porque ha roto”.' },
+        { t: 'Pero no la acepta', upto: 37, d: 'Las velas por encima tienen <b>mechas superiores largas y cuerpos pequeños</b>: llegan órdenes de venta a cada intento. No hay desplazamiento.' },
+        { t: 'Vuelve dentro', upto: 42, d: 'El precio cierra de nuevo por debajo de la zona. La ruptura queda anulada. Esto no es un fallo del nivel: es información —arriba había vendedores esperando.' },
+        { t: 'Consecuencia', upto: 48, d: 'Los que compraron la ruptura tienen pérdidas y sus stops están justo debajo. Ese combustible suele acelerar el movimiento contrario.' }
+      ],
+      caption: 'La diferencia entre las dos secuencias no está en la ruptura, sino en <b>qué hizo el precio en las 3–5 velas siguientes</b>.'
+    },
+    {
+      k: 'cards', n: 2, items: [
+        { c: 'bull', t: 'Evidencia a favor de ruptura real', d: ['Cierres completos fuera de la zona, no solo mechas.', 'Velas con cuerpo amplio en el momento de romper (desplazamiento).', 'El retroceso posterior <b>no</b> vuelve a entrar en profundidad.', 'El retest respeta la zona y deja un giro rápido.'] },
+        { c: 'bear', t: 'Evidencia a favor de ruptura falsa', d: ['El precio sale con mechas pero cierra dentro.', 'Velas pequeñas y solapadas al otro lado del nivel.', 'Vuelta dentro de la zona en pocas velas.', 'La ruptura ocurre justo sobre un extremo muy obvio (máximos iguales, máximo de Asia): mira el capítulo 4.'] }
+      ]
+    },
+    {
+      k: 'qa', items: [
+        'Un nivel que el precio atraviesa, y después una serie de velas que deciden si ese nivel queda atrás o no.',
+        'Comparando cierres, no mechas. Y midiendo el tamaño de los cuerpos: una ruptura con convicción deja velas notablemente mayores que las anteriores.',
+        'Aceptación de precios nuevos: participantes dispuestos a operar por encima (o por debajo) de donde antes se negaban.',
+        'Sobre niveles que mucha gente vigila. Una ruptura de un nivel que solo ves tú no moviliza a nadie.',
+        '<b>No</b> significa entrada automática. La ruptura es el inicio del proceso, no el final. Tampoco significa que el retest vaya a ocurrir: hay movimientos que se van sin mirar atrás.',
+        'Si aparece retest y cómo se comporta el precio ahí. Y en paralelo, si el movimiento generó una nueva estructura (capítulo 5) o solo ruido.'
+      ]
+    },
+    { k: 'note', t2: 'key', t: `<b>La pregunta que sustituye a “¿ha roto?”:</b> <i>¿el mercado está aceptando estos precios nuevos, o solo los ha visitado?</i> Aceptar significa negociar ahí varias velas y dejar cierres. Visitar significa una mecha y una retirada.` }
+  ])
+});
+
+/* ---------------- 04 · LIQUIDEZ ---------------- */
+chapter({
+  id: 'liquidez', grp: 'Fundamentos', n: '04', nav: 'Liquidez y barridos', t: 'Liquidez: por qué el precio va donde va',
+  lede: 'Para comprar en grande hace falta que alguien venda. Los sitios donde se acumulan órdenes —stops, roturas, objetivos— son los sitios hacia los que el precio tiende a gravitar. Entender esto cambia la forma de mirar un máximo.',
+  build: () => build([
+    { k: 'h', t: 'Dónde se acumulan las órdenes', d: 'No hace falta ver el libro de órdenes. Basta razonar dónde estaría el stop de la mayoría.' },
+    {
+      k: 'chart', title: 'Máximos iguales = un imán', tf: 'XAUUSD · M15',
+      candles: S([[0, 4290, 'L'], [7, 4344, 'H'], [13, 4316, 'L'], [20, 4345, 'H'], [26, 4320, 'L'], [33, 4346, 'H'], [39, 4322, 'L']], 33),
+      ov: [
+        { k: 'zone', p1: 4341, p2: 4349, color: C.liq, label: 'EQH — máximos iguales', g: 'l' },
+        { k: 'stops', p: 4352, from: 8, to: 33, n: 7, color: C.liq, text: 'stops de quien vende + órdenes de compra por ruptura', g: 'l' },
+        { k: 'note', i: 26, side: 'L', text: 'cada intento deja más órdenes acumuladas arriba', color: C.liq, off: 30, g: 'l', dx: 20 }
+      ],
+      groups: [{ id: 'l', label: 'Mostrar liquidez' }],
+      caption: `${T('EQH', 'Equal Highs — máximos iguales o casi iguales, a la misma altura')} son dos o más máximos prácticamente a la misma altura. Quien vendió en esos máximos tiene su stop justo encima; quien espera una ruptura tiene ahí su orden de compra. Ese conjunto de órdenes es <b>liquidez</b>: un sitio donde un participante grande puede ejecutar volumen sin mover el precio en su contra.`
+    },
+    {
+      k: 'cards', n: 3, items: [
+        { c: 'liq', t: 'Liquidez', d: ['Órdenes pendientes acumuladas en una zona. Cuanto más obvio es un nivel, más órdenes concentra.'] },
+        { c: 'liq', t: 'EQH / EQL', d: [`${T('EQH', 'Equal Highs — máximos iguales')} máximos iguales, ${T('EQL', 'Equal Lows — mínimos iguales')} mínimos iguales. Son la forma más visible de acumulación: un techo o suelo “demasiado limpio”.`] },
+        { c: 'liq', t: 'Barrido (sweep)', d: ['El precio supera brevemente el nivel, activa esas órdenes y vuelve dentro. También se le llama <i>stop hunt</i> o <i>liquidity grab</i>.'] }
+      ]
+    },
+
+    { k: 'h', t: 'Anatomía de un barrido', d: 'Seis pasos. Fíjate especialmente en la velocidad del regreso.' },
+    {
+      k: 'chart', title: 'Barrido de máximos iguales', tf: 'XAUUSD · M15',
+      candles: S([[0, 4292, 'L'], [7, 4344, 'H'], [13, 4318, 'L'], [20, 4345, 'H'], [26, 4322, 'L'], [33, 4346, 'H'], [38, 4328, 'L'], [43, 4366, 'H'], [47, 4332], [54, 4280, 'L']], 41),
+      ov: [
+        { k: 'zone', p1: 4341, p2: 4349, color: C.liq, label: 'EQH' },
+        { k: 'stops', p: 4353, from: 10, to: 33, n: 6, color: C.liq, text: 'liquidez acumulada', s: 1, e: 3 },
+        { k: 'mark', i: 43, side: 'H', text: 'barrido', color: C.warn, s: 3 },
+        { k: 'note', i: 45, side: 'H', text: 'una sola vela por encima, y mecha larga', color: C.warn, s: 4, e: 4, off: 24, dx: -30 },
+        { k: 'level', p: 4346, color: C.liq, dash: '4 4', s: 4 },
+        { k: 'note', i: 49, side: 'L', text: 'vuelve dentro del rango', color: C.bear, s: 4, off: 26 },
+        { k: 'note', i: 54, side: 'L', text: 'el movimiento real empieza aquí', color: C.bear, s: 5, off: 22, dx: -20 }
+      ],
+      steps: [
+        { t: 'Se forma el techo', upto: 35, d: 'Tres máximos casi idénticos. El gráfico “se ve limpio” por arriba, y eso es justo lo sospechoso.' },
+        { t: 'Ahí hay órdenes', upto: 35, d: 'Encima de esos máximos conviven stops de vendedores y órdenes de compra a la ruptura. Mucha liquidez concentrada en pocos dólares.' },
+        { t: 'El precio se acerca', upto: 41, d: 'El precio vuelve a subir hacia el techo. Todavía no sabemos si romperá de verdad o solo irá a buscar esas órdenes.' },
+        { t: 'Lo supera', upto: 45, d: 'Sale por encima del nivel. Aquí se activan los stops y las compras por ruptura: hay <b>contrapartida abundante</b> para quien quiera vender en tamaño.' },
+        { t: 'Vuelve dentro', upto: 50, d: 'En dos o tres velas el precio está otra vez por debajo del techo, dejando una mecha superior evidente. Eso es un <b>barrido</b>: visitó el nivel, no lo aceptó.' },
+        { t: 'Consecuencia', upto: 55, d: 'Con los compradores tardíos atrapados y sin oferta pendiente arriba, el camino de menor resistencia queda hacia abajo. <b>Queda invalidado si</b> el precio recupera y cierra otra vez sobre los máximos.' }
+      ],
+      caption: 'Nota mental útil: “el precio no rompió el techo, <b>fue a buscarlo</b>”. Un barrido es una razón para mirar, no una señal de venta por sí sola.'
+    },
+
+    { k: 'h', t: 'Barrido contra ruptura real', d: 'Las dos empiezan igual: el precio supera un nivel obvio. Lo que las separa es lo que pasa después.' },
+    {
+      k: 'grid', n: 2, items: [
+        {
+          title: 'Barrido', tf: 'vuelve dentro', padR: 44, h: 260,
+          candles: S([[0, 4300, 'L'], [7, 4344, 'H'], [14, 4320, 'L'], [21, 4345, 'H'], [28, 4324, 'L'], [34, 4364, 'H'], [38, 4330], [46, 4288, 'L']], 41),
+          ov: [
+            { k: 'zone', p1: 4341, p2: 4348, color: C.liq, label: 'EQH' },
+            { k: 'mark', i: 34, side: 'H', text: 'mecha arriba', color: C.warn, fs: 9.5 },
+            { k: 'note', i: 42, side: 'L', text: 'cierres de nuevo dentro', color: C.bear, off: 22, fs: 9.5 }
+          ],
+          caption: 'Una vela por encima, mecha larga, retorno inmediato. Sin aceptación.'
+        },
+        {
+          title: 'Ruptura real', tf: 'acepta y retestea', padR: 44, h: 260,
+          candles: S([[0, 4300, 'L'], [7, 4344, 'H'], [14, 4320, 'L'], [21, 4345, 'H'], [28, 4326, 'L'], [36, 4386, 'H'], [42, 4352, 'L'], [50, 4414, 'H']], 12),
+          ov: [
+            { k: 'zone', p1: 4341, p2: 4348, color: C.liq, label: 'EQH' },
+            { k: 'mark', i: 33, side: 'L', text: 'cuerpos amplios', color: C.bull, fs: 9.5 },
+            { k: 'note', i: 42, side: 'L', text: 'retest respetado', color: C.bull, off: 24, fs: 9.5 }
+          ],
+          caption: 'Varias velas con cuerpo fuera, retroceso que respeta el nivel y continuación.'
+        }
+      ]
+    },
+    {
+      k: 'ticks', items: [
+        '<b>¿Cuántas velas aguantó fuera?</b> Una sola mecha apunta a barrido; tres o cuatro cierres apuntan a aceptación.',
+        '<b>¿Con qué tamaño salió?</b> El desplazamiento (velas notablemente mayores) es el rastro de una orden grande, no de una trampa.',
+        '<b>¿Con qué velocidad volvió?</b> Un retorno inmediato al rango es la firma del barrido.',
+        '<b>¿Qué había detrás del nivel?</b> Si por encima solo hay “aire” hasta la siguiente zona, la ruptura tiene recorrido. Si hay una zona de H4 justo encima, el barrido es más probable.'
+      ]
+    },
+    {
+      k: 'qa', items: [
+        'Un techo o suelo demasiado perfecto, y luego una vela que lo perfora y se retira.',
+        'Busco máximos o mínimos alineados, y me pregunto dónde estaría mi stop si hubiera operado contra ese nivel. Ahí está la liquidez.',
+        'Que el precio fue a buscar contrapartida antes de moverse en serio. Muchos movimientos amplios del oro empiezan justo después de un barrido.',
+        'En extremos que ve todo el mundo: máximos iguales, máximo/mínimo de Asia, PDH/PDL, máximo del día. Cuanto más obvio el nivel, mejor funciona como imán.',
+        '<b>No</b> significa que todo pinchazo sea un barrido institucional ni que debas operar contra cada mecha. Muchas roturas son simplemente roturas. Sin reacción posterior y sin cambio de estructura, un barrido es solo una mecha.',
+        'El cambio de estructura en el marco inferior. Barrido + cambio de estructura es la secuencia que conecta este capítulo con el siguiente.'
+      ]
+    },
+    { k: 'note', t2: 'warn', t: `<b>El error típico.</b> Ver barridos en todas partes. Si etiquetas cada mecha como <i>stop hunt</i>, has dejado de analizar y has empezado a narrar. Un barrido merece ese nombre cuando ocurre sobre liquidez evidente <b>y</b> el precio reacciona después.` }
+  ])
+});
+
+/* ---------------- 05 · ESTRUCTURA AVANZADA ---------------- */
+chapter({
+  id: 'bos-choch', grp: 'Fundamentos', n: '05', nav: 'BOS, CHoCH y MSS', t: 'Poner nombre a las roturas de estructura',
+  lede: 'Son tres etiquetas para la misma idea del capítulo 1: qué pasa cuando el precio rompe un swing importante. La distinción útil no está en el nombre, sino en si la rotura continúa la historia o la contradice.',
+  build: () => build([
+    {
+      k: 'cards', n: 3, items: [
+        { c: 'bull', t: 'BOS', d: [`${T('BOS', 'Break of Structure — rotura de estructura a favor de la tendencia')} Rotura <b>a favor</b> de la estructura vigente. En tendencia alcista: el precio supera el máximo anterior. Confirma que la secuencia continúa.`] },
+        { c: 'gold', t: 'CHoCH', d: [`${T('CHoCH', 'Change of Character — cambio de carácter: primera rotura en contra de la estructura vigente')} Primera rotura <b>en contra</b>. En tendencia alcista: el precio pierde el último mínimo creciente. Es un aviso, no una confirmación.`] },
+        { c: 'bear', t: 'MSS', d: [`${T('MSS', 'Market Structure Shift — cambio de estructura con desplazamiento, normalmente tras un barrido')} Cambio de estructura “con credenciales”: rotura en contra <b>acompañada de desplazamiento</b> y, normalmente, precedida de un barrido de liquidez.`] }
+      ]
+    },
+
+    { k: 'h', t: 'BOS: la estructura continúa', d: 'Lo más frecuente y lo menos comentado, porque no promete un giro espectacular.' },
+    {
+      k: 'chart', title: 'Rotura a favor de la tendencia', tf: 'XAUUSD · H1',
+      candles: S([[0, 4280, 'L'], [7, 4330, 'H'], [13, 4308, 'L'], [22, 4372, 'H'], [28, 4346, 'L'], [38, 4408, 'H']], 26),
+      ov: [
+        { k: 'swing', i: 13, side: 'L', text: 'HL', color: C.bull, g: 'b' },
+        { k: 'swing', i: 22, side: 'H', text: 'HH', color: C.bull, g: 'b' },
+        { k: 'swing', i: 28, side: 'L', text: 'HL', color: C.bull, g: 'b' },
+        { k: 'level', p: 4372, color: C.bull, dash: '5 4', label: 'HH previo', g: 'b' },
+        { k: 'mark', i: 33, side: 'L', text: 'BOS', color: C.bull, g: 'b' },
+        { k: 'swing', i: 38, side: 'H', text: 'nuevo HH', color: C.bull, g: 'b' }
+      ],
+      groups: [{ id: 'b', label: 'Mostrar BOS' }],
+      caption: 'El precio supera el máximo anterior desde un mínimo que también era superior. La estructura alcista se ratifica. Útil sobre todo para <b>descartar</b> escenarios bajistas, no tanto para entrar.'
+    },
+
+    { k: 'h', t: 'CHoCH: el primer aviso', d: 'Antes → Cambio → Ahora. Avanza paso a paso.' },
+    {
+      k: 'chart', title: 'Cambio de carácter', tf: 'XAUUSD · H1',
+      candles: S([[0, 4280, 'L'], [7, 4334, 'H'], [13, 4310, 'L'], [21, 4378, 'H'], [27, 4350, 'L'], [32, 4371, 'H'], [42, 4318, 'L'], [48, 4346, 'H'], [56, 4292, 'L']], 19),
+      ov: [
+        { k: 'swing', i: 13, side: 'L', text: 'HL', color: C.bull },
+        { k: 'swing', i: 21, side: 'H', text: 'HH', color: C.bull },
+        { k: 'swing', i: 27, side: 'L', text: 'HL', color: C.bull },
+        { k: 'zig', pts: [[0, 'L'], [7, 'H'], [13, 'L'], [21, 'H'], [27, 'L'], [32, 'H']], color: C.bull, op: .45 },
+        { k: 'level', p: 4350, color: C.warn, dash: '5 4', label: 'último HL', s: 1 },
+        { k: 'note', i: 32, side: 'H', text: 'el rebote ya no supera el máximo', color: C.warn, s: 1, e: 1, off: 20, dx: -20 },
+        { k: 'mark', i: 38, side: 'L', text: 'CHoCH', color: C.bear, s: 2 },
+        { k: 'swing', i: 48, side: 'H', text: 'LH', color: C.bear, s: 3 },
+        { k: 'swing', i: 56, side: 'L', text: 'LL', color: C.bear, s: 3 },
+        { k: 'zig', pts: [[42, 'L'], [48, 'H'], [56, 'L']], color: C.bear, s: 3 }
+      ],
+      steps: [
+        { t: 'Antes', upto: 30, d: 'Estructura alcista sana: HL → HH → HL. Nada que discutir.' },
+        { t: 'Primera grieta', upto: 35, d: 'El rebote se queda por debajo del máximo anterior. Aún no hay rotura, pero <b>la fuerza compradora se ha reducido</b>. El nivel a vigilar es el último HL: 4350.' },
+        { t: 'Cambio', upto: 44, d: 'El precio pierde el último mínimo creciente. Eso es un <b>CHoCH</b>: por primera vez la estructura se rompe en contra. Es un aviso de que el carácter del movimiento ha cambiado.' },
+        { t: 'Ahora', upto: 57, d: 'Se confirma con un máximo decreciente (LH) y un mínimo decreciente (LL). El escenario bajista ya no es hipótesis. <b>Quedaría invalidado si</b> el precio recuperase el LH y volviera a hacer máximos crecientes.' }
+      ],
+      caption: 'Entre “Cambio” y “Ahora” hay un tramo de incertidumbre. Quien actúa en el paso 3 asume que el paso 4 llegará; muchas veces no llega y el precio simplemente vuelve al rango.'
+    },
+
+    { k: 'h', t: 'MSS: no todas las roturas pesan igual', d: 'El mismo evento técnico puede ser ruido o ser relevante. Depende de cómo y dónde ocurre.' },
+    {
+      k: 'grid', n: 2, items: [
+        {
+          title: 'Rotura débil', tf: 'lenta y sin contexto', padR: 44, h: 265,
+          candles: S([[0, 4300, 'L'], [8, 4348, 'H'], [15, 4330, 'L'], [22, 4360, 'H'], [30, 4322, 'L'], [38, 4340, 'H'], [46, 4318, 'L']], 77, { noise: .26, wick: .16 }),
+          ov: [
+            { k: 'level', p: 4330, color: C.mut, dash: '4 4', label: 'HL', lab: 'in', fs: 9.5 },
+            { k: 'note', i: 28, side: 'L', text: 'velas pequeñas y solapadas', color: C.mut, off: 22, fs: 9.5 }
+          ],
+          caption: 'Rompe el mínimo, sí, pero arrastrándose. Sin desplazamiento y sin liquidez detrás, es poco informativo.'
+        },
+        {
+          title: 'MSS', tf: 'barrido + desplazamiento', padR: 44, h: 265,
+          candles: S([[0, 4300, 'L'], [8, 4350, 'H'], [15, 4332, 'L'], [22, 4351, 'H'], [27, 4336, 'L'], [31, 4372, 'H'], [36, 4326], [44, 4288, 'L']], 61, { noise: .12 }),
+          ov: [
+            { k: 'zone', p1: 4346, p2: 4354, color: C.liq, label: 'EQH', fs: 9.5 },
+            { k: 'mark', i: 31, side: 'H', text: 'barrido', color: C.warn, fs: 9.5 },
+            { k: 'level', p: 4332, color: C.bear, dash: '4 4', label: 'HL', lab: 'in', fs: 9.5 },
+            { k: 'mark', i: 39, side: 'L', text: 'MSS con desplazamiento', color: C.bear, fs: 9.5, dx: -10 }
+          ],
+          caption: 'Primero barre la liquidez de arriba, luego rompe el mínimo con velas grandes. Misma rotura, mucha más información.'
+        }
+      ]
+    },
+    {
+      k: 'qa', items: [
+        'Una línea horizontal en el último swing relevante y el momento exacto en que el precio la atraviesa con un cierre.',
+        'Marco el último HL (en tendencia alcista) o el último LH (en bajista) y espero un <b>cierre</b> al otro lado, no una mecha.',
+        'BOS: la historia continúa. CHoCH: la historia se ha interrumpido. MSS: se ha interrumpido y además con fuerza y desde un sitio con sentido.',
+        'En marcos temporales con peso. Un CHoCH en H1 reordena el día; uno en M1 caduca en diez minutos.',
+        '<b>No</b> significa comprar ni vender. Un CHoCH bajista después de un tramo alcista muy extendido a menudo solo produce un retroceso lateral. La rotura describe el pasado inmediato; no compromete al futuro.',
+        'Dónde se detiene el primer retroceso tras la rotura. Si respeta la zona de origen del movimiento, el nuevo escenario gana evidencia; si la atraviesa, vuelves a no tener nada.'
+      ]
+    },
+    { k: 'note', t2: 'no', t: `<p style="margin:0"><b>Repite esto hasta que sea automático:</b> una rotura de estructura no es una orden. Es un cambio en el conjunto de escenarios posibles. La pregunta que sigue nunca es “¿compro o vendo?”, sino <i>“¿qué tendría que ver ahora para que este nuevo escenario me convenza, y qué lo invalidaría?”</i></p>` }
+  ])
+});
+/* ---------- galería reutilizable ---------- */
+function gallery(items) {
+  const wrap = el('<div></div>');
+  const bar = el(`<div class="gal">${items.map((it, i) => `<button data-i="${i}" class="${i ? '' : 'on'}">${it.n}</button>`).join('')}</div>`);
+  const host = el('<div></div>');
+  wrap.append(bar, host);
+  const show = i => {
+    host.innerHTML = '';
+    const it = items[i];
+    host.appendChild(mkChart(it.chart).node);
+    if (it.cards) host.appendChild(el(`<div class="grid g2">${it.cards.map(c => `<div class="card ${c.c || ''}"><h4>${c.t}</h4>${c.d.map(p => `<p>${p}</p>`).join('')}</div>`).join('')}</div>`));
+  };
+  bar.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    bar.querySelectorAll('button').forEach(x => x.classList.remove('on')); b.classList.add('on'); show(+b.dataset.i);
+  }));
+  show(0); return wrap;
+}
+
+/* ---------------- 06 · OFERTA Y DEMANDA ---------------- */
+chapter({
+  id: 'supply-demand', grp: 'Zonas y desequilibrios', n: '06', nav: 'Oferta, demanda y order blocks', t: 'Zonas de origen: de dónde salió el movimiento',
+  lede: 'Un soporte es un sitio donde el precio ya rebotó. Una zona de demanda es el sitio desde el que salió disparado. Parecido, pero no igual: aquí lo que importa es el origen de un desplazamiento, no el número de toques.',
+  build: () => {
+    const dz = S([[0, 4304], [5, 4308, 'H'], [10, 4296, 'L'], [14, 4303], [22, 4378, 'H'], [31, 4312, 'L'], [40, 4404, 'H']], 29, { noise: .13 });
+    const obc = S([[0, 4290, 'L'], [6, 4332, 'H'], [11, 4316, 'L'], [16, 4336, 'H'], [20, 4318, 'L'], [21, 4322], [30, 4396, 'H'], [38, 4344, 'L'], [46, 4418, 'H']], 53, { noise: .12 });
+    const ob = obc[20];
+    return build([
+      { k: 'h', t: 'Zona de demanda', d: 'La base desde la que arrancó un movimiento alcista amplio. La lógica: si alguien compró en tamaño ahí y el precio se fue, puede quedar interés sin ejecutar en ese mismo sitio.' },
+      {
+        k: 'chart', title: 'Origen de un desplazamiento alcista', tf: 'XAUUSD · H1', candles: dz,
+        ov: [
+          { k: 'zone', p1: 4294, p2: 4309, from: 0, color: C.bull, label: 'zona de demanda', g: 'd' },
+          { k: 'note', i: 18, side: 'L', text: 'desplazamiento: velas muy superiores a la media', color: C.bull, off: 34, g: 'd', dx: 40 },
+          { k: 'mark', i: 31, side: 'L', text: 'vuelve al origen y reacciona', color: C.bull, g: 'd', dx: 10 }
+        ],
+        groups: [{ id: 'd', label: 'Mostrar zona' }],
+        caption: 'Tres ingredientes: <b>acumulación estrecha</b> → <b>desplazamiento</b> (movimiento rápido y amplio que deja la zona atrás) → <b>regreso posible</b>. Si falta el desplazamiento, no es una zona de demanda: es lateralidad.'
+      },
+      {
+        k: 'qa', items: [
+          'Un rectángulo pequeño al inicio de un tramo vertical, y el precio volviendo a él semanas o sesiones más tarde.',
+          'Busco primero el movimiento amplio. Luego retrocedo hasta la última consolidación o la última vela contraria antes de que arrancara. Eso es la zona.',
+          'Que ahí se produjo un desequilibrio fuerte a favor de los compradores. La zona representa el punto donde apareció esa presión.',
+          'Cuando la zona procede de H1 o H4 y el precio llega a ella <b>por primera vez</b>. Una zona ya visitada varias veces pierde casi todo su valor.',
+          '<b>No</b> significa que el precio tenga que girar ahí. La zona es un lugar donde buscar reacción, no una promesa de rebote. Si el precio la atraviesa con cuerpo, la lectura se invalida y esa información también sirve.',
+          'La reacción concreta al llegar: rechazo rápido, o cierres dentro de la zona sin fuerza. Y después, si aparece un cambio de estructura en el marco menor.'
+        ]
+      },
+
+      { k: 'h', t: 'Order block: la vela de origen', d: 'Un order block es la versión concreta de la idea anterior: la última vela contraria antes del desplazamiento que rompe estructura. Cuatro condiciones, en este orden.' },
+      {
+        k: 'chart', title: 'Construcción de un order block alcista', tf: 'XAUUSD · M15', candles: obc,
+        ov: [
+          { k: 'hi', from: 20, to: 20, color: C.gold, s: 1 },
+          { k: 'zone', p1: ob.l, p2: ob.o, from: 20, color: C.gold, label: 'order block', s: 2, fo: .16 },
+          { k: 'note', i: 20, side: 'L', text: 'última vela bajista antes del impulso', color: C.gold, off: 26, s: 1, e: 1, dx: 40 },
+          { k: 'level', p: 4336, color: '#5A6478', dash: '4 4', label: 'máximo previo', s: 2 },
+          { k: 'mark', i: 26, side: 'L', text: 'rompe estructura con desplazamiento', color: C.bull, s: 2, dx: 30 },
+          { k: 'mark', i: 38, side: 'L', text: 'regresa a la zona', color: C.gold, s: 3 },
+          { k: 'note', i: 44, side: 'H', text: 'reacción y continuación', color: C.bull, off: 22, s: 4 }
+        ],
+        steps: [
+          { t: 'La vela de origen', upto: 22, d: 'Antes de que empiece el impulso hay una última vela contraria (bajista, en un order block alcista). Sola, no significa nada todavía.' },
+          { t: 'Desplazamiento y rotura', upto: 32, d: 'Desde ahí el precio se desplaza con velas notablemente más grandes y <b>rompe el máximo previo</b>. Esta es la condición que separa un order block de “una vela roja cualquiera”.' },
+          { t: 'Regreso', upto: 40, d: 'El precio retrocede hasta la zona de aquella vela. Aquí se comprueba si queda interés comprador sin ejecutar.' },
+          { t: 'Reacción', upto: 47, d: 'Hay respuesta y el precio continúa. <b>Queda invalidado si</b> el precio cierra por debajo del mínimo del order block: entonces la zona ha fallado y no tiene sentido insistir.' }
+        ],
+        caption: 'Si no hubo rotura de estructura después del impulso, no hay order block. Esa es la regla que evita llenar el gráfico de rectángulos.'
+      },
+      { k: 'note', t2: 'warn', t: `<b>El vicio más común.</b> Marcar como order block cualquier vela antes de cualquier subida. Si aplicas las cuatro condiciones —vela contraria, desplazamiento, rotura de estructura, primer regreso— en una sesión de oro te saldrán dos o tres, no veinte. Esa escasez es lo que les da valor.` },
+
+      { k: 'h', t: 'Tres cosas parecidas que conviene no mezclar', d: 'Se dibujan igual —un rectángulo— pero responden a preguntas distintas.' },
+      {
+        k: 'cards', n: 3, items: [
+          { c: 'gold', t: 'Soporte / resistencia', d: ['<b>Pregunta:</b> ¿dónde ha girado el precio antes?', '<b>Se valida con:</b> número de toques y calidad del rechazo.', '<b>Ventaja:</b> lo ve todo el mercado, incluso quien no sabe qué es un order block.'] },
+          { c: 'bull', t: 'Oferta / demanda', d: ['<b>Pregunta:</b> ¿desde dónde salió el último movimiento fuerte?', '<b>Se valida con:</b> el desplazamiento posterior.', '<b>Ojo:</b> pierde valor con cada visita. La primera vuelta es la interesante.'] },
+          { c: 'liq', t: 'Order block', d: ['<b>Pregunta:</b> ¿qué vela concreta originó el movimiento que rompió la estructura?', '<b>Se valida con:</b> rotura de estructura <b>obligatoria</b>.', '<b>Ojo:</b> es la versión más estricta y también la más fácil de sobreajustar.'] }
+        ]
+      },
+
+      { k: 'h', t: 'Breaker y mitigation block', d: 'Dos variantes que aparecen cuando una zona falla. Útiles, pero secundarias: no las uses hasta tener automatizado lo anterior.' },
+      {
+        k: 'grid', n: 2, items: [
+          {
+            title: 'Breaker block', tf: 'la zona que falló cambia de bando', padR: 44, h: 265,
+            candles: S([[0, 4300, 'L'], [7, 4348, 'H'], [13, 4326, 'L'], [17, 4330], [25, 4286, 'L'], [33, 4330, 'H'], [42, 4262, 'L']], 67, { noise: .13 }),
+            ov: [
+              { k: 'zone', p1: 4322, p2: 4334, color: C.bull, label: 'era demanda', to: 24, fs: 9.5 },
+              { k: 'mark', i: 22, side: 'L', text: 'la rompe', color: C.bear, fs: 9.5 },
+              { k: 'zone', p1: 4322, p2: 4334, color: C.bear, label: 'ahora actúa como oferta', from: 25, fs: 9.5, dash: '4 3' },
+              { k: 'mark', i: 33, side: 'H', text: 'rechazo', color: C.bear, fs: 9.5 }
+            ],
+            caption: 'Una zona de demanda que el precio atraviesa y a la que vuelve después desde abajo. Quien compró ahí y aguantó suele soltar en ese mismo precio.'
+          },
+          {
+            title: 'Mitigation block', tf: 'vuelve a cerrar la posición pendiente', padR: 44, h: 265,
+            candles: S([[0, 4340, 'H'], [8, 4296, 'L'], [14, 4322, 'H'], [19, 4304, 'L'], [27, 4368, 'H'], [35, 4330, 'L'], [43, 4394, 'H']], 83, { noise: .13 }),
+            ov: [
+              { k: 'zone', p1: 4300, p2: 4312, color: C.bull, label: 'origen del giro', fs: 9.5 },
+              { k: 'mark', i: 27, side: 'H', text: 'movimiento fuerte', color: C.bull, fs: 9.5 },
+              { k: 'note', i: 35, side: 'L', text: 'regreso parcial y continuación', color: C.bull, off: 22, fs: 9.5, dx: -20 }
+            ],
+            caption: 'Zona a la que el precio vuelve para “cerrar cuentas” con posiciones atrapadas antes de seguir. En la práctica se lee igual que una zona de demanda.'
+          }
+        ]
+      },
+      { k: 'note', t2: 'key', t: `<b>Orden de prioridad honesto.</b> Estructura (cap. 1) → niveles (cap. 2) → liquidez (cap. 4). Después, y solo después, zonas de oferta y demanda. Un gráfico leído con estructura y liquidez, sin un solo order block dibujado, sigue siendo un buen análisis. Al revés, no.` }
+    ]);
+  }
+});
+
+/* ---------------- 07 · IMBALANCE / FVG ---------------- */
+chapter({
+  id: 'fvg', grp: 'Zonas y desequilibrios', n: '07', nav: 'Imbalance y FVG', t: 'Huecos de negociación: imbalance y FVG',
+  lede: 'Cuando el precio se mueve muy rápido, deja tramos en los que apenas hubo negociación en los dos sentidos. Esos huecos son fáciles de localizar y sirven como zonas de interés. Nada más, y nada menos.',
+  build: () => build([
+    { k: 'h', t: 'Cómo se identifica un Fair Value Gap', d: 'Con tres velas consecutivas. La regla es puramente geométrica, así que no hay margen para interpretaciones.' },
+    {
+      k: 'chart', title: 'Las tres velas', tf: 'XAUUSD · M5', h: 340, padR: 96,
+      candles: X([[4294, 4304, 4290, 4300], [4300, 4308, 4296, 4302], [4302, 4312, 4299, 4310], [4311, 4354, 4309, 4350], [4350, 4362, 4326, 4356], [4356, 4360, 4340, 4344], [4344, 4351, 4332, 4340], [4340, 4346, 4330, 4344]]),
+      ov: [
+        { k: 'note', i: 2, side: 'H', text: 'vela 1 · máximo 4312', color: C.info, off: 22, g: 'f' },
+        { k: 'note', i: 3, side: 'H', text: 'vela 2 · desplazamiento', color: C.gold, off: 16, g: 'f' },
+        { k: 'note', i: 4, side: 'L', text: 'vela 3 · mínimo 4326', color: C.info, off: 26, g: 'f' },
+        { k: 'fvg', p1: 4312, p2: 4326, from: 2, to: 7, color: C.info, label: 'FVG 4312 – 4326', g: 'f' }
+      ],
+      groups: [{ id: 'f', label: 'Mostrar FVG', on: false }],
+      caption: 'Si el <b>mínimo de la vela 3</b> queda por encima del <b>máximo de la vela 1</b>, ese hueco es un Fair Value Gap alcista. Al revés (máximo de la 3 por debajo del mínimo de la 1) es bajista. Apaga el interruptor e intenta verlo tú antes de encenderlo.'
+    },
+    {
+      k: 'cards', n: 4, items: [
+        { t: 'Imbalance', d: ['Desequilibrio entre compras y ventas en un tramo de precio. Término general.'] },
+        { t: 'FVG', d: [`${T('FVG', 'Fair Value Gap — hueco de valor justo: el espacio entre la vela 1 y la vela 3 de una secuencia de tres')} La forma concreta de medirlo con tres velas. Es lo que dibujas.`] },
+        { t: 'Liquidity void', d: ['Un tramo mucho más amplio, con varias velas seguidas casi sin solapamiento. Suele aparecer en noticias.'] },
+        { c: 'gold', t: 'Desplazamiento', d: ['El movimiento que lo crea: velas claramente mayores que las de alrededor, con cuerpos grandes y poca mecha.'] }
+      ]
+    },
+
+    { k: 'h', t: 'Desplazamiento contra movimiento lento', d: 'El mismo recorrido en precio puede contar historias distintas según cómo se recorra.' },
+    {
+      k: 'grid', n: 2, items: [
+        {
+          title: 'Con desplazamiento', tf: 'deja hueco', padR: 44, h: 250,
+          candles: X([[4300, 4306, 4296, 4302], [4302, 4308, 4299, 4304], [4304, 4310, 4301, 4308], [4309, 4348, 4307, 4344], [4344, 4358, 4322, 4352], [4352, 4358, 4342, 4348], [4348, 4354, 4338, 4346]]),
+          ov: [{ k: 'fvg', p1: 4310, p2: 4322, from: 2, to: 6, color: C.info, label: 'FVG', fs: 9.5 }],
+          caption: 'Dos velas enormes seguidas. El hueco es el rastro de una orden que no esperó.'
+        },
+        {
+          title: 'Sin desplazamiento', tf: 'sin hueco', padR: 44, h: 250,
+          candles: X([[4300, 4306, 4296, 4302], [4302, 4310, 4300, 4307], [4306, 4316, 4303, 4313], [4312, 4322, 4309, 4319], [4318, 4330, 4315, 4327], [4326, 4338, 4322, 4334], [4333, 4346, 4330, 4344]]),
+          ov: [{ k: 'note', i: 4, side: 'L', text: 'todas las velas se solapan', color: C.mut, off: 24, fs: 9.5 }],
+          caption: 'Sube lo mismo, pero negociando cada dólar. No hay hueco que marcar.'
+        }
+      ]
+    },
+
+    { k: 'h', t: 'El malentendido más extendido', d: 'En redes sociales verás “hay un FVG, el precio volverá a rellenarlo”. Es falso como afirmación y caro como estrategia.' },
+    {
+      k: 'chart', title: 'Un hueco que nunca se rellenó', tf: 'XAUUSD · M15',
+      candles: (() => {
+        const a = X([[4300, 4306, 4296, 4302], [4302, 4309, 4299, 4305], [4305, 4312, 4302, 4310], [4311, 4352, 4310, 4348], [4348, 4360, 4328, 4356]]);
+        const b = S([[0, 4356, 'L'], [7, 4392, 'H'], [13, 4368, 'L'], [21, 4432, 'H'], [28, 4404, 'L'], [36, 4470, 'H']], 37, { noise: .13 });
+        return join(a, b);
+      })(),
+      ov: [
+        { k: 'fvg', p1: 4312, p2: 4328, from: 2, to: 40, color: C.info, label: 'FVG sin rellenar', g: 'f' },
+        { k: 'note', i: 24, side: 'L', text: 'el precio nunca volvió', color: C.mut, off: 30, g: 'f', dx: -30 }
+      ],
+      groups: [{ id: 'f', label: 'Mostrar FVG' }],
+      caption: 'Un FVG <b>no</b> tiene obligación de rellenarse. En tendencias fuertes del oro es habitual encadenar huecos sin que el precio vuelva a ninguno. Úsalo como zona de interés si el precio llega, no como predicción de que llegará.'
+    },
+    {
+      k: 'qa', items: [
+        'Un rectángulo estrecho que marca el espacio entre la primera y la tercera vela de un impulso.',
+        'Tres velas: comparo el máximo de la primera con el mínimo de la tercera. Si no se tocan, ahí está el hueco.',
+        'Que en ese tramo de precio prácticamente solo hubo un lado del mercado. Es una huella de velocidad.',
+        'Cuando el hueco es grande, reciente, y el precio vuelve a él estando además en una zona relevante de H1/H4. Un FVG suelto en M1 es ruido.',
+        '<b>No</b> significa que el precio deba volver, ni que sea un punto de entrada. Tampoco todos los huecos valen igual: los que se forman dentro de un rango se rellenan casi siempre; los que se forman en desplazamientos tras una rotura, muchas veces no.',
+        'Si el precio llega al hueco, qué tipo de reacción deja: rechazo inmediato desde el borde, o lo atraviesa entero. Atravesarlo con cuerpo resta mucha fuerza al escenario que lo creó.'
+      ]
+    }
+  ])
+});
+
+/* ---------------- 08 · VELAS ---------------- */
+function anatomyBlock() {
+  const parts = {
+    cuerpo: ['Cuerpo', 'La distancia entre apertura y cierre. Cuerpo grande = un lado dominó todo el periodo. Cuerpo pequeño = equilibrio o indecisión.'],
+    sup: ['Mecha superior', 'Hasta dónde llegó el precio y no se quedó. Una mecha superior larga significa que hubo intento de subir y apareció oferta suficiente para devolverlo.'],
+    inf: ['Mecha inferior', 'Lo mismo al revés: se intentó bajar y apareció demanda. En soportes y tras barridos es la parte más informativa de la vela.'],
+    ap: ['Apertura', 'Primer precio negociado en el periodo. En el oro con gráficos de 24h casi siempre coincide con el cierre anterior.'],
+    ci: ['Cierre', 'Último precio del periodo. Es el dato con más peso: define el color y decide si una ruptura “cuenta” o no.'],
+    max: ['Máximo', 'El precio más alto alcanzado. Es el punto que otros participantes usarán como referencia... y donde pondrán stops.'],
+    min: ['Mínimo', 'El precio más bajo alcanzado. Mismo papel que el máximo, al otro lado.']
+  };
+  const n = el(`<div class="chart"><div class="chart-head"><span class="t">Anatomía de una vela</span><span class="tf">toca cada parte</span></div>
+  <div class="chart-svg" style="padding:10px 6px 0">
+  <svg viewBox="0 0 620 330" style="max-width:620px;margin:0 auto">
+    <line x1="230" y1="34" x2="230" y2="286" stroke="#2BBF7B" stroke-width="3.2" data-p="cuerpo" opacity="0"/>
+    <line x1="230" y1="34" x2="230" y2="96" stroke="#2BBF7B" stroke-width="3.2"/>
+    <line x1="230" y1="232" x2="230" y2="286" stroke="#2BBF7B" stroke-width="3.2"/>
+    <rect x="196" y="96" width="68" height="136" rx="3" fill="#2BBF7B"/>
+    <rect class="hot" data-p="sup" x="214" y="28" width="32" height="72" fill="transparent"/>
+    <rect class="hot" data-p="cuerpo" x="196" y="96" width="68" height="136" fill="transparent"/>
+    <rect class="hot" data-p="inf" x="214" y="228" width="32" height="64" fill="transparent"/>
+    <rect class="hot" data-p="max" x="130" y="20" width="200" height="26" fill="transparent"/>
+    <rect class="hot" data-p="min" x="130" y="274" width="200" height="26" fill="transparent"/>
+    <rect class="hot" data-p="ci" x="264" y="84" width="180" height="26" fill="transparent"/>
+    <rect class="hot" data-p="ap" x="264" y="218" width="180" height="26" fill="transparent"/>
+    <g font-family="JetBrains Mono, monospace" font-size="13" fill="#6B7686">
+      <line x1="150" y1="34" x2="212" y2="34" stroke="#2E3746" stroke-dasharray="3 3"/><text x="144" y="38" text-anchor="end" data-t="max">máximo</text>
+      <line x1="150" y1="286" x2="212" y2="286" stroke="#2E3746" stroke-dasharray="3 3"/><text x="144" y="290" text-anchor="end" data-t="min">mínimo</text>
+      <line x1="268" y1="96" x2="330" y2="96" stroke="#2E3746" stroke-dasharray="3 3"/><text x="338" y="100" data-t="ci">cierre</text>
+      <line x1="268" y1="232" x2="330" y2="232" stroke="#2E3746" stroke-dasharray="3 3"/><text x="338" y="236" data-t="ap">apertura</text>
+      <text x="338" y="168" data-t="cuerpo" fill="#DDE3EC">cuerpo</text>
+      <line x1="268" y1="164" x2="330" y2="164" stroke="#2E3746" stroke-dasharray="3 3"/>
+      <text x="144" y="70" text-anchor="end" data-t="sup">mecha superior</text>
+      <line x1="150" y1="66" x2="212" y2="66" stroke="#2E3746" stroke-dasharray="3 3"/>
+      <text x="144" y="262" text-anchor="end" data-t="inf">mecha inferior</text>
+      <line x1="150" y1="258" x2="212" y2="258" stroke="#2E3746" stroke-dasharray="3 3"/>
+    </g>
+    <text x="474" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#4E586A">vela alcista</text>
+    <text x="474" y="58" font-family="JetBrains Mono, monospace" font-size="12" fill="#4E586A">cierre &gt; apertura</text>
+  </svg></div>
+  <div class="qa-body" id="anaOut" style="border-top:1px solid var(--line);margin-top:6px"></div></div>`);
+  const out = n.querySelector('#anaOut');
+  const show = k => { out.innerHTML = `<span class="k">${parts[k][0]}</span>${parts[k][1]}`; n.querySelectorAll('[data-t]').forEach(t => t.setAttribute('fill', t.dataset.t === k ? '#E8B44A' : (t.dataset.t === 'cuerpo' ? '#DDE3EC' : '#6B7686'))); };
+  n.querySelectorAll('.hot').forEach(h => { h.style.cursor = 'pointer'; h.addEventListener('pointerenter', () => show(h.dataset.p)); h.addEventListener('click', () => show(h.dataset.p)); });
+  show('cuerpo');
+  return n;
+}
+
+chapter({
+  id: 'velas', grp: 'Lectura de velas', n: '08', nav: 'Velas japonesas', t: 'Velas: ocho formas y una sola idea',
+  lede: 'No hay que memorizar veinte patrones. Hay que entender qué cuenta una vela sobre el forcejeo entre compradores y vendedores, y después mirar dónde aparece. El contexto pesa más que la forma.',
+  build: () => build([
+    anatomyBlock(),
+    { k: 'note', t2: 'key', t: `<b>Traducción mental.</b> Cuerpo = quién ganó el periodo. Mecha = hasta dónde llegó el que perdió. Una vela con mecha inferior larga en un soporte dice: <i>“intentaron bajar, no les dejaron”</i>. Esa frase vale más que el nombre del patrón.` },
+
+    { k: 'h', t: 'Las ocho que merecen la pena', d: 'Elige una y mírala en su contexto. Fíjate en que ninguna descripción dice “el precio subirá”.' },
+    gallery([
+      {
+        n: 'Bullish Engulfing', chart: {
+          title: 'Envolvente alcista', tf: 'tras una caída sostenida', h: 300,
+          candles: X([[4362, 4366, 4354, 4356], [4356, 4358, 4344, 4346], [4346, 4350, 4336, 4340], [4340, 4342, 4328, 4332], [4332, 4334, 4322, 4326], [4326, 4328, 4318, 4322], [4322, 4324, 4313, 4316], [4316, 4318, 4308, 4311], [4310, 4342, 4307, 4340], [4340, 4350, 4335, 4346], [4346, 4356, 4342, 4353]]),
+          ov: [{ k: 'hi', from: 8, to: 8, color: C.bull }, { k: 'note', i: 8, side: 'L', text: 'el cuerpo envuelve al anterior', color: C.bull, off: 24, dx: -20 }]
+        },
+        cards: [
+          { c: 'bull', t: 'Qué está ocurriendo', d: ['La vela abre cerca del mínimo previo y cierra por encima de la apertura de la vela anterior: todo el recorrido bajista del periodo anterior se deshace en uno solo.', 'Indica que entró demanda con tamaño suficiente para revertir la sesión.'] },
+          { t: 'Qué NO significa', d: ['No es una señal de compra. En mitad de una caída aparecen envolventes continuamente y el precio sigue cayendo.', 'Gana valor si ocurre <b>en una zona</b> (soporte, demanda, mínimo de sesión) y si va seguida de rotura de estructura al alza. Sin eso, es una vela grande y nada más.'] }
+        ]
+      },
+      {
+        n: 'Bearish Engulfing', chart: {
+          title: 'Envolvente bajista', tf: 'tras una subida sostenida', h: 300,
+          candles: X([[4296, 4306, 4294, 4304], [4304, 4312, 4302, 4310], [4310, 4318, 4308, 4316], [4316, 4324, 4314, 4322], [4322, 4330, 4320, 4328], [4328, 4336, 4326, 4334], [4334, 4344, 4332, 4342], [4342, 4350, 4340, 4348], [4350, 4352, 4316, 4318], [4318, 4322, 4306, 4310], [4310, 4314, 4298, 4302]]),
+          ov: [{ k: 'hi', from: 8, to: 8, color: C.bear }, { k: 'note', i: 8, side: 'H', text: 'engulle toda la vela previa', color: C.bear, off: 20, dx: -20 }]
+        },
+        cards: [
+          { c: 'bear', t: 'Qué está ocurriendo', d: ['Apertura por encima del cierre previo y cierre por debajo de la apertura previa. La oferta absorbió toda la subida del periodo anterior.'] },
+          { t: 'Qué NO significa', d: ['No confirma un techo. Lo relevante es dónde ocurre: una envolvente bajista sobre el PDH o sobre máximos iguales recién barridos es otra cosa que una en mitad del rango.'] }
+        ]
+      },
+      {
+        n: 'Hammer', chart: {
+          title: 'Martillo', tf: 'mecha inferior larga', h: 300,
+          candles: X([[4362, 4364, 4352, 4354], [4354, 4356, 4342, 4344], [4344, 4346, 4332, 4334], [4334, 4336, 4324, 4326], [4326, 4328, 4318, 4320], [4320, 4324, 4300, 4319], [4319, 4330, 4316, 4328], [4328, 4338, 4325, 4335]]),
+          ov: [{ k: 'hi', from: 5, to: 5, color: C.bull }, { k: 'note', i: 5, side: 'L', text: 'rechazo del mínimo', color: C.bull, off: 22 }]
+        },
+        cards: [
+          { c: 'bull', t: 'Qué está ocurriendo', d: ['El precio bajó con fuerza dentro del periodo y volvió casi entero. La mecha inferior mide el tramo rechazado.', 'En oro es la vela más útil después de un barrido de mínimos: muestra la absorción justo donde estaban los stops.'] },
+          { t: 'Qué NO significa', d: ['No marca un suelo. Un martillo en medio de un tramo bajista es simplemente una pausa.', 'Observa después: ¿el mínimo de esa mecha aguanta en las siguientes velas? ¿aparece rotura de estructura al alza en M5?'] }
+        ]
+      },
+      {
+        n: 'Shooting Star', chart: {
+          title: 'Estrella fugaz', tf: 'mecha superior larga', h: 300,
+          candles: X([[4296, 4306, 4294, 4304], [4304, 4314, 4302, 4312], [4312, 4322, 4310, 4320], [4320, 4330, 4318, 4328], [4328, 4336, 4326, 4334], [4334, 4370, 4332, 4338], [4338, 4342, 4326, 4329], [4329, 4332, 4318, 4321]]),
+          ov: [{ k: 'hi', from: 5, to: 5, color: C.bear }, { k: 'note', i: 5, side: 'H', text: 'llegó arriba y no se quedó', color: C.bear, off: 16, dx: -10 }]
+        },
+        cards: [
+          { c: 'bear', t: 'Qué está ocurriendo', d: ['Intento de subida rechazado dentro del mismo periodo. La oferta apareció y devolvió el precio al punto de partida.'] },
+          { t: 'Qué NO significa', d: ['No es un techo confirmado. Si la vela siguiente supera el máximo de la mecha, la lectura queda invalidada y quien vendió ahí está atrapado.'] }
+        ]
+      },
+      {
+        n: 'Doji', chart: {
+          title: 'Doji', tf: 'apertura ≈ cierre', h: 300,
+          candles: X([[4300, 4308, 4298, 4306], [4306, 4314, 4304, 4312], [4312, 4320, 4310, 4318], [4318, 4326, 4316, 4324], [4324, 4340, 4314, 4325], [4325, 4332, 4318, 4322], [4322, 4330, 4316, 4326]]),
+          ov: [{ k: 'hi', from: 4, to: 4, color: C.gold }, { k: 'note', i: 4, side: 'H', text: 'ni compradores ni vendedores', color: C.gold, off: 18, dx: -10 }]
+        },
+        cards: [
+          { c: 'gold', t: 'Qué está ocurriendo', d: ['El periodo termina donde empezó pese a haberse movido. Equilibrio temporal: ninguna de las dos partes consiguió imponerse.'] },
+          { t: 'Qué NO significa', d: ['No anticipa un giro. Un doji es una pausa; lo que importa es hacia qué lado se resuelve. Su valor sube si aparece justo en un nivel relevante después de un movimiento largo.'] }
+        ]
+      },
+      {
+        n: 'Spinning Top', chart: {
+          title: 'Peonza', tf: 'cuerpo pequeño, dos mechas', h: 300,
+          candles: X([[4300, 4308, 4298, 4306], [4306, 4316, 4304, 4314], [4314, 4322, 4312, 4320], [4320, 4340, 4310, 4324], [4324, 4330, 4316, 4321], [4321, 4328, 4314, 4319]]),
+          ov: [{ k: 'hi', from: 3, to: 3, color: C.gold }, { k: 'note', i: 3, side: 'H', text: 'mucho movimiento, ninguna decisión', color: C.gold, off: 18, dx: -20 }]
+        },
+        cards: [
+          { c: 'gold', t: 'Qué está ocurriendo', d: ['Rango amplio y cierre cerca de la apertura. Hubo forcejeo en las dos direcciones y ninguna cuajó.'] },
+          { t: 'Qué NO significa', d: ['No indica dirección. Varias peonzas seguidas suelen anunciar compresión: rango y, después, expansión. Dónde se rompe esa compresión es el dato útil.'] }
+        ]
+      },
+      {
+        n: 'Morning Star', chart: {
+          title: 'Estrella del amanecer', tf: 'tres velas', h: 300,
+          candles: X([[4380, 4384, 4372, 4374], [4374, 4376, 4362, 4364], [4364, 4366, 4334, 4336], [4333, 4338, 4326, 4331], [4332, 4364, 4330, 4362], [4362, 4372, 4358, 4368]]),
+          ov: [{ k: 'hi', from: 2, to: 4, color: C.bull }, { k: 'note', i: 3, side: 'L', text: 'caída → pausa → recuperación', color: C.bull, off: 22 }]
+        },
+        cards: [
+          { c: 'bull', t: 'Qué está ocurriendo', d: ['Vela bajista amplia, vela pequeña de indecisión y vela alcista que recupera buena parte del tramo. Es una transición contada en tres tiempos.'] },
+          { t: 'Qué NO significa', d: ['No es un suelo. Es una secuencia de agotamiento que <b>gana sentido en una zona de demanda o tras un barrido de mínimos</b>, y muy poco fuera de ahí.'] }
+        ]
+      },
+      {
+        n: 'Evening Star', chart: {
+          title: 'Estrella del atardecer', tf: 'tres velas', h: 300,
+          candles: X([[4300, 4310, 4298, 4308], [4308, 4320, 4306, 4318], [4318, 4352, 4316, 4350], [4352, 4358, 4348, 4353], [4352, 4354, 4322, 4324], [4324, 4328, 4312, 4316]]),
+          ov: [{ k: 'hi', from: 2, to: 4, color: C.bear }, { k: 'note', i: 3, side: 'H', text: 'subida → pausa → pérdida', color: C.bear, off: 18, dx: -10 }]
+        },
+        cards: [
+          { c: 'bear', t: 'Qué está ocurriendo', d: ['La imagen inversa: impulso alcista, pausa arriba y vela bajista que devuelve el precio. El intento de aceptar precios altos falló.'] },
+          { t: 'Qué NO significa', d: ['No garantiza continuación bajista. Observa si el mínimo de la tercera vela se pierde después: sin eso, sigue siendo solo un retroceso.'] }
+        ]
+      }
+    ]),
+
+    { k: 'h', t: 'La prueba definitiva: el mismo martillo, dos sitios', d: 'Dos gráficos con una vela idéntica. Lo único que cambia es dónde aparece.' },
+    {
+      k: 'grid', n: 2, items: [
+        {
+          title: 'Martillo en mitad de ninguna parte', tf: 'sin nivel, sin liquidez', padR: 44, h: 290,
+          candles: (() => { const a = S([[0, 4362, 'H'], [8, 4330, 'L'], [13, 4346, 'H'], [20, 4322, 'L'], [24, 4334]], 91, { noise: .2 }); return join(a, X([[4334, 4337, 4318, 4333], [4333, 4339, 4328, 4331], [4331, 4334, 4318, 4320], [4320, 4323, 4308, 4310]])); })(),
+          ov: [{ k: 'hi', from: 25, to: 25, color: C.mut }, { k: 'note', i: 25, side: 'L', text: 'martillo', color: C.mut, off: 24, fs: 9.5 }, { k: 'note', i: 28, side: 'L', text: 'no cambia nada', color: C.mut, off: 20, fs: 9.5, dx: -10 }],
+          caption: 'Ni zona, ni extremo, ni estructura implicada. Una mecha sin contexto no informa de nada.'
+        },
+        {
+          title: 'Martillo tras barrer liquidez en soporte', tf: 'cuatro cosas coinciden', padR: 44, h: 290,
+          candles: (() => { const a = S([[0, 4368, 'H'], [7, 4322, 'L'], [13, 4348, 'H'], [19, 4321, 'L'], [24, 4340, 'H'], [28, 4330]], 44, { noise: .13 }); return join(a, X([[4330, 4332, 4306, 4328], [4328, 4344, 4326, 4342], [4342, 4356, 4338, 4354], [4354, 4368, 4350, 4366]])); })(),
+          ov: [
+            { k: 'zone', p1: 4314, p2: 4326, color: C.bull, label: 'soporte H1', fs: 9.5 },
+            { k: 'stops', p: 4316, from: 8, to: 20, n: 5, color: C.liq, text: 'EQL', fs: 9.5 },
+            { k: 'hi', from: 29, to: 29, color: C.bull },
+            { k: 'mark', i: 29, side: 'L', text: 'barre y rechaza', color: C.bull, fs: 9.5 },
+            { k: 'note', i: 32, side: 'H', text: 'rotura al alza después', color: C.bull, off: 18, fs: 9.5, dx: -20 }
+          ],
+          caption: 'Mínimos iguales barridos + soporte de H1 + martillo + rotura posterior. Cuatro evidencias apiladas.'
+        }
+      ]
+    },
+    { k: 'note', t2: 'key', t: `<p style="margin:0">Misma vela, valor informativo completamente distinto. Por eso el orden correcto nunca es “busco velas y luego miro el contexto”, sino <b>“marco el contexto y luego miro qué vela aparece ahí”</b>. Si te descubres escaneando el gráfico en busca de martillos, has invertido el proceso.</p>` }
+  ])
+});
+
+/* ---------------- 09 · PATRONES ---------------- */
+chapter({
+  id: 'patrones', grp: 'Lectura de velas', n: '09', nav: 'Patrones gráficos', t: 'Patrones: la figura es la consecuencia, no la causa',
+  lede: 'Un doble techo no hace caer al precio. Es el dibujo que deja un mercado que intentó dos veces aceptar precios más altos y no pudo. Aprende la historia y el nombre sobra.',
+  build: () => build([
+    { k: 'h', t: 'Doce figuras contadas como lo que son', d: 'Cada una viene con su secuencia psicológica. Lee esa secuencia, no el nombre.' },
+    gallery([
+      {
+        n: 'Doble techo', chart: {
+          title: 'Doble techo', tf: 'XAUUSD · H1', h: 300,
+          candles: S([[0, 4280, 'L'], [10, 4362, 'H'], [17, 4318, 'L'], [25, 4359, 'H'], [36, 4282, 'L']], 14),
+          ov: [
+            { k: 'level', p: 4318, color: C.gold, dash: '5 4', label: 'cuello' },
+            { k: 'swing', i: 10, side: 'H', text: '1º intento', color: C.bear },
+            { k: 'swing', i: 25, side: 'H', text: '2º intento', color: C.bear },
+            { k: 'mark', i: 31, side: 'L', text: 'pierde el cuello', color: C.bear }
+          ]
+        },
+        cards: [
+          { c: 'bear', t: 'La historia', d: ['<b>1.</b> El precio ataca una resistencia y es rechazado.', '<b>2.</b> Retrocede hasta un mínimo que actúa de referencia (el cuello).', '<b>3.</b> Vuelve a atacar el mismo techo y <b>no consigue superarlo</b>: no hay compradores dispuestos a pagar más.', '<b>4.</b> Al perder el cuello, los que compraron en la zona alta quedan atrapados.'] },
+          { t: 'Cómo leerlo bien', d: ['Los dos máximos casi iguales son, además, <b>liquidez</b> (EQH). No es raro que el segundo techo los barra ligeramente antes de caer: eso refuerza la lectura en vez de anularla.', '<b>Queda invalidado si</b> el precio recupera y cierra por encima de los dos máximos.'] }
+        ]
+      },
+      {
+        n: 'Doble suelo', chart: {
+          title: 'Doble suelo', tf: 'XAUUSD · H1', h: 300,
+          candles: S([[0, 4390, 'H'], [10, 4302, 'L'], [17, 4346, 'H'], [25, 4304, 'L'], [36, 4392, 'H']], 21),
+          ov: [
+            { k: 'level', p: 4346, color: C.gold, dash: '5 4', label: 'cuello' },
+            { k: 'swing', i: 10, side: 'L', text: '1º', color: C.bull }, { k: 'swing', i: 25, side: 'L', text: '2º', color: C.bull },
+            { k: 'mark', i: 31, side: 'H', text: 'supera el cuello', color: C.bull }
+          ]
+        },
+        cards: [
+          { c: 'bull', t: 'La historia', d: ['Dos intentos de bajar frenados en el mismo sitio, y un rebote que se lleva por delante el máximo intermedio.', 'Los vendedores agresivos del segundo mínimo necesitan recomprar: ese es el combustible del tramo alcista.'] },
+          { t: 'Cómo leerlo bien', d: ['Lo importante no son los dos mínimos, sino <b>la rotura del cuello con cuerpo</b>. Sin eso solo tienes un rango.', '<b>Queda invalidado si</b> el precio pierde los mínimos.'] }
+        ]
+      },
+      {
+        n: 'Hombro-cabeza-hombro', chart: {
+          title: 'Hombro-cabeza-hombro', tf: 'XAUUSD · H1', h: 300,
+          candles: S([[0, 4272, 'L'], [7, 4332, 'H'], [12, 4306, 'L'], [20, 4372, 'H'], [26, 4304, 'L'], [33, 4334, 'H'], [44, 4256, 'L']], 24),
+          ov: [
+            { k: 'level', p: 4305, color: C.gold, dash: '5 4', label: 'cuello' },
+            { k: 'note', i: 7, side: 'H', text: 'hombro', color: C.mut, off: 18 },
+            { k: 'note', i: 20, side: 'H', text: 'cabeza', color: C.bear, off: 18 },
+            { k: 'note', i: 33, side: 'H', text: 'hombro', color: C.mut, off: 18 },
+            { k: 'mark', i: 38, side: 'L', text: 'rotura', color: C.bear }
+          ]
+        },
+        cards: [
+          { c: 'bear', t: 'La historia', d: ['<b>1.</b> Máximo, retroceso. <b>2.</b> Máximo superior (la cabeza): la tendencia aún funciona.', '<b>3.</b> El siguiente intento ya no llega tan alto: primer máximo decreciente.', '<b>4.</b> Se pierde el cuello y la estructura pasa a ser bajista de forma explícita.'] },
+          { t: 'Cómo leerlo bien', d: ['Es, literalmente, un CHoCH dibujado con más detalle: LH + pérdida del mínimo anterior.', 'Si ya sabes leer estructura, no necesitas el nombre. <b>Queda invalidado si</b> el precio recupera el hombro derecho.'] }
+        ]
+      },
+      {
+        n: 'HCH invertido', chart: {
+          title: 'Hombro-cabeza-hombro invertido', tf: 'XAUUSD · H1', h: 300,
+          candles: S([[0, 4390, 'H'], [7, 4330, 'L'], [12, 4356, 'H'], [20, 4290, 'L'], [26, 4358, 'H'], [33, 4328, 'L'], [44, 4406, 'H']], 34),
+          ov: [
+            { k: 'level', p: 4357, color: C.gold, dash: '5 4', label: 'cuello' },
+            { k: 'note', i: 20, side: 'L', text: 'cabeza', color: C.bull, off: 20 },
+            { k: 'mark', i: 38, side: 'H', text: 'rotura al alza', color: C.bull }
+          ]
+        },
+        cards: [
+          { c: 'bull', t: 'La historia', d: ['Mínimo, mínimo más profundo, y un tercer intento de caer que ya no llega: la presión vendedora se está agotando escalón a escalón.'] },
+          { t: 'Cómo leerlo bien', d: ['El hombro derecho suele coincidir con una zona de demanda dejada por el rebote de la cabeza. Esa coincidencia es la parte útil.'] }
+        ]
+      },
+      {
+        n: 'Triángulo ascendente', chart: {
+          title: 'Triángulo ascendente', tf: 'XAUUSD · M15', h: 300,
+          candles: S([[0, 4292, 'L'], [6, 4349, 'H'], [11, 4308, 'L'], [17, 4350, 'H'], [22, 4324, 'L'], [27, 4349, 'H'], [31, 4336, 'L'], [40, 4394, 'H']], 45),
+          ov: [
+            { k: 'level', p: 4350, from: 4, to: 32, color: C.bear, dash: '4 4', label: 'techo plano' },
+            { k: 'trend', i1: 0, p1: 4292, i2: 31, p2: 4336, color: C.bull, dash: '4 4' },
+            { k: 'mark', i: 34, side: 'L', text: 'ruptura', color: C.bull }
+          ]
+        },
+        cards: [
+          { c: 'bull', t: 'La historia', d: ['El techo aguanta, pero cada retroceso es menos profundo: los compradores aceptan precios cada vez más altos mientras los vendedores repiten el mismo nivel.', 'La compresión termina resolviéndose, y estadísticamente con más frecuencia hacia arriba... pero no siempre.'] },
+          { t: 'Cómo leerlo bien', d: ['El techo plano es <b>liquidez</b>: máximos iguales. Es habitual ver un barrido antes de la ruptura buena.', '<b>Queda invalidado si</b> el precio pierde la directriz de mínimos crecientes.'] }
+        ]
+      },
+      {
+        n: 'Triángulo descendente', chart: {
+          title: 'Triángulo descendente', tf: 'XAUUSD · M15', h: 300,
+          candles: S([[0, 4386, 'H'], [6, 4322, 'L'], [11, 4368, 'H'], [17, 4321, 'L'], [22, 4348, 'H'], [27, 4322, 'L'], [31, 4336, 'H'], [40, 4276, 'L']], 51),
+          ov: [
+            { k: 'level', p: 4321, from: 4, to: 32, color: C.bull, dash: '4 4', label: 'suelo plano' },
+            { k: 'trend', i1: 0, p1: 4386, i2: 31, p2: 4336, color: C.bear, dash: '4 4' },
+            { k: 'mark', i: 34, side: 'H', text: 'ruptura', color: C.bear }
+          ]
+        },
+        cards: [
+          { c: 'bear', t: 'La historia', d: ['Los rebotes son cada vez más cortos contra un suelo que se repite. La demanda defiende el mismo precio mientras la oferta baja sus pretensiones.'] },
+          { t: 'Cómo leerlo bien', d: ['El suelo plano son mínimos iguales: liquidez evidente. Espera el barrido antes de dar por buena la ruptura.'] }
+        ]
+      },
+      {
+        n: 'Triángulo simétrico', chart: {
+          title: 'Triángulo simétrico', tf: 'XAUUSD · M15', h: 300,
+          candles: S([[0, 4296, 'L'], [6, 4372, 'H'], [12, 4310, 'L'], [18, 4358, 'H'], [24, 4324, 'L'], [29, 4346, 'H'], [33, 4334, 'L'], [42, 4400, 'H']], 57),
+          ov: [
+            { k: 'trend', i1: 6, p1: 4372, i2: 33, p2: 4344, color: C.bear, dash: '4 4' },
+            { k: 'trend', i1: 0, p1: 4296, i2: 33, p2: 4334, color: C.bull, dash: '4 4' },
+            { k: 'note', i: 31, side: 'H', text: 'compresión', color: C.gold, off: 24 }
+          ]
+        },
+        cards: [
+          { c: 'gold', t: 'La historia', d: ['Máximos decrecientes y mínimos crecientes a la vez: el rango se estrecha y la volatilidad se comprime. Nadie manda.'] },
+          { t: 'Cómo leerlo bien', d: ['No tiene sesgo propio. Lo que decide es <b>el contexto del marco superior</b>: en una tendencia alcista de H1, esta compresión suele ser una pausa alcista.', 'Los triángulos producen muchas falsas roturas: es un sitio donde el barrido es la norma, no la excepción.'] }
+        ]
+      },
+      {
+        n: 'Cuña ascendente', chart: {
+          title: 'Cuña ascendente', tf: 'XAUUSD · M15', h: 300,
+          candles: S([[0, 4300, 'L'], [7, 4348, 'H'], [12, 4322, 'L'], [18, 4364, 'H'], [23, 4344, 'L'], [28, 4374, 'H'], [32, 4360, 'L'], [42, 4306, 'L']], 65),
+          ov: [
+            { k: 'trend', i1: 0, p1: 4300, i2: 32, p2: 4360, color: C.bull, dash: '4 4' },
+            { k: 'trend', i1: 7, p1: 4348, i2: 28, p2: 4374, color: C.bear, dash: '4 4' },
+            { k: 'mark', i: 35, side: 'H', text: 'pierde la directriz', color: C.bear, dx: -10 }
+          ]
+        },
+        cards: [
+          { c: 'bear', t: 'La historia', d: ['El precio sigue subiendo, pero cada tramo alcista es menor y los retrocesos más frecuentes. Subir le cuesta cada vez más esfuerzo.'] },
+          { t: 'Cómo leerlo bien', d: ['Es agotamiento, no un giro garantizado. Muchas cuñas simplemente se convierten en rangos.', 'Lo que confirma la lectura es la pérdida del último mínimo creciente, no el dibujo de la cuña.'] }
+        ]
+      },
+      {
+        n: 'Cuña descendente', chart: {
+          title: 'Cuña descendente', tf: 'XAUUSD · M15', h: 300,
+          candles: S([[0, 4386, 'H'], [7, 4330, 'L'], [12, 4356, 'H'], [18, 4316, 'L'], [23, 4336, 'H'], [28, 4308, 'L'], [32, 4322, 'H'], [42, 4380, 'H']], 69),
+          ov: [
+            { k: 'trend', i1: 0, p1: 4386, i2: 32, p2: 4322, color: C.bear, dash: '4 4' },
+            { k: 'trend', i1: 7, p1: 4330, i2: 28, p2: 4308, color: C.bull, dash: '4 4' },
+            { k: 'mark', i: 35, side: 'L', text: 'rompe al alza', color: C.bull }
+          ]
+        },
+        cards: [
+          { c: 'bull', t: 'La historia', d: ['Baja, pero cada vez con menos convicción y con rebotes que quitan terreno. La presión vendedora se agota.'] },
+          { t: 'Cómo leerlo bien', d: ['Igual que la anterior: lo que vale es la rotura del último máximo decreciente, el resto es decoración.'] }
+        ]
+      },
+      {
+        n: 'Rango', chart: {
+          title: 'Rango / rectángulo', tf: 'XAUUSD · M15', h: 300,
+          candles: S([[0, 4302, 'L'], [5, 4348, 'H'], [10, 4301, 'L'], [16, 4346, 'H'], [22, 4299, 'L'], [28, 4350, 'H'], [34, 4304, 'L'], [42, 4366, 'H']], 74, { noise: .2 }),
+          ov: [
+            { k: 'zone', p1: 4342, p2: 4353, to: 36, color: C.bear, label: 'techo' },
+            { k: 'zone', p1: 4295, p2: 4308, to: 36, color: C.bull, label: 'suelo' },
+            { k: 'mark', i: 38, side: 'L', text: 'resolución', color: C.bull }
+          ]
+        },
+        cards: [
+          { c: 'gold', t: 'La historia', d: ['Equilibrio. Compradores y vendedores se van turnando entre dos referencias que ambos reconocen.'] },
+          { t: 'Cómo leerlo bien', d: ['Los extremos del rango acumulan liquidez por los dos lados. La primera ruptura falla con mucha frecuencia.', 'Lo más rentable en términos de aprendizaje: <b>no operar el centro del rango</b> y esperar a ver qué extremo se barre primero.'] }
+        ]
+      },
+      {
+        n: 'Bandera alcista', chart: {
+          title: 'Bandera alcista', tf: 'XAUUSD · M15', h: 300,
+          candles: S([[0, 4292, 'L'], [10, 4392, 'H'], [15, 4366, 'L'], [19, 4380, 'H'], [24, 4356, 'L'], [28, 4370, 'H'], [32, 4352, 'L'], [42, 4452, 'H']], 78, { noise: .12 }),
+          ov: [
+            { k: 'note', i: 6, side: 'L', text: 'mástil', color: C.bull, off: 26 },
+            { k: 'trend', i1: 10, p1: 4392, i2: 32, p2: 4368, color: C.mut, dash: '4 4' },
+            { k: 'trend', i1: 15, p1: 4366, i2: 32, p2: 4352, color: C.mut, dash: '4 4' },
+            { k: 'mark', i: 35, side: 'L', text: 'continuación', color: C.bull }
+          ]
+        },
+        cards: [
+          { c: 'bull', t: 'La historia', d: ['Impulso fuerte y después un retroceso lento, estrecho y en contra. Nadie vende con convicción: solo se recogen beneficios.', 'El contraste entre <b>impulso rápido</b> y <b>corrección lenta</b> es la clave.'] },
+          { t: 'Cómo leerlo bien', d: ['Si la corrección se vuelve tan rápida y amplia como el impulso, ya no es una bandera: es un giro.', 'El mástil suele dejar FVG; que el retroceso respete ese hueco añade evidencia.'] }
+        ]
+      },
+      {
+        n: 'Bandera bajista', chart: {
+          title: 'Bandera bajista', tf: 'XAUUSD · M15', h: 300,
+          candles: S([[0, 4392, 'H'], [10, 4292, 'L'], [15, 4318, 'H'], [19, 4304, 'L'], [24, 4328, 'H'], [28, 4314, 'L'], [32, 4332, 'H'], [42, 4232, 'L']], 82, { noise: .12 }),
+          ov: [
+            { k: 'note', i: 6, side: 'H', text: 'mástil', color: C.bear, off: 22 },
+            { k: 'trend', i1: 10, p1: 4292, i2: 32, p2: 4316, color: C.mut, dash: '4 4' },
+            { k: 'trend', i1: 15, p1: 4318, i2: 32, p2: 4332, color: C.mut, dash: '4 4' },
+            { k: 'mark', i: 35, side: 'H', text: 'continuación', color: C.bear }
+          ]
+        },
+        cards: [
+          { c: 'bear', t: 'La historia', d: ['Caída vertical y rebote perezoso en canal ascendente estrecho. El rebote es recompra técnica, no demanda nueva.'] },
+          { t: 'Cómo leerlo bien', d: ['El techo del canal suele coincidir con el order block o el FVG que dejó la caída. Ahí es donde la figura y las zonas se juntan.'] }
+        ]
+      }
+    ]),
+    { k: 'note', t2: 'warn', t: `<p style="margin:0"><b>Sobre patrones armónicos</b> (Crab, Butterfly, Gartley, Bat). Existen y hay gente que los usa, pero dependen de relaciones de Fibonacci muy precisas y su identificación es discutible hasta que ya han terminado. Para leer XAUUSD intradía, el tiempo que les dedicarías rinde bastante más en estructura, liquidez y sesiones. Déjalos para mucho más adelante.</p>` }
+  ])
+});
+/* ---------------- 10 · MULTI TIMEFRAME ---------------- */
+chapter({
+  id: 'multitimeframe', grp: 'Contexto XAUUSD', n: '10', nav: 'Multi timeframe', t: 'El mismo movimiento, cuatro verdades distintas',
+  lede: 'Casi todos los errores de lectura vienen de confundir un retroceso con una tendencia. La única cura es mirar siempre de mayor a menor: primero dónde estamos, después qué hacer con ello.',
+  build: () => {
+    const h4 = S([[0, 4600, 'H'], [9, 4470, 'L'], [15, 4542, 'H'], [24, 4382, 'L'], [30, 4452, 'H'], [40, 4318, 'L'], [46, 4362, 'H']], 11, { noise: .14 });
+    const h1 = S([[0, 4452, 'H'], [10, 4382, 'L'], [16, 4420, 'H'], [26, 4318, 'L'], [36, 4364, 'H']], 23, { noise: .14 });
+    const m15 = S([[0, 4318, 'L'], [8, 4348, 'H'], [13, 4331, 'L'], [21, 4364, 'H'], [26, 4350, 'L'], [32, 4362, 'H']], 47, { noise: .15 });
+    const m5 = S([[0, 4331, 'L'], [7, 4352, 'H'], [12, 4343, 'L'], [19, 4364, 'H'], [24, 4353, 'L'], [30, 4363, 'H']], 59, { noise: .16 });
+    const roles = [
+      ['H4 · contexto', 'Estructura bajista clara: LH → LL → LH → LL. Todo lo que ocurra dentro nace con esa etiqueta.'],
+      ['H1 · estructura', 'El mismo mercado, un escalón más cerca. El tramo final es un rebote dentro de la caída, no una tendencia nueva.'],
+      ['M15 · zona y reacción', 'Aquí aparecen los detalles: dónde se frenó, qué zona está tocando el rebote.'],
+      ['M5 · confirmación', 'Aislado parece un mercado alcista de manual: HH y HL encadenados. Y sin embargo es el interior del rebote anterior.']
+    ];
+    const box = { k: 'hi', color: C.gold, fo: .07 };
+    const view = el(`<div class="card gold" style="margin-top:18px"><h4>Cambia de asiento</h4><div class="tfpick">
+      <button class="on" data-v="0">Quien solo mira M5</button><button data-v="1">Quien mira H4 primero</button></div>
+      <p id="mtfTxt" style="margin-top:10px"></p></div>`);
+    const txts = [
+      'Ve máximos y mínimos crecientes, compra en el retroceso y considera que la tendencia es alcista. Su lectura de M5 <b>es correcta</b>: la estructura de M5 realmente es alcista. El problema es que está operando dentro del rebote de una caída de H4, con una zona de oferta justo encima y sin saberlo.',
+      'Ve una estructura bajista en H4 y en H1, y un rebote que se está acercando a la zona desde la que salió la última caída. Con eso, la subida de M5 deja de ser una oportunidad de compra y pasa a ser <b>información</b>: le dice dónde puede terminar el rebote. La misma pantalla, una conclusión opuesta.'
+    ];
+    view.querySelectorAll('.tfpick button').forEach(b => b.addEventListener('click', () => {
+      view.querySelectorAll('.tfpick button').forEach(x => x.classList.remove('on')); b.classList.add('on');
+      view.querySelector('#mtfTxt').innerHTML = txts[+b.dataset.v];
+    }));
+    view.querySelector('#mtfTxt').innerHTML = txts[0];
+
+    const FRAG = build([
+      { k: 'h', t: 'Los cuatro marcos a la vez', d: 'Cada panel amplía el recuadro dorado del panel anterior. Es literalmente el mismo precio, en el mismo momento.' },
+      {
+        k: 'raw', t: '<div class="mtf" id="mtfGrid"></div>'
+      },
+      {
+        k: 'cards', n: 2, items: [
+          { c: 'bear', t: 'Lo que dice H4 y H1', d: ['Máximos decrecientes y mínimos decrecientes. El último tramo al alza no ha superado ningún máximo relevante.', 'Mientras no haya un CHoCH en H1, la hipótesis por defecto sigue siendo bajista.'] },
+          { c: 'bull', t: 'Lo que dice M5', d: ['Máximos y mínimos crecientes. Estructura alcista impecable... de 30 velas.', 'No es mentira: es un retroceso alcista <b>dentro</b> de una estructura mayor bajista. Las dos cosas son verdad a la vez.'] }
+        ]
+      },
+      view,
+      { k: 'h', t: 'Cómo usarlo sin volverse loco', d: 'Un marco para cada pregunta, y no mezclar preguntas.' },
+      {
+        k: 'flow', items: [
+          { t: 'H4 — contexto', d: '¿Estructura alcista, bajista o rango? ¿Dónde están las zonas grandes? Se mira una vez y se anota.' },
+          { t: 'H1 — estructura', d: '¿Se cumple lo de H4? ¿Cuál es el último HL o LH que decide el escenario?' },
+          { t: 'M15 — zona', d: '¿A qué nivel está llegando el precio? ¿Hay liquidez cerca? Aquí se define <b>dónde</b> merece la pena mirar.' },
+          { t: 'M5 — confirmación', d: '¿Qué hace el precio al llegar ahí? Barrido, reacción, cambio de estructura. Es el único marco donde se afina el momento.' }
+        ]
+      },
+      { k: 'note', t2: 'no', t: `<b>La regla que evita más disgustos:</b> el marco pequeño nunca cambia el contexto del grande, solo dice cuándo. Si tu razón para operar solo existe en M5, esa razón es débil. Si el marco pequeño contradice al grande, lo normal es esperar, no elegir el que más te gusta.` },
+      { k: 'note', t2: 'key', t: `<b>Y al revés también:</b> una estructura alcista de H4 no te obliga a comprar en cualquier sitio. El contexto te dice el sesgo; el marco menor te dice si hay una situación concreta que aproveche ese sesgo. Sin las dos cosas, no hay lectura completa.` },
+      null
+    ]);
+    (() => {
+        {
+          const g = FRAG.querySelector('#mtfGrid'); if (!g) return;
+          [[h4, [40, 46]], [h1, [26, 36]], [m15, [13, 32]], [m5, null]].forEach(([cd, hl], i) => {
+            g.appendChild(mkChart({
+              title: roles[i][0], tf: ['4 horas', '1 hora', '15 min', '5 min'][i], padR: 46, h: 235, candles: cd,
+              ov: (hl ? [{ ...box, from: hl[0], to: hl[1] }] : []).concat(
+                i === 0 ? [{ k: 'swing', i: 15, side: 'H', text: 'LH', color: C.bear, fs: 9.5 }, { k: 'swing', i: 24, side: 'L', text: 'LL', color: C.bear, fs: 9.5 }, { k: 'swing', i: 30, side: 'H', text: 'LH', color: C.bear, fs: 9.5 }, { k: 'swing', i: 40, side: 'L', text: 'LL', color: C.bear, fs: 9.5 }] :
+                  i === 1 ? [{ k: 'swing', i: 16, side: 'H', text: 'LH', color: C.bear, fs: 9.5 }, { k: 'swing', i: 26, side: 'L', text: 'LL', color: C.bear, fs: 9.5 }, { k: 'note', i: 33, side: 'H', text: 'rebote', color: C.mut, off: 18, fs: 9.5 }] :
+                    i === 2 ? [{ k: 'note', i: 21, side: 'H', text: 'sube, pero dentro del rebote', color: C.mut, off: 18, fs: 9.5, dx: -20 }] :
+                      [{ k: 'swing', i: 12, side: 'L', text: 'HL', color: C.bull, fs: 9.5 }, { k: 'swing', i: 19, side: 'H', text: 'HH', color: C.bull, fs: 9.5 }, { k: 'swing', i: 24, side: 'L', text: 'HL', color: C.bull, fs: 9.5 }]),
+              caption: roles[i][1]
+            }).node);
+          });
+        }
+      })();
+    return FRAG;
+  }
+});
+
+/* ---------------- 11 · SESIONES ---------------- */
+chapter({
+  id: 'sesiones', grp: 'Contexto XAUUSD', n: '11', nav: 'Sesiones del oro', t: 'Asia, Londres y Nueva York',
+  lede: 'El oro no se comporta igual a las 4 de la mañana que a las 3 de la tarde. Saber en qué sesión estás y qué extremos ha dejado la anterior es, para XAUUSD intradía, tan importante como la propia estructura.',
+  build: () => build([
+    {
+      k: 'raw', t: `<div class="tl"><div class="tl-bar">
+      <div class="tl-asia" style="flex:1.6">Asia<span class="s">≈ 01:00 – 09:00</span></div>
+      <div class="tl-lon" style="flex:1.7">Londres<span class="s">≈ 09:00 – 17:30</span></div>
+      <div class="tl-ny" style="flex:1.7">Nueva York<span class="s">≈ 14:30 – 23:00</span></div>
+      </div><p class="mut" style="font-size:13px;margin:8px 0 0">Horario peninsular español, aproximado y sujeto a cambios de horario de verano. El solape Londres–Nueva York (≈14:30–17:30) concentra la mayor parte del rango diario del oro.</p></div>`
+    },
+    {
+      k: 'cards', n: 3, items: [
+        { t: 'Asia', d: ['Volumen bajo. El oro tiende a construir un <b>rango estrecho</b>.', 'Su utilidad no es operarla: es que deja dos referencias muy observadas, <b>Asian High</b> y <b>Asian Low</b>.'] },
+        { c: 'gold', t: 'Londres', d: ['Entra volumen de verdad. Es habitual que el primer movimiento ataque uno de los extremos del rango asiático.', 'La pregunta del día suele ser: ¿lo rompe de verdad o solo lo barre?'] },
+        { c: 'liq', t: 'Nueva York', d: ['Datos macro y máximo volumen. Puede continuar lo de Londres o darle la vuelta a buena parte del movimiento.', 'Los extremos de Londres pasan a ser el objetivo natural.'] }
+      ]
+    },
+    {
+      k: 'ticks', items: [
+        '<b>Asian High / Asian Low</b> — el rango de la madrugada, referencia obligatoria.',
+        '<b>London High / London Low</b> — los extremos que deja Londres, y que Nueva York suele visitar.',
+        '<b>New York High / New York Low</b> — sirven para el cierre y para el día siguiente.',
+        `<b>${T('PDH', 'Previous Day High — máximo del día anterior')} / ${T('PDL', 'Previous Day Low — mínimo del día anterior')}</b> — el rango del día previo, por encima de todos los anteriores.`
+      ]
+    },
+
+    { k: 'h', t: 'Escenario 1 — Londres barre el máximo de Asia y vuelve dentro', d: 'El más frecuente cuando el contexto de H1 no acompaña a la ruptura.' },
+    {
+      k: 'chart', title: 'Barrido del Asian High', tf: 'XAUUSD · M15',
+      candles: S([[0, 4322, 'L'], [5, 4338, 'H'], [10, 4324, 'L'], [15, 4337, 'H'], [20, 4326, 'L'], [26, 4356, 'H'], [31, 4330], [40, 4296, 'L']], 42, { noise: .14 }),
+      ov: [
+        { k: 'vzone', from: 0, to: 21, color: C.info, label: 'Asia', fo: .06 },
+        { k: 'vzone', from: 22, to: 40, color: C.gold, label: 'Londres', fo: .05 },
+        { k: 'level', p: 4338, color: C.info, dash: '5 4', label: 'Asian High', g: 'a' },
+        { k: 'level', p: 4322, color: C.info, dash: '5 4', label: 'Asian Low', g: 'a' },
+        { k: 'mark', i: 26, side: 'H', text: 'barrido', color: C.warn, g: 'a' },
+        { k: 'note', i: 34, side: 'L', text: 'vuelve dentro del rango asiático', color: C.bear, off: 26, g: 'a', dx: 20 }
+      ],
+      groups: [{ id: 'a', label: 'Mostrar niveles' }],
+      caption: 'Londres abre, empuja por encima del máximo asiático, recoge las órdenes que había ahí y devuelve el precio al rango. <b>No es una regla</b>: es un escenario frecuente que conviene reconocer para no comprar la ruptura a ciegas.'
+    },
+
+    { k: 'h', t: 'Escenario 2 — Londres rompe y acepta', d: 'La misma apertura, desenlace opuesto. Lo que cambia es la aceptación.' },
+    {
+      k: 'chart', title: 'Ruptura con continuidad', tf: 'XAUUSD · M15',
+      candles: S([[0, 4322, 'L'], [5, 4338, 'H'], [10, 4325, 'L'], [15, 4337, 'H'], [20, 4327, 'L'], [28, 4372, 'H'], [34, 4344, 'L'], [42, 4402, 'H']], 66, { noise: .13 }),
+      ov: [
+        { k: 'vzone', from: 0, to: 21, color: C.info, label: 'Asia', fo: .06 },
+        { k: 'vzone', from: 22, to: 42, color: C.gold, label: 'Londres', fo: .05 },
+        { k: 'level', p: 4338, color: C.info, dash: '5 4', label: 'Asian High', g: 'a' },
+        { k: 'mark', i: 25, side: 'L', text: 'rompe con cuerpo', color: C.bull, g: 'a' },
+        { k: 'mark', i: 34, side: 'L', text: 'retest del Asian High', color: C.bull, g: 'a', dx: 10 },
+        { k: 'note', i: 42, side: 'H', text: 'continúa', color: C.bull, off: 18, g: 'a' }
+      ],
+      groups: [{ id: 'a', label: 'Mostrar niveles' }],
+      caption: 'Aquí el precio no solo supera el máximo de Asia: <b>cierra varias velas por encima</b> y el retroceso lo respeta. Misma señal inicial, evidencia acumulada completamente distinta.'
+    },
+
+    { k: 'h', t: 'Escenario 3 — Nueva York revierte a Londres', d: 'Clásico en días de dato macro: el movimiento europeo se deshace en la tarde.' },
+    {
+      k: 'chart', title: 'La tarde corrige la mañana', tf: 'XAUUSD · M15',
+      candles: S([[0, 4330, 'L'], [6, 4342, 'H'], [11, 4331, 'L'], [22, 4402, 'H'], [28, 4380, 'L'], [33, 4398, 'H'], [46, 4336, 'L']], 88, { noise: .14 }),
+      ov: [
+        { k: 'vzone', from: 0, to: 11, color: C.info, label: 'Asia', fo: .06 },
+        { k: 'vzone', from: 12, to: 29, color: C.gold, label: 'Londres', fo: .05 },
+        { k: 'vzone', from: 30, to: 46, color: C.liq, label: 'Nueva York', fo: .05 },
+        { k: 'level', p: 4402, color: C.gold, dash: '5 4', label: 'London High', g: 'a' },
+        { k: 'level', p: 4331, color: C.info, dash: '5 4', label: 'Asian Low', g: 'a' },
+        { k: 'mark', i: 33, side: 'H', text: 'barre el máximo de Londres', color: C.warn, g: 'a', dx: -10 },
+        { k: 'note', i: 44, side: 'L', text: 'devuelve casi todo el movimiento', color: C.bear, off: 24, g: 'a', dx: -30 }
+      ],
+      groups: [{ id: 'a', label: 'Mostrar niveles' }],
+      caption: 'Nueva York empieza barriendo el máximo que dejó Londres y después devuelve el precio hacia el rango asiático. Por eso conviene tratar los extremos de cada sesión como <b>objetivos potenciales</b>, no como soportes y resistencias definitivos.'
+    },
+    {
+      k: 'qa', items: [
+        'Bandas de color sobre el gráfico que separan las tres sesiones, y líneas horizontales en los extremos de cada una.',
+        'Marco el rango de Asia al abrir Londres. Después, según avanza el día, añado los extremos de Londres. Son cuatro líneas en total, no quince.',
+        'Que cada sesión hereda los extremos de la anterior como referencias, y que el volumen (y por tanto la capacidad de romper de verdad) cambia radicalmente entre ellas.',
+        'En intradía de XAUUSD, siempre. Es probablemente el contexto con mejor relación esfuerzo/utilidad de todo el curso.',
+        '<b>No</b> significa que Londres barra siempre el máximo de Asia, ni que Nueva York revierta siempre a Londres. Son patrones de comportamiento frecuentes, no reglas. Hay días de tendencia limpia en los que nada de esto ocurre.',
+        'Qué hace el precio <b>después</b> de tocar el extremo de la sesión previa: si lo acepta (cierres al otro lado) o lo rechaza. Esa es la pregunta operativa del día.'
+      ]
+    },
+    { k: 'note', t2: 'warn', t: `<b>Sobre los datos macro.</b> El oro reacciona con violencia a las publicaciones de EE. UU. (empleo, IPC, tipos). El análisis técnico no anticipa esos movimientos: en esos minutos los niveles se atraviesan sin respeto ninguno. Saber qué hay en el calendario es parte del contexto, y a menudo la mejor decisión técnica es no tener ninguna hipótesis activa.` }
+  ])
+});
+
+/* ---------------- 12 · CONFLUENCIAS ---------------- */
+chapter({
+  id: 'confluencias', grp: 'Contexto XAUUSD', n: '12', nav: 'Confluencias', t: 'Apilar evidencias, no buscar señales',
+  lede: 'Aquí se junta todo. Un mismo gráfico al que vamos añadiendo capas: contexto, estructura, nivel, liquidez, sesión, barrido, cambio estructural, retest y reacción. Ninguna capa por separado decide nada.',
+  build: () => {
+    const cd = S([[0, 4288, 'L'], [8, 4344, 'H'], [14, 4318, 'L'], [21, 4345, 'H'], [27, 4322, 'L'], [33, 4346, 'H'], [38, 4328, 'L'], [43, 4368, 'H'], [47, 4334], [52, 4310, 'L'], [58, 4330, 'H'], [66, 4276, 'L']], 41, { noise: .13 });
+    const layers = [
+      { id: 'l1', t: 'Contexto H1', d: 'estructura mayor bajista, esto es un rebote' },
+      { id: 'l2', t: 'Estructura', d: 'máximos contenidos, sin HH reales' },
+      { id: 'l3', t: 'Nivel relevante', d: 'zona de oferta que ya rechazó dos veces' },
+      { id: 'l4', t: 'Liquidez', d: 'máximos iguales con órdenes encima' },
+      { id: 'l5', t: 'Extremo de sesión', d: 'coincide con el máximo de Asia' },
+      { id: 'l6', t: 'Barrido', d: 'supera los máximos y vuelve dentro' },
+      { id: 'l7', t: 'Cambio estructural', d: 'pierde el último mínimo con desplazamiento' },
+      { id: 'l8', t: 'Retest', d: 'vuelve a la zona rota y la respeta' },
+      { id: 'l9', t: 'Reacción', d: 'rechazo y continuación a la baja' }
+    ];
+    const ch = mkChart({
+      title: 'Lectura completa de una sesión', tf: 'XAUUSD · M15', h: 400, candles: cd, padHi: .14,
+      ov: [
+        { k: 'txt', i: 4, py: 4362, text: 'contexto H1: bajista — esto es un rebote', color: C.info, g: 'l1' },
+        { k: 'zig', pts: [[8, 'H'], [14, 'L'], [21, 'H'], [27, 'L'], [33, 'H']], color: C.mut, dash: '4 4', g: 'l2' },
+        { k: 'swing', i: 27, side: 'L', text: 'último mínimo', color: C.mut, g: 'l2', fs: 10 },
+        { k: 'zone', p1: 4340, p2: 4350, color: C.bear, label: 'zona de oferta', g: 'l3' },
+        { k: 'stops', p: 4352, from: 10, to: 33, n: 6, color: C.liq, text: 'liquidez', g: 'l4' },
+        { k: 'level', p: 4345, color: C.info, dash: '5 4', label: 'Asian High', g: 'l5' },
+        { k: 'mark', i: 43, side: 'H', text: 'barrido', color: C.warn, g: 'l6' },
+        { k: 'mark', i: 50, side: 'L', text: 'CHoCH con desplazamiento', color: C.bear, g: 'l7', dx: 20 },
+        { k: 'level', p: 4322, color: C.bear, dash: '4 4', label: 'nivel roto', from: 27, g: 'l7' },
+        { k: 'mark', i: 58, side: 'H', text: 'retest', color: C.gold, g: 'l8' },
+        { k: 'note', i: 64, side: 'L', text: 'continuación', color: C.bear, off: 24, g: 'l9' }
+      ],
+      caption: 'Cada capa responde a una pregunta distinta. Si tuvieras que quedarte con dos, serían <b>estructura</b> y <b>liquidez</b>.'
+    });
+    ch.offAll(layers.map(l => l.id));
+    const panel = el(`<div class="card"><h4>Confluencias detectadas</h4><div class="layerlist" style="margin-top:10px">${layers.map(l => `<div class="li" data-l="${l.id}"><span class="ic">✓</span><span><b>${l.t}</b><br><span style="font-size:12px;opacity:.8">${l.d}</span></span></div>`).join('')}</div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn" id="addL">Añadir capa</button><button class="btn plain" id="rstL">Reiniciar</button></div>
+    <p style="margin-top:12px;font-size:12.6px" class="mut" id="confMsg">Ve añadiendo capas y observa cómo la misma imagen se vuelve legible.</p></div>`);
+    let k = 0;
+    const sync = () => {
+      panel.querySelectorAll('.li').forEach((n, i) => n.classList.toggle('on', i < k));
+      panel.querySelector('#addL').disabled = k >= layers.length;
+      panel.querySelector('#confMsg').innerHTML = k === 0 ? 'Ve añadiendo capas y observa cómo la misma imagen se vuelve legible.'
+        : k < layers.length ? `<b>${layers[k - 1].t}:</b> ${layers[k - 1].d}.`
+          : 'Nueve evidencias apiladas. Y aun así, esto <b>no</b> es una señal de venta: es un escenario bien fundamentado con un punto claro de invalidación —que el precio recupere la zona de oferta.';
+    };
+    panel.querySelector('#addL').addEventListener('click', () => { if (k < layers.length) { ch.on(layers[k].id); k++; sync(); } });
+    panel.querySelector('#rstL').addEventListener('click', () => { k = 0; ch.offAll(layers.map(l => l.id)); sync(); });
+    sync();
+    const wrap = el('<div class="conf-wrap"></div>');
+    wrap.append(ch.node, panel);
+
+    return build([
+      { k: 'h', t: 'Construye la lectura capa a capa', d: 'Pulsa “Añadir capa” nueve veces. Fíjate en que el gráfico no cambia: lo único que cambia es lo que eres capaz de ver en él.' },
+      wrap,
+      { k: 'h', t: 'Cómo pesar lo que has apilado', d: 'No todas las confluencias valen lo mismo y ninguna cantidad de marcas verdes convierte una hipótesis en certeza.' },
+      {
+        k: 'cards', n: 3, items: [
+          { c: 'bull', t: 'Pesan mucho', d: ['Estructura del marco superior.', 'Liquidez evidente barrida.', 'Cambio de estructura <b>con</b> desplazamiento.', 'Nivel que ve todo el mercado (PDH/PDL, extremo de sesión).'] },
+          { c: 'gold', t: 'Pesan algo', d: ['Retest limpio de la zona rota.', 'Vela de rechazo en la zona correcta.', 'FVG sin rellenar en la dirección del movimiento.', 'Cifra redonda que coincide con lo anterior.'] },
+          { c: 'bear', t: 'Pesan poco o nada solas', d: ['Un patrón de velas aislado.', 'Un order block sin rotura de estructura previa.', 'Una figura “bonita” en un marco muy pequeño.', 'Cualquier cosa que solo veas tú con mucho zoom.'] }
+        ]
+      },
+      { k: 'note', t2: 'no', t: `<p><b>El riesgo de este capítulo.</b> Cuantas más herramientas conoces, más fácil es encontrar siempre alguna que respalde lo que ya querías hacer. Si al mirar un gráfico siempre encuentras seis confluencias, no estás analizando: estás justificando.</p><p style="margin:0">Una prueba honesta: antes de decidir nada, escribe <b>qué tendría que pasar para que tu lectura fuese errónea</b>. Si no sabes responder, la lectura todavía no está terminada.</p>` }
+    ]);
+  }
+});
+/* ---------------- MODO PRÁCTICA ---------------- */
+const EX = [
+  {
+    q: '¿La estructura es alcista, bajista o un rango?',
+    hint: 'Compara cada máximo con el máximo anterior, y cada mínimo con el mínimo anterior.',
+    chart: {
+      title: 'Ejercicio 1', tf: 'XAUUSD · M15',
+      candles: S([[0, 4372, 'H'], [8, 4326, 'L'], [14, 4354, 'H'], [22, 4300, 'L'], [29, 4330, 'H'], [37, 4272, 'L']], 35),
+      ov: [
+        { k: 'swing', i: 14, side: 'H', text: 'LH', color: C.bear, g: 'sol' },
+        { k: 'swing', i: 22, side: 'L', text: 'LL', color: C.bear, g: 'sol' },
+        { k: 'swing', i: 29, side: 'H', text: 'LH', color: C.bear, g: 'sol' },
+        { k: 'swing', i: 37, side: 'L', text: 'LL', color: C.bear, g: 'sol' },
+        { k: 'zig', pts: [[0, 'H'], [8, 'L'], [14, 'H'], [22, 'L'], [29, 'H'], [37, 'L']], color: C.bear, g: 'sol' }
+      ]
+    },
+    type: 'choice', opts: ['Alcista', 'Bajista', 'Rango'], ok: 1,
+    why: 'Cada rebote se queda por debajo del máximo anterior (<b>LH</b>) y cada caída marca un mínimo inferior (<b>LL</b>). Eso es estructura bajista. Fíjate en que hay tramos verdes largos: el color de las velas no decide nada.'
+  },
+  {
+    q: 'Haz clic sobre el último mínimo creciente (HL)',
+    hint: 'Es el último valle que quedó por encima del valle anterior. Pincha sobre esa vela del gráfico.',
+    chart: {
+      title: 'Ejercicio 2', tf: 'XAUUSD · H1',
+      candles: S([[0, 4280, 'L'], [7, 4330, 'H'], [13, 4306, 'L'], [21, 4368, 'H'], [28, 4340, 'L'], [36, 4404, 'H']], 26),
+      ov: [
+        { k: 'swing', i: 13, side: 'L', text: 'HL', color: C.bull, g: 'sol' },
+        { k: 'swing', i: 21, side: 'H', text: 'HH', color: C.bull, g: 'sol' },
+        { k: 'swing', i: 28, side: 'L', text: 'último HL', color: C.gold, g: 'sol' },
+        { k: 'swing', i: 36, side: 'H', text: 'HH', color: C.bull, g: 'sol' }
+      ]
+    },
+    type: 'click', target: { i: 28, tol: 3 },
+    why: 'El último HL está en 4340. Es el nivel que decide si la estructura alcista sigue viva: mientras el precio no cierre por debajo, la lectura alcista se mantiene. Por eso es el único mínimo que necesitas tener marcado.'
+  },
+  {
+    q: '¿Esto es una ruptura real o un barrido?',
+    hint: 'Mira cuántas velas aguantaron por encima del nivel y con qué velocidad volvió el precio.',
+    chart: {
+      title: 'Ejercicio 3', tf: 'XAUUSD · M15',
+      candles: S([[0, 4300, 'L'], [7, 4344, 'H'], [14, 4320, 'L'], [21, 4345, 'H'], [28, 4324, 'L'], [34, 4366, 'H'], [38, 4330], [46, 4292, 'L']], 41),
+      ov: [
+        { k: 'zone', p1: 4341, p2: 4348, color: C.liq, label: 'EQH', g: 'sol' },
+        { k: 'mark', i: 34, side: 'H', text: 'una sola vela fuera, mecha larga', color: C.warn, g: 'sol', dx: -40 },
+        { k: 'note', i: 40, side: 'L', text: 'cierra otra vez dentro', color: C.bear, off: 24, g: 'sol' }
+      ]
+    },
+    type: 'choice', opts: ['Ruptura real, el precio ha aceptado precios superiores', 'Barrido: visitó el nivel y volvió dentro', 'No hay nivel relevante aquí'], ok: 1,
+    why: 'Solo una vela cerró por encima, con mecha superior larga, y en tres velas el precio ya estaba de nuevo dentro del rango. No hubo aceptación: fue a buscar la liquidez de los máximos iguales. <b>Quedaría invalidado si</b> el precio recuperase la zona y cerrase por encima varias velas.'
+  },
+  {
+    q: '¿Dónde está la liquidez más evidente?',
+    hint: 'Pregúntate dónde pondría el stop la mayoría de participantes.',
+    chart: {
+      title: 'Ejercicio 4', tf: 'XAUUSD · M15',
+      candles: S([[0, 4288, 'L'], [7, 4342, 'H'], [13, 4314, 'L'], [20, 4343, 'H'], [26, 4318, 'L'], [33, 4344, 'H'], [39, 4322, 'L']], 33),
+      ov: [
+        { k: 'zone', p1: 4339, p2: 4347, color: C.liq, label: 'EQH', g: 'sol' },
+        { k: 'stops', p: 4350, from: 8, to: 33, n: 6, color: C.liq, text: 'aquí', g: 'sol' }
+      ]
+    },
+    type: 'choice', opts: ['Justo por encima de los tres máximos casi iguales', 'En el centro del movimiento', 'Por debajo del primer mínimo', 'No hay liquidez identificable'], ok: 0,
+    why: 'Tres máximos a la misma altura son el tipo de techo que todo el mundo ve. Quien vendió ahí tiene el stop justo encima y quien espera la ruptura tiene ahí su compra. <b>No</b> significa que el precio vaya a ir a buscarla: significa que si sube, ese es el imán más probable.'
+  },
+  {
+    q: 'Marca la resistencia: haz clic a la altura del nivel',
+    hint: 'Pincha en el gráfico a la altura donde el precio ha sido rechazado varias veces.',
+    chart: {
+      title: 'Ejercicio 5', tf: 'XAUUSD · M15',
+      candles: S([[0, 4296, 'L'], [6, 4345, 'H'], [12, 4316, 'L'], [18, 4347, 'H'], [24, 4320, 'L'], [30, 4344, 'H'], [37, 4300, 'L']], 5),
+      ov: [
+        { k: 'zone', p1: 4338, p2: 4351, color: C.bear, label: 'resistencia', g: 'sol' },
+        { k: 'note', i: 30, side: 'H', text: 'tercer rechazo', color: C.bear, off: 20, g: 'sol' }
+      ]
+    },
+    type: 'click', target: { p: 4345, tol: 11 },
+    why: 'La resistencia está en torno a 4345, y conviene tratarla como <b>zona</b> (aproximadamente 4338–4351) porque las tres reacciones no ocurrieron en el mismo precio exacto. Una línea fina te habría hecho pensar que el nivel “falló”.'
+  },
+  {
+    q: '¿Dónde ocurrió el BOS?',
+    hint: 'Busca la vela que cierra por encima del máximo anterior. Haz clic sobre ella.',
+    chart: {
+      title: 'Ejercicio 6', tf: 'XAUUSD · M15',
+      candles: S([[0, 4282, 'L'], [7, 4332, 'H'], [13, 4310, 'L'], [22, 4374, 'H'], [28, 4348, 'L'], [38, 4410, 'H']], 26),
+      ov: [
+        { k: 'level', p: 4374, color: C.bull, dash: '5 4', label: 'máximo previo', g: 'sol' },
+        { k: 'mark', i: 33, side: 'L', text: 'BOS', color: C.bull, g: 'sol' },
+        { k: 'swing', i: 28, side: 'L', text: 'HL', color: C.bull, g: 'sol' }
+      ]
+    },
+    type: 'click', target: { i: 33, tol: 3 },
+    why: 'El BOS ocurre cuando el precio <b>cierra</b> por encima del máximo anterior (4374), no cuando lo toca con una mecha. Es una rotura a favor de la estructura: confirma que la secuencia alcista continúa. No es, por sí sola, una razón para entrar.'
+  },
+  {
+    q: '¿Dónde está el Fair Value Gap?',
+    hint: 'Busca tres velas donde el mínimo de la tercera quede por encima del máximo de la primera. Haz clic sobre la vela central.',
+    chart: {
+      title: 'Ejercicio 7', tf: 'XAUUSD · M5', h: 320,
+      candles: X([[4298, 4306, 4294, 4302], [4302, 4310, 4300, 4307], [4307, 4314, 4304, 4312], [4313, 4358, 4311, 4354], [4354, 4364, 4330, 4360], [4360, 4366, 4350, 4354], [4354, 4358, 4342, 4346], [4346, 4352, 4338, 4350]]),
+      ov: [
+        { k: 'fvg', p1: 4314, p2: 4330, from: 2, to: 7, color: C.info, label: 'FVG 4314 – 4330', g: 'sol' },
+        { k: 'note', i: 3, side: 'H', text: 'vela de desplazamiento', color: C.gold, off: 16, g: 'sol' }
+      ]
+    },
+    type: 'click', target: { i: 3, tol: 1 },
+    why: 'El máximo de la vela 3 (4314) queda por debajo del mínimo de la vela 5 (4330): ese hueco es el FVG. Recuerda: es una zona de interés <b>si</b> el precio vuelve, no una predicción de que volverá.'
+  },
+  {
+    q: 'Acaba de producirse un barrido y un cambio de estructura. ¿Qué harías a continuación?',
+    hint: 'No hay trampa: la respuesta correcta es la que describe un proceso, no una acción inmediata.',
+    chart: {
+      title: 'Ejercicio 8', tf: 'XAUUSD · M15',
+      candles: S([[0, 4300, 'L'], [8, 4348, 'H'], [15, 4330, 'L'], [22, 4350, 'H'], [27, 4334, 'L'], [32, 4370, 'H'], [37, 4336], [44, 4310, 'L']], 61, { noise: .12 }),
+      ov: [
+        { k: 'zone', p1: 4344, p2: 4353, color: C.liq, label: 'EQH barridos', g: 'sol' },
+        { k: 'level', p: 4334, color: C.bear, dash: '4 4', label: 'nivel roto', g: 'sol' },
+        { k: 'mark', i: 32, side: 'H', text: 'barrido', color: C.warn, g: 'sol' },
+        { k: 'mark', i: 41, side: 'L', text: 'CHoCH', color: C.bear, g: 'sol' },
+        { k: 'note', i: 44, side: 'L', text: '¿vuelve al nivel roto?', color: C.gold, off: 24, g: 'sol', dx: -20 }
+      ]
+    },
+    type: 'choice', opts: [
+      'Vender de inmediato: barrido más cambio de estructura es señal suficiente',
+      'Observar si el precio vuelve al nivel roto y qué reacción deja ahí',
+      'Bajar a M1 para encontrar una entrada más ajustada cuanto antes',
+      'Buscar un patrón armónico que confirme el giro'
+    ], ok: 1,
+    why: 'Tienes dos evidencias (barrido + cambio de estructura) y falta la tercera: la <b>reacción</b>. El retest del nivel roto es donde el escenario se confirma o se cae. Bajar de marco temporal para “entrar antes” no añade evidencia: añade ruido.'
+  },
+  {
+    q: 'Acaba de romperse el último mínimo creciente de una tendencia alcista. ¿Qué estructura hay ahora?',
+    hint: 'Piensa en la diferencia entre “se ha roto algo” y “se ha construido algo nuevo”.',
+    chart: {
+      title: 'Ejercicio 9', tf: 'XAUUSD · H1',
+      candles: S([[0, 4282, 'L'], [7, 4336, 'H'], [13, 4312, 'L'], [21, 4378, 'H'], [27, 4352, 'L'], [32, 4372, 'H'], [41, 4326, 'L']], 19),
+      ov: [
+        { k: 'swing', i: 27, side: 'L', text: 'último HL', color: C.bull, g: 'sol' },
+        { k: 'level', p: 4352, color: C.warn, dash: '5 4', label: 'roto', g: 'sol' },
+        { k: 'mark', i: 37, side: 'L', text: 'CHoCH', color: C.bear, g: 'sol' },
+        { k: 'note', i: 41, side: 'L', text: 'todavía no hay LH ni LL', color: C.gold, off: 24, g: 'sol', dx: -20 }
+      ]
+    },
+    type: 'choice', opts: ['Bajista confirmada', 'Alcista, sigue siendo un simple retroceso', 'En transición: la alcista ha dejado de cumplirse y la bajista aún no existe'], ok: 2,
+    why: 'Se ha roto la condición que sostenía la lectura alcista, pero todavía no hay un máximo decreciente ni un mínimo decreciente nuevos. Es el hueco de incertidumbre entre “Cambio” y “Ahora”. Reconocerlo —y aceptar que ahí no hay nada claro que hacer— es una de las habilidades más rentables.'
+  }
+];
+
+function practiceBlock() {
+  const host = el('<div></div>');
+  let i = 0, score = 0, done = 0, locked = false;
+
+  function draw() {
+    host.innerHTML = ''; locked = false;
+    const ex = EX[i];
+    const node = el(`<div class="quiz">
+      <div class="quiz-top"><span class="q">Ejercicio ${i + 1} de ${EX.length}</span><span style="flex:1"></span><div class="score">Aciertos <b>${score}</b> de ${done}</div></div>
+      <div class="quiz-q">${ex.q}</div>
+      <div class="quiz-hint">${ex.hint}</div>
+      <div class="qchart"></div>
+      <div class="opts"></div>
+      <div class="quiz-sol" style="display:none"></div>
+      <div class="quiz-act"></div>
+    </div>`);
+    const chart = mkChart(Object.assign({}, ex.chart, {
+      onPick: (pt) => { if (ex.type === 'click' && !locked) judgeClick(pt); }
+    }));
+    chart.offAll(['sol']);
+    node.querySelector('.qchart').appendChild(chart.node);
+    const opts = node.querySelector('.opts'), sol = node.querySelector('.quiz-sol'), act = node.querySelector('.quiz-act');
+
+    if (ex.type === 'choice') {
+      ex.opts.forEach((o, k) => {
+        const b = el(`<button><span class="k">${String.fromCharCode(65 + k)}</span><span>${o}</span></button>`);
+        b.addEventListener('click', () => {
+          if (locked) return; locked = true;
+          const good = k === ex.ok; done++; if (good) score++;
+          [...opts.children].forEach((c, ci) => { c.disabled = true; if (ci === ex.ok) c.classList.add('ok'); else if (ci === k) c.classList.add('ko'); });
+          reveal(good ? 'Correcto.' : 'No exactamente.');
+        });
+        opts.appendChild(b);
+      });
+    } else {
+      opts.appendChild(el(`<div class="mut" style="font-size:13.4px;padding:2px 0">Haz clic directamente sobre el gráfico.</div>`));
+    }
+
+    function judgeClick(pt) {
+      locked = true; done++;
+      let good = false;
+      if (ex.target.i != null) good = Math.abs(pt.i - ex.target.i) <= ex.target.tol;
+      else good = Math.abs(pt.p - ex.target.p) <= ex.target.tol;
+      if (good) score++;
+      reveal(good ? 'Buen ojo.' : 'Ahí no era.');
+    }
+
+    function reveal(verdict) {
+      chart.on('sol');
+      sol.style.display = 'block';
+      sol.innerHTML = `<div class="solbox"><b>${verdict}</b> ${ex.why}</div>`;
+      node.querySelector('.score').innerHTML = `Aciertos <b>${score}</b> de ${done}`;
+      act.innerHTML = '';
+      if (i < EX.length - 1) { const b = el('<button class="btn">Siguiente ejercicio →</button>'); b.addEventListener('click', () => { i++; draw(); }); act.appendChild(b); }
+      else {
+        const b = el('<button class="btn plain">Empezar de nuevo</button>');
+        b.addEventListener('click', () => { i = 0; score = 0; done = 0; draw(); });
+        act.appendChild(el(`<div class="solbox" style="border-left-color:var(--bull);width:100%">Has terminado los nueve ejercicios con <b>${score} de ${done}</b>. Lo importante no es el marcador, sino si has sabido <b>explicar por qué</b> en cada uno.</div>`));
+        act.appendChild(b);
+      }
+      act.appendChild(el('<span style="flex:1"></span>'));
+    }
+    host.appendChild(node);
+    if (ex.type === 'click') { const s = el('<div></div>'); }
+  }
+  draw();
+  return host;
+}
+
+chapter({
+  id: 'practica', grp: 'Practicar', n: '★', nav: 'Entrena tu ojo', t: 'Entrena tu ojo',
+  lede: 'Nueve gráficos sin anotaciones. Responde primero, y solo después mira la solución. Equivocarse aquí es exactamente para lo que sirve esta pantalla.',
+  build: () => build([
+    { k: 'note', t2: 'key', t: `Antes de responder, obliga a tu cabeza a decir la frase completa: <i>“veo tal cosa, por tanto esto indica tal otra, y lo confirmaría o invalidaría tal”</i>. Si no te sale la frase, todavía no tienes la respuesta —aunque aciertes el botón.` },
+    practiceBlock()
+  ])
+});
+
+/* ---------------- CHECKLIST ---------------- */
+const CKD = [
+  { t: 'Contexto', s: '¿Dónde estamos en H4 y H1?', q: ['¿La estructura mayor es alcista, bajista o un rango?', '¿El precio está en el medio de nada o cerca de un extremo?', '¿Hay algún dato macro importante en las próximas horas?'], bad: 'Si el contexto no está claro, no hay prisa: no todos los días hay algo que leer.' },
+  { t: 'Estructura', s: '¿HH/HL o LH/LL? ¿Tendencia o rango?', q: ['¿Cuál es el último HL (o LH) que sostiene la estructura?', '¿Ese nivel está cerca o lejos del precio actual?', '¿La estructura de H1 coincide con la de H4?'], bad: 'Si H1 y H4 se contradicen, estás en una transición: reduce expectativas.' },
+  { t: 'Nivel', s: '¿Hay soporte, resistencia o extremo relevante?', q: ['¿El precio está llegando a una zona con historial, o flotando?', '¿Coincide con PDH/PDL, extremo de sesión o cifra redonda?', '¿La zona viene de H1/H4 o solo de M5?'], bad: 'Un nivel que solo existe en M5 no justifica ninguna decisión.' },
+  { t: 'Liquidez', s: '¿Qué extremos pueden atraer al precio?', q: ['¿Hay máximos o mínimos iguales sin barrer?', '¿Dónde estarían los stops de la mayoría?', '¿El precio se dirige hacia esa liquidez o se aleja de ella?'], bad: 'Si estás pensando en comprar justo debajo de una liquidez evidente, piénsalo dos veces.' },
+  { t: 'Evento', s: '¿Ruptura, barrido, rechazo o desplazamiento?', q: ['¿El precio ha cerrado fuera del nivel o solo lo ha tocado con mecha?', '¿Cuántas velas ha aguantado fuera?', '¿El movimiento tiene cuerpos grandes o son velas solapadas?'], bad: 'Romper no es confirmar. Si no ha habido aceptación, no ha pasado nada.' },
+  { t: 'Cambio', s: '¿Ha cambiado la estructura?', q: ['¿Se ha roto el último HL o LH con un cierre?', '¿La rotura vino con desplazamiento o arrastrándose?', '¿Ocurrió después de barrer liquidez o en mitad de la nada?'], bad: 'Un CHoCH sin contexto ni desplazamiento es ruido con nombre bonito.' },
+  { t: 'Reacción', s: '¿Hay retest o rechazo?', q: ['¿El precio ha vuelto al nivel roto?', '¿Lo ha respetado o lo ha atravesado con cuerpo?', '¿Qué tipo de vela ha dejado justo ahí?'], bad: 'Sin reacción solo tienes una hipótesis, por bonita que sea.' },
+  { t: 'Confirmación', s: '¿Qué muestra el timeframe inferior?', q: ['¿M5 confirma lo que dice M15, o lo contradice?', '¿Qué tendría que ocurrir para que esta lectura fuese errónea?', '¿Sabría explicarle a alguien mi lectura en una frase?'], bad: 'Si no sabes qué invalidaría tu lectura, la lectura no está terminada.' }
+];
+
+chapter({
+  id: 'checklist', grp: 'Practicar', n: '✓', nav: '¿Cómo leo un gráfico?', t: '¿Cómo leo un gráfico?',
+  lede: 'Ocho preguntas, siempre en el mismo orden, siempre de mayor a menor. Esta es la pantalla para tener abierta mientras miras XAUUSD en vivo: pulsa “Checklist” arriba a la derecha para dejarla flotando.',
+  build: () => {
+    const wrap = el(`<div class="ck">${CKD.map((c, i) => `
+      <div class="ck-item" data-i="${i}">
+        <button class="ck-head">
+          <span class="ck-box"><svg width="11" height="9" viewBox="0 0 11 9"><path d="M1 4.6 4 7.5 10 1.3" stroke="#06170F" stroke-width="2" fill="none" stroke-linecap="round"/></svg></span>
+          <span class="ck-n">${i + 1}</span>
+          <span class="ck-t">${c.t}<span>${c.s}</span></span>
+          <span class="ck-caret">›</span>
+        </button>
+        <div class="ck-body"><ul style="margin:0;padding-left:18px">${c.q.map(q => `<li>${q}</li>`).join('')}</ul>
+        <p style="margin:9px 0 0;font-size:13px" class="bad">${c.bad}</p></div>
+      </div>`).join('')}</div>`);
+    wrap.querySelectorAll('.ck-item').forEach(it => {
+      const head = it.querySelector('.ck-head');
+      head.addEventListener('click', e => {
+        if (e.offsetX < 34 && e.target.closest('.ck-box')) return;
+        it.classList.toggle('open');
+      });
+      it.querySelector('.ck-box').addEventListener('click', e => { e.stopPropagation(); it.classList.toggle('on'); saveCk(); });
+    });
+    function saveCk() { try { localStorage.setItem('xau_ck', JSON.stringify([...wrap.querySelectorAll('.ck-item')].map(n => n.classList.contains('on')))); } catch (e) { } }
+    try { const v = JSON.parse(localStorage.getItem('xau_ck') || '[]'); wrap.querySelectorAll('.ck-item').forEach((n, i) => { if (v[i]) n.classList.add('on'); }); } catch (e) { }
+
+    return build([
+      wrap,
+      { k: 'raw', t: '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 10px"><button class="btn plain" id="ckReset">Desmarcar todo</button><button class="btn" id="ckFloat">Abrir como panel flotante</button></div>' },
+      { k: 'h', t: 'El resumen en una línea', d: 'Si tuvieras que reducir todo el curso a una frase, sería esta.' },
+      {
+        k: 'raw', t: `<div class="hero-mantra" style="margin-top:6px">
+        <div style="--c:#4CC2E0"><div class="l">01</div><div class="v">Contexto</div></div>
+        <div style="--c:#2BBF7B"><div class="l">02</div><div class="v">Estructura</div></div>
+        <div style="--c:#E8B44A"><div class="l">03</div><div class="v">Nivel</div></div>
+        <div style="--c:#8B7BF0"><div class="l">04</div><div class="v">Liquidez</div></div>
+        <div style="--c:#F0983C"><div class="l">05</div><div class="v">Reacción</div></div>
+        <div style="--c:#E5484D"><div class="l">06</div><div class="v">Confirmación</div></div></div>` },
+      { k: 'note', t2: 'no', t: `<p style="margin:0">Y nunca al revés. En el momento en que empieces por “veo un martillo” y vayas hacia atrás buscando qué lo justifica, habrás dejado de leer el gráfico para empezar a defender una idea que ya tenías.</p>` },
+      { k: 'note', t2: 'warn', t: `<b>Recordatorio final.</b> Todo lo de este curso describe comportamiento del precio, no lo predice. Ninguna estructura, barrido, figura o confluencia garantiza nada; el propio mercado puede invalidar cualquier lectura en una vela. Esto es material educativo, no asesoramiento financiero ni una recomendación de inversión.` }
+    ]);
+  }
+});
+
+/* ---------------- APP ---------------- */
+const view = $('#view'), nav = $('#nav'), crumb = $('#crumb');
+const visited = new Set();
+try { (JSON.parse(localStorage.getItem('xau_seen') || '[]')).forEach(x => visited.add(x)); } catch (e) { }
+
+(function buildNav() {
+  let last = '';
+  CH.forEach((c, i) => {
+    if (c.grp !== last) { nav.appendChild(el(`<div class="grp">${c.grp}</div>`)); last = c.grp; }
+    nav.appendChild(el(`<a href="#/${c.id}" data-id="${c.id}"><span class="n">${c.n}</span><span>${c.nav}</span></a>`));
+  });
+})();
+
+function syncNav(id) {
+  $$('.nav a').forEach(a => {
+    a.classList.toggle('on', a.dataset.id === id);
+    a.classList.toggle('done', visited.has(a.dataset.id));
+  });
+  const pct = Math.round(visited.size / CH.length * 100);
+  $('#progBar').style.width = pct + '%';
+  $('#progTxt').textContent = visited.size + ' / ' + CH.length;
+}
+
+function go(id, push) {
+  const idx = Math.max(0, CH.findIndex(c => c.id === id));
+  const c = CH[idx];
+  visited.add(c.id);
+  try { localStorage.setItem('xau_seen', JSON.stringify([...visited])); } catch (e) { }
+  REG.length = 0;
+  view.innerHTML = '';
+  view.appendChild(el(`<div class="chead"><div class="kick"><i></i>${c.grp} · ${c.n === '★' || c.n === '✓' ? c.nav : 'Capítulo ' + c.n}</div><h2>${c.t}</h2><p class="lede">${c.lede}</p></div>`));
+  view.appendChild(c.build());
+  const foot = el('<div class="chapfoot"></div>');
+  if (idx > 0) { const b = el(`<button><small>← Anterior</small><b>${CH[idx - 1].nav}</b></button>`); b.addEventListener('click', () => location.hash = '#/' + CH[idx - 1].id); foot.appendChild(b); } else foot.appendChild(el('<span></span>'));
+  if (idx < CH.length - 1) { const b = el(`<button><small>Siguiente →</small><b>${CH[idx + 1].nav}</b></button>`); b.addEventListener('click', () => location.hash = '#/' + CH[idx + 1].id); foot.appendChild(b); }
+  view.appendChild(foot);
+  crumb.innerHTML = `<b>${c.grp}</b> / ${c.nav}`;
+  syncNav(c.id);
+  document.body.classList.remove('menu');
+  try { scrollTo(0, 0); } catch (e) { }
+}
+
+addEventListener('hashchange', () => go((location.hash.replace('#/', '') || CH[0].id)));
+$('#burger').addEventListener('click', () => document.body.classList.toggle('menu'));
+$('.scrim').addEventListener('click', () => document.body.classList.remove('menu'));
+$('#nav').addEventListener('click', e => { if (e.target.closest('a')) document.body.classList.remove('menu'); });
+
+/* panel flotante */
+const pf = $('#pfloat');
+pf.innerHTML = `<div class="pf-h"><b>¿Cómo leo un gráfico?</b><button class="ghost" id="pfClose" style="padding:3px 9px">Cerrar</button></div>
+<ol>${CKD.map(c => `<li><b>${c.t}</b>${c.s}</li>`).join('')}</ol>`;
+$('#pfClose').addEventListener('click', () => pf.classList.remove('on'));
+$('#pinBtn').addEventListener('click', () => pf.classList.toggle('on'));
+document.addEventListener('click', e => {
+  if (e.target.id === 'ckFloat') pf.classList.add('on');
+  if (e.target.id === 'ckReset') { $$('.ck-item').forEach(n => n.classList.remove('on')); try { localStorage.removeItem('xau_ck'); } catch (err) { } }
+});
+
+go(location.hash.replace('#/', '') || CH[0].id);
+</script>
+</body>
+</html>
