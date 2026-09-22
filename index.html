@@ -216,6 +216,11 @@ h4.min{font-size:15.5px;font-family:var(--ff-d);margin:0 0 6px}
 .note.no{border-left-color:var(--bear)}
 .note.no b{color:var(--bear)}
 .note p:last-child{margin-bottom:0}
+.scalp-panel{margin:22px 0 8px;border:1px solid var(--gold-dim);border-radius:var(--r-l);background:var(--panel);overflow:hidden}
+.scalp-panel-h{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line);background:rgba(232,180,74,.05)}
+.scalp-panel-h b{font-family:var(--ff-d);font-size:14px;color:var(--gold)}
+.scalp-panel-h span{font-family:var(--ff-m);font-size:10.5px;color:var(--tx-3);text-transform:uppercase;letter-spacing:.08em}
+.scalp-panel iframe{display:block;width:100%;height:900px;border:0;background:var(--bg)}
 
 .term{border-bottom:1px dotted var(--tx-3);cursor:help;position:relative;color:var(--tx)}
 .term:hover::after,.term:focus::after{
@@ -4925,6 +4930,19 @@ chapter({
       { k: 'bot', items: [{ c: '/ahora · /contexto · /escenario', d: 'los tres comandos que reproducen este recorrido sobre el precio real.' }, { c: '/analisis · /panel', d: 'las capas de indicadores y su interpretación manual.' }] }
     ]);
   }
+});
+
+/* ---------------- ENTRENADOR DE SCALPING ---------------- */
+chapter({
+  id: 'scalping', grp: '10 · Simulación', n: '28', nav: 'Entrenador scalping', t: 'Entrenador de scalping · Oro (XAUUSD)',
+  lede: 'Practica decisiones rápidas sobre velas y medias móviles. Decide qué harías en el punto marcado y descubre qué ocurrió después, con una explicación didáctica en cada ronda.',
+  build: () => build([
+    { k: 'raw', t: `<div class="scalp-panel">
+      <div class="scalp-panel-h"><b>Entrenador interactivo</b><span>Datos simulados · práctica visual</span></div>
+      <iframe src="./entrenador-scalping-oro.html" title="Entrenador de scalping para XAUUSD" loading="lazy"></iframe>
+    </div>` },
+    { k: 'note', t2: 'warn', t: '<b>Recuerda:</b> las rondas usan datos simulados. El entrenador sirve para practicar la lectura del sesgo, los retrocesos y la disciplina de esperar; no es una señal de trading ni una recomendación de inversión.' }
+  ])
 });
 /* ---------------- APP ---------------- */
 const view = $('#view'), nav = $('#nav'), crumb = $('#crumb');

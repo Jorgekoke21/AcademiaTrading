@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Entrenador de scalping — XAUUSD</title>
+<style>
+  :root{
+    color-scheme: light dark;
+    --bg:#f6f5f0; --card:#ffffff; --text:#1f1f1c; --muted:#6c6b64;
+    --border:#e4e2d9; --border-strong:#d3d1c7;
+    --up:#4f8a1f; --down:#d1433f; --ema9:#e0951f; --ema21:#2f7fd0; --ema200:#8f8d84;
+    --accent:#0f6e56; --accent-bg:#e1f5ee; --danger:#a32d2d; --danger-bg:#fceaea;
+    --radius:10px;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box}
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1e1e1b; --card:#2a2a26; --text:#ece9df; --muted:#a3a199;
+      --border:#3a3a33; --border-strong:#4a4a42;
+      --accent:#3ec9a2; --accent-bg:#0f3d33; --danger:#e8706e; --danger-bg:#3d1c1c;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1e1e1b; --card:#2a2a26; --text:#ece9df; --muted:#a3a199;
+    --border:#3a3a33; --border-strong:#4a4a42;
+    --accent:#3ec9a2; --accent-bg:#0f3d33; --danger:#e8706e; --danger-bg:#3d1c1c;
+  }
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:16px 16px 40px}
+  header{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:4px}
+  h1{font-size:20px; font-weight:600; margin:0}
+  .sub{color:var(--muted); font-size:13.5px; margin:2px 0 14px}
+  .themebtn{background:none; border:1px solid var(--border); color:var(--muted); border-radius:8px; padding:4px 9px; font-size:12px; cursor:pointer}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:14px}
+  .scorerow{display:flex; gap:16px; flex-wrap:wrap; font-size:13.5px; color:var(--muted); margin-bottom:10px}
+  .scorerow b{color:var(--text); font-weight:600}
+  .legend{display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-top:8px}
+  .legend span{display:inline-flex; align-items:center; gap:5px}
+  .swatch{width:16px; height:3px; border-radius:2px; display:inline-block}
+  .chartbox{width:100%; overflow-x:auto}
+  svg{display:block; width:100%; height:auto}
+  .prompt{font-size:15px; font-weight:600; margin:12px 2px 10px}
+  .btns{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px}
+  .btns button{
+    padding:12px 8px; border-radius:var(--radius); border:1px solid var(--border-strong);
+    background:var(--card); color:var(--text); font-size:14px; font-weight:600; cursor:pointer;
+    transition:transform .05s, background .15s;
+  }
+  .btns button:hover:not(:disabled){background:var(--bg)}
+  .btns button:active:not(:disabled){transform:translateY(1px)}
+  .btns button:disabled{opacity:.55; cursor:default}
+  .btns button.buy{border-color:#4f8a1f}
+  .btns button.sell{border-color:#d1433f}
+  .btns button.pick-correct{background:var(--accent-bg); border-color:var(--accent); color:var(--text)}
+  .btns button.pick-wrong{background:var(--danger-bg); border-color:var(--danger); color:var(--text)}
+  .toolrow{display:flex; gap:8px; margin-top:10px}
+  .ghost{background:none; border:1px solid var(--border); color:var(--muted); border-radius:8px; padding:7px 12px; font-size:13px; cursor:pointer}
+  .ghost:hover{border-color:var(--border-strong)}
+  .feedback{margin-top:12px; border-radius:var(--radius); padding:12px 14px; font-size:14px; display:none}
+  .feedback .verdict{font-weight:700; margin-bottom:4px}
+  .feedback.ok{background:var(--accent-bg); border:1px solid var(--accent)}
+  .feedback.no{background:var(--danger-bg); border:1px solid var(--danger)}
+  .hintbox{margin-top:10px; font-size:13.5px; color:var(--muted); background:var(--bg); border:1px dashed var(--border-strong); border-radius:8px; padding:9px 12px; display:none}
+  .next{margin-top:12px; width:100%; padding:12px; border-radius:var(--radius); border:none; background:var(--accent); color:#fff; font-size:15px; font-weight:600; cursor:pointer; display:none}
+  :root[data-theme="dark"] .next, :root:not([data-theme="light"]) .next{color:#0c2a22}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .next{color:#0c2a22}}
+  .help{font-size:13px; color:var(--muted); margin-top:8px}
+  .help summary{cursor:pointer; font-weight:600; color:var(--text)}
+  .help ul{margin:8px 0 0; padding-left:18px}
+  .help li{margin:3px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Entrenador de scalping · Oro (XAUUSD)</h1>
+    <button class="themebtn" id="themebtn">Modo oscuro</button>
+  </header>
+  <p class="sub">Mira las velas y las EMAs. Decide qué harías en el punto marcado. Luego se revela lo que pasó y por qué.</p>
+
+  <div class="card">
+    <div class="scorerow">
+      <span>Aciertos: <b id="hits">0</b>/<b id="total">0</b></span>
+      <span>Racha: <b id="streak">0</b></span>
+      <span>Mejor racha: <b id="best">0</b></span>
+    </div>
+
+    <div class="chartbox">
+      <svg id="chart" viewBox="0 0 720 360" role="img" aria-label="Gráfico de velas con EMAs"></svg>
+    </div>
+    <div class="legend">
+      <span><i class="swatch" style="background:var(--up)"></i>Vela alcista</span>
+      <span><i class="swatch" style="background:var(--down)"></i>Vela bajista</span>
+      <span><i class="swatch" style="background:var(--ema9)"></i>EMA 9</span>
+      <span><i class="swatch" style="background:var(--ema21)"></i>EMA 21</span>
+      <span><i class="swatch" style="background:var(--ema200)"></i>EMA 200 (sesgo)</span>
+    </div>
+
+    <div class="prompt" id="prompt">¿Qué harías en la línea marcada?</div>
+    <div class="btns">
+      <button class="buy" data-a="buy">Comprar</button>
+      <button data-a="wait">Esperar</button>
+      <button class="sell" data-a="sell">Vender</button>
+    </div>
+    <div class="toolrow">
+      <button class="ghost" id="hintbtn">Ver pista</button>
+    </div>
+    <div class="hintbox" id="hintbox"></div>
+
+    <div class="feedback" id="feedback">
+      <div class="verdict" id="verdict"></div>
+      <div id="explain"></div>
+    </div>
+    <button class="next" id="nextbtn">Siguiente ronda ▶</button>
+  </div>
+
+  <details class="help">
+    <summary>Cómo se juega y qué buscar</summary>
+    <ul>
+      <li><b>Compra:</b> el precio está por encima de la EMA 200 (sesgo alcista), hubo un impulso y ahora retrocede tocando la EMA 9/21. Compras barato dentro de la tendencia.</li>
+      <li><b>Venta:</b> lo mismo al revés — precio bajo la EMA 200, impulso bajista, retroceso al alza hacia la EMA 9/21.</li>
+      <li><b>Esperar:</b> EMAs enredadas (rango), precio muy estirado lejos de la EMA 9/21 (no perseguir), o señales que van contra el sesgo de la EMA 200.</li>
+    </ul>
+    <p style="margin-top:8px">Es una herramienta didáctica con datos simulados, no señales reales. Practica el ojo, no busques certezas.</p>
+  </details>
+</div>
+
+<script>
+(function(){
+  // ---------- utilidades ----------
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296;};}
+  function ema(vals, p){const k=2/(p+1); let e=vals[0]; const out=[e]; for(let i=1;i<vals.length;i++){e=vals[i]*k+e*(1-k); out.push(e);} return out;}
+  function slow(vals){let e=vals[0]; const out=[e]; for(let i=1;i<vals.length;i++){e=e+0.028*(vals[i]-e); out.push(e);} return out;}
+
+  function genCloses(segs, rng, start){
+    let c=start; const out=[c];
+    for(const s of segs){ for(let i=0;i<s.len;i++){ c += s.dir*s.step + (rng()-0.5)*s.vol; out.push(c);} }
+    return out;
+  }
+  function toCandles(closes, rng, wick){
+    const cs=[];
+    for(let i=1;i<closes.length;i++){
+      const o=closes[i-1], c=closes[i];
+      const hi=Math.max(o,c)+rng()*wick;
+      const lo=Math.min(o,c)-rng()*wick;
+      cs.push({o,h:hi,l:lo,c});
+    }
+    return cs;
+  }
+
+  // ---------- escenarios ----------
+  var DEFS = [
+    { key:'buy1', answer:'buy', start:2000, wick:0.9,
+      segs:[{dir:1,len:8,step:0.6,vol:1.2},{dir:1,len:6,step:2.2,vol:1.0},{dir:-1,len:5,step:1.4,vol:0.9}],
+      out:[{dir:1,len:8,step:2.0,vol:1.0}],
+      hint:'¿Dónde está el precio respecto a la EMA 200? ¿Acaba de tocar la EMA 9/21 justo después de un impulso al alza?',
+      why:'Sesgo alcista (precio sobre la EMA 200), hubo impulso y el precio retrocedió hasta la EMA 9/21. Es la compra clásica en pullback: entras barato dentro de una tendencia que sube, con el stop bajo el mínimo del retroceso.' },
+
+    { key:'buy2', answer:'buy', start:2000, wick:0.9,
+      segs:[{dir:1,len:10,step:0.9,vol:1.2},{dir:1,len:5,step:2.0,vol:0.8},{dir:-1,len:4,step:1.5,vol:0.8}],
+      out:[{dir:1,len:7,step:1.9,vol:0.9}],
+      hint:'Tendencia sana al alza, precio sobre la EMA 200... y un retroceso corto hacia las EMAs rápidas.',
+      why:'Compra válida: tendencia alcista intacta, precio sobre la EMA 200 y un retroceso limpio hasta la EMA 9/21 antes de continuar. Entrada a favor de la tendencia.' },
+
+    { key:'buy3', answer:'buy', start:2000, wick:0.9,
+      segs:[{dir:1,len:6,step:0.8,vol:1.0},{dir:1,len:7,step:1.8,vol:0.9},{dir:-1,len:4,step:1.2,vol:0.8}],
+      out:[{dir:1,len:7,step:1.7,vol:0.9}],
+      hint:'El precio manda al alza y acaba de coger aire. ¿Dónde está la EMA 9/21 respecto al precio ahora?',
+      why:'Compra en pullback: tras el impulso el precio descansa sobre las EMAs rápidas, con el sesgo alcista de la EMA 200 a favor. Se compra la reanudación, no el impulso.' },
+
+    { key:'buy4', answer:'buy', start:2000, wick:0.9,
+      segs:[{dir:1,len:9,step:0.7,vol:1.1},{dir:1,len:5,step:2.4,vol:0.9},{dir:-1,len:6,step:1.1,vol:0.8}],
+      out:[{dir:1,len:8,step:1.8,vol:0.9}],
+      hint:'El retroceso ha sido algo más profundo. ¿Ha perdido la EMA 200 o sigue por encima?',
+      why:'Compra válida con retroceso más profundo: el precio corrige bastante pero NO pierde la EMA 200, así que el sesgo alcista sigue intacto. Retrocesos hondos dan mejor precio y stop, si la estructura aguanta.' },
+
+    { key:'buy5', answer:'buy', start:2000, wick:0.9,
+      segs:[{dir:1,len:7,step:1.0,vol:1.2},{dir:1,len:6,step:2.0,vol:0.9},{dir:-1,len:3,step:1.6,vol:0.8}],
+      out:[{dir:1,len:6,step:2.1,vol:1.0}],
+      hint:'La tendencia es muy fuerte y el retroceso apenas ha durado. ¿Sigue a favor?',
+      why:'Compra válida con retroceso corto: cuando la tendencia es muy fuerte, el pullback a la EMA 9 es breve. El sesgo sigue arriba; se entra a favor.' },
+
+    { key:'buy6', answer:'buy', start:2000, wick:0.9,
+      segs:[{dir:1,len:11,step:0.6,vol:1.0},{dir:1,len:5,step:1.9,vol:0.8},{dir:-1,len:5,step:1.3,vol:0.9}],
+      out:[{dir:1,len:7,step:1.8,vol:0.9}],
+      hint:'Tendencia alcista ordenada y madura. ¿El precio acaba de volver a las EMAs rápidas?',
+      why:'Compra en pullback dentro de una tendencia alcista establecida. Precio sobre la EMA 200, retroceso a la EMA 9/21 y continuación. Setup a favor de la corriente.' },
+
+    { key:'buy7', answer:'buy', start:2000, wick:0.9,
+      segs:[{dir:1,len:8,step:0.9,vol:1.3},{dir:1,len:4,step:2.6,vol:0.9},{dir:-1,len:4,step:1.4,vol:0.8}],
+      out:[{dir:1,len:9,step:1.7,vol:0.9}],
+      hint:'Impulso casi vertical y luego una pausa. ¿Entrarías en el impulso o esperarías el pullback?',
+      why:'Compra válida: en vez de perseguir el impulso vertical, esperaste el retroceso a la EMA 9/21 con el sesgo alcista a favor. Mejor precio, stop más ajustado.' },
+
+    { key:'buy8', answer:'buy', start:2000, wick:0.9,
+      segs:[{dir:1,len:6,step:0.7,vol:1.0},{dir:1,len:8,step:1.6,vol:0.8},{dir:-1,len:5,step:1.1,vol:0.8}],
+      out:[{dir:1,len:6,step:1.9,vol:0.9}],
+      hint:'Subida lenta y sostenida, precio sobre la EMA 200. ¿Y ese retroceso hacia las medias?',
+      why:'Compra válida en tendencia lenta y sostenida: no hay impulsos violentos, pero la estructura sube y el retroceso a la EMA 9/21 ofrece la entrada a favor.' },
+
+    { key:'buy9', answer:'buy', start:2000, wick:0.9,
+      segs:[{dir:1,len:10,step:0.8,vol:1.1},{dir:1,len:6,step:2.0,vol:0.9},{dir:-1,len:4,step:1.5,vol:0.9}],
+      out:[{dir:1,len:7,step:2.0,vol:1.0}],
+      hint:'Sesgo alcista claro, impulso y retroceso limpio. ¿Qué toca?',
+      why:'Compra en pullback de manual: precio sobre la EMA 200, impulso, retroceso a la EMA 9/21 y reanudación. Se entra a favor de la tendencia con stop bajo el mínimo del retroceso.' },
+
+    { key:'sell1', answer:'sell', start:2000, wick:0.9,
+      segs:[{dir:-1,len:8,step:0.6,vol:1.2},{dir:-1,len:6,step:2.2,vol:1.0},{dir:1,len:5,step:1.4,vol:0.9}],
+      out:[{dir:-1,len:8,step:2.0,vol:1.0}],
+      hint:'Sesgo bajista... ¿el precio acaba de rebotar hacia arriba hasta la EMA 9/21?',
+      why:'Sesgo bajista (precio bajo la EMA 200), impulso a la baja y retroceso al alza hasta la EMA 9/21. Es la venta en pullback: entras caro dentro de una tendencia que baja, con el stop por encima del máximo del retroceso.' },
+
+    { key:'sell2', answer:'sell', start:2000, wick:0.9,
+      segs:[{dir:-1,len:10,step:0.9,vol:1.2},{dir:-1,len:5,step:2.0,vol:0.8},{dir:1,len:4,step:1.5,vol:0.8}],
+      out:[{dir:-1,len:7,step:1.9,vol:0.9}],
+      hint:'Tendencia bajista clara, precio bajo la EMA 200... y un rebote corto hacia las EMAs rápidas.',
+      why:'Venta válida: tendencia bajista intacta, precio bajo la EMA 200 y un rebote hasta la EMA 9/21 antes de seguir cayendo. Entrada a favor de la tendencia.' },
+
+    { key:'sell3', answer:'sell', start:2000, wick:0.9,
+      segs:[{dir:-1,len:6,step:0.8,vol:1.0},{dir:-1,len:7,step:1.8,vol:0.9},{dir:1,len:4,step:1.2,vol:0.8}],
+      out:[{dir:-1,len:7,step:1.7,vol:0.9}],
+      hint:'El precio manda a la baja y acaba de rebotar. ¿Dónde está la EMA 9/21 ahora?',
+      why:'Venta en pullback: tras el impulso bajista el precio rebota hasta las EMAs rápidas, con el sesgo bajista de la EMA 200 a favor. Se vende la reanudación, no el impulso.' },
+
+    { key:'sell4', answer:'sell', start:2000, wick:0.9,
+      segs:[{dir:-1,len:9,step:0.7,vol:1.1},{dir:-1,len:5,step:2.4,vol:0.9},{dir:1,len:6,step:1.1,vol:0.8}],
+      out:[{dir:-1,len:8,step:1.8,vol:0.9}],
+      hint:'El rebote ha sido algo más amplio. ¿Ha recuperado la EMA 200 o sigue por debajo?',
+      why:'Venta válida con rebote más amplio: el precio corrige al alza bastante pero NO recupera la EMA 200, así que el sesgo bajista sigue vigente. Rebotes amplios dan mejor precio de venta.' },
+
+    { key:'sell5', answer:'sell', start:2000, wick:0.9,
+      segs:[{dir:-1,len:7,step:1.0,vol:1.2},{dir:-1,len:6,step:2.0,vol:0.9},{dir:1,len:3,step:1.6,vol:0.8}],
+      out:[{dir:-1,len:6,step:2.1,vol:1.0}],
+      hint:'Caída muy fuerte y el rebote apenas dura. ¿Sigue a favor?',
+      why:'Venta válida con rebote corto: en tendencias bajistas fuertes el rebote a la EMA 9 es breve. El sesgo sigue abajo; se entra a favor.' },
+
+    { key:'sell6', answer:'sell', start:2000, wick:0.9,
+      segs:[{dir:-1,len:11,step:0.6,vol:1.0},{dir:-1,len:5,step:1.9,vol:0.8},{dir:1,len:5,step:1.3,vol:0.9}],
+      out:[{dir:-1,len:7,step:1.8,vol:0.9}],
+      hint:'Tendencia bajista ordenada y madura. ¿El precio acaba de volver a las EMAs rápidas?',
+      why:'Venta en pullback dentro de una tendencia bajista establecida. Precio bajo la EMA 200, rebote a la EMA 9/21 y continuación a la baja. Setup a favor de la corriente.' },
+
+    { key:'sell7', answer:'sell', start:2000, wick:0.9,
+      segs:[{dir:-1,len:8,step:0.9,vol:1.3},{dir:-1,len:4,step:2.6,vol:0.9},{dir:1,len:4,step:1.4,vol:0.8}],
+      out:[{dir:-1,len:9,step:1.7,vol:0.9}],
+      hint:'Caída casi vertical y luego una pausa. ¿Venderías en el impulso o esperarías el rebote?',
+      why:'Venta válida: en vez de perseguir la caída vertical, esperaste el rebote a la EMA 9/21 con el sesgo bajista a favor. Mejor precio, stop más ajustado.' },
+
+    { key:'sell8', answer:'sell', start:2000, wick:0.9,
+      segs:[{dir:-1,len:6,step:0.7,vol:1.0},{dir:-1,len:8,step:1.6,vol:0.8},{dir:1,len:5,step:1.1,vol:0.8}],
+      out:[{dir:-1,len:6,step:1.9,vol:0.9}],
+      hint:'Bajada lenta y sostenida, precio bajo la EMA 200. ¿Y ese rebote hacia las medias?',
+      why:'Venta válida en tendencia lenta y sostenida: sin caídas violentas, pero la estructura baja y el rebote a la EMA 9/21 ofrece la entrada a favor.' },
+
+    { key:'sell9', answer:'sell', start:2000, wick:0.9,
+      segs:[{dir:-1,len:10,step:0.8,vol:1.1},{dir:-1,len:6,step:2.0,vol:0.9},{dir:1,len:4,step:1.5,vol:0.9}],
+      out:[{dir:-1,len:7,step:2.0,vol:1.0}],
+      hint:'Sesgo bajista claro, impulso a la baja y rebote limpio. ¿Qué toca?',
+      why:'Venta en pullback de manual: precio bajo la EMA 200, impulso bajista, rebote a la EMA 9/21 y reanudación. Se entra a favor con stop sobre el máximo del rebote.' },
+
+    { key:'range1', answer:'wait', start:2000, wick:1.1,
+      segs:[{dir:1,len:4,step:1.0,vol:1.6},{dir:-1,len:4,step:1.1,vol:1.6},{dir:1,len:4,step:0.9,vol:1.6},{dir:-1,len:4,step:1.0,vol:1.6},{dir:1,len:3,step:1.0,vol:1.6}],
+      out:[{dir:-1,len:3,step:1.1,vol:1.6},{dir:1,len:3,step:1.0,vol:1.6}],
+      hint:'Fíjate en las EMAs: ¿están ordenadas y separadas, o enredadas y cruzándose?',
+      why:'Las EMAs están enredadas y el precio va de un lado a otro: es un rango. Aquí los cruces dan señales falsas constantes. Lo correcto es esperar a que se defina una tendencia clara.' },
+
+    { key:'range2', answer:'wait', start:2000, wick:1.1,
+      segs:[{dir:-1,len:3,step:1.2,vol:1.7},{dir:1,len:4,step:1.0,vol:1.7},{dir:-1,len:4,step:1.1,vol:1.7},{dir:1,len:4,step:1.0,vol:1.7},{dir:-1,len:4,step:1.0,vol:1.7}],
+      out:[{dir:1,len:3,step:1.1,vol:1.7},{dir:-1,len:3,step:1.0,vol:1.7}],
+      hint:'El precio no llega a ningún sitio. ¿Ves una tendencia o un vaivén?',
+      why:'Rango: el precio oscila sin dirección y las EMAs se cruzan una y otra vez. No hay sesgo. Operar cruces aquí es regalar dinero al spread. Toca esperar.' },
+
+    { key:'range3', answer:'wait', start:2000, wick:1.0,
+      segs:[{dir:1,len:5,step:0.8,vol:1.5},{dir:-1,len:5,step:0.9,vol:1.5},{dir:1,len:5,step:0.8,vol:1.5},{dir:-1,len:4,step:0.9,vol:1.5}],
+      out:[{dir:1,len:4,step:0.9,vol:1.5},{dir:-1,len:4,step:0.8,vol:1.5}],
+      hint:'Movimiento lateral con olas suaves. ¿Están las medias planas y pegadas?',
+      why:'Rango lateral: medias planas y pegadas, precio subiendo y bajando en el mismo carril. Sin tendencia definida no hay entrada de calidad. Esperar.' },
+
+    { key:'range4', answer:'wait', start:2000, wick:1.1,
+      segs:[{dir:-1,len:4,step:1.0,vol:1.8},{dir:1,len:5,step:0.9,vol:1.8},{dir:-1,len:4,step:1.0,vol:1.8},{dir:1,len:4,step:0.9,vol:1.8},{dir:-1,len:3,step:1.0,vol:1.8}],
+      out:[{dir:1,len:4,step:1.0,vol:1.8}],
+      hint:'Mucha mecha y poco avance neto. ¿Confiarías en un cruce aquí?',
+      why:'Rango con mucho ruido: velas con mechas largas y sin progreso neto. Los cruces de EMAs se dan constantemente y fallan. La jugada disciplinada es esperar fuera.' },
+
+    { key:'chase1', answer:'wait', start:2000, wick:0.9,
+      segs:[{dir:1,len:6,step:0.5,vol:0.8},{dir:1,len:12,step:2.4,vol:0.8}],
+      out:[{dir:-1,len:8,step:2.1,vol:1.0}],
+      hint:'¿Cuánto ha subido de golpe? ¿Qué tan lejos está el precio de la EMA 9/21?',
+      why:'El impulso ya está muy extendido y el precio está lejísimos de la EMA 9/21. Entrar aquí es perseguir el precio: llegas tarde, justo antes del retroceso (mira lo que pasa después). Lo correcto es esperar el pullback.' },
+
+    { key:'chase2', answer:'wait', start:2000, wick:0.9,
+      segs:[{dir:-1,len:6,step:0.5,vol:0.8},{dir:-1,len:12,step:2.4,vol:0.8}],
+      out:[{dir:1,len:8,step:2.1,vol:1.0}],
+      hint:'Caída larga y sin pausa. ¿Vender aquí no es llegar tarde?',
+      why:'Caída ya muy extendida: el precio está estiradísimo por debajo de la EMA 9/21. Vender ahora es perseguir; el rebote suele estar cerca (mira el resultado). Se espera el pullback al alza para vender con ventaja.' },
+
+    { key:'chase3', answer:'wait', start:2000, wick:0.9,
+      segs:[{dir:1,len:5,step:0.6,vol:0.9},{dir:1,len:14,step:2.2,vol:0.8}],
+      out:[{dir:-1,len:9,step:2.0,vol:1.0}],
+      hint:'Impulso larguísimo sin descanso. ¿Queda recorrido o toca corrección?',
+      why:'Impulso agotado: subida muy larga sin retroceso, precio disparado sobre las medias. Comprar aquí es comprar caro justo antes de la corrección. Disciplina: esperar el pullback.' },
+
+    { key:'trap1', answer:'wait', start:2000, wick:1.0,
+      segs:[{dir:-1,len:11,step:1.4,vol:1.0},{dir:1,len:6,step:1.7,vol:0.9}],
+      out:[{dir:-1,len:9,step:1.9,vol:1.0}],
+      hint:'El cruce parece de compra... pero mira dónde está el precio respecto a la EMA 200.',
+      why:'Trampa contra-tendencia: hubo un cruce alcista de la EMA 9 sobre la 21, pero el precio sigue por debajo de la EMA 200 (sesgo bajista). Con este sistema solo compras si el precio está sobre la EMA 200. Comprar aquí es ir contra la corriente.' },
+
+    { key:'trap2', answer:'wait', start:2000, wick:1.0,
+      segs:[{dir:1,len:11,step:1.4,vol:1.0},{dir:-1,len:6,step:1.7,vol:0.9}],
+      out:[{dir:1,len:9,step:1.9,vol:1.0}],
+      hint:'El cruce parece de venta... pero ¿dónde está el precio respecto a la EMA 200?',
+      why:'Trampa contra-tendencia: la EMA 9 cruzó por debajo de la 21, pero el precio sigue por encima de la EMA 200 (sesgo alcista). Solo se vende bajo la EMA 200. Vender aquí es pelearse con la tendencia dominante.' },
+
+    { key:'trap3', answer:'wait', start:2000, wick:1.0,
+      segs:[{dir:-1,len:13,step:1.3,vol:1.0},{dir:1,len:7,step:1.5,vol:0.9}],
+      out:[{dir:-1,len:10,step:1.8,vol:1.0}],
+      hint:'Un rebote fuerte tras una gran caída. ¿Es cambio de tendencia o solo un respiro?',
+      why:'Rebote técnico dentro de una tendencia bajista: el cruce alcista tienta, pero el precio no ha recuperado la EMA 200. Es un respiro, no un giro. Comprar contra el sesgo suele acabar mal; mejor esperar.' }
+  ];
+
+  // ---------- estado ----------
+  var order=[], op=0, sessionSeed=(Math.random()*1e9)|0;
+  var hits=0, total=0, streak=0, best=0;
+  try{ best=parseInt(localStorage.getItem('sc_best')||'0',10)||0; }catch(e){}
+
+  var cur=null; // escenario construido
+  var answered=false;
+
+  function shuffle(arr, rng){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(rng()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]];} return arr; }
+
+  function buildScenario(def, seed){
+    var rng=mulberry32(seed);
+    var contextSegs=def.segs;
+    var allSegs=def.segs.concat(def.out);
+    var closes=genCloses(allSegs, rng, def.start);
+    var candles=toCandles(closes, rng, def.wick);
+    // nº de velas de contexto (hasta el punto de decisión)
+    var ctx=0; contextSegs.forEach(function(s){ctx+=s.len;});
+    var cl=candles.map(function(c){return c.c;});
+    return {
+      def:def, candles:candles, decision:ctx,
+      e9:ema(cl,9), e21:ema(cl,21), e200:slow(cl)
+    };
+  }
+
+  // ---------- dibujo ----------
+  var svg=document.getElementById('chart');
+  var VB={w:720,h:360}, PAD={l:10,r:12,t:16,b:16};
+
+  function el(name, attrs){ var e=document.createElementNS('http://www.w3.org/2000/svg',name); for(var k in attrs){e.setAttribute(k,attrs[k]);} return e; }
+  function cssvar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+  function draw(showAll){
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    var C=cur.candles, n=C.length;
+    var k = showAll ? n : cur.decision; // cuántas velas mostrar
+    var slot=(VB.w-PAD.l-PAD.r)/n;
+    var bodyW=Math.max(2, slot*0.6);
+
+    // rango de precios: velas visibles + EMAs visibles
+    var min=Infinity, max=-Infinity;
+    for(var i=0;i<k;i++){ if(C[i].l<min)min=C[i].l; if(C[i].h>max)max=C[i].h;
+      var vals=[cur.e9[i],cur.e21[i],cur.e200[i]];
+      for(var v=0;v<3;v++){ if(vals[v]<min)min=vals[v]; if(vals[v]>max)max=vals[v]; } }
+    var pad=(max-min)*0.08||1; min-=pad; max+=pad;
+    function Y(p){ return PAD.t + (max-p)/(max-min)*(VB.h-PAD.t-PAD.b); }
+    function X(i){ return PAD.l + slot*i + slot*0.5; }
+
+    var upc=cssvar('--up'), dnc=cssvar('--down');
+
+    // velas
+    for(var i=0;i<k;i++){
+      var c=C[i], x=X(i), up=c.c>=c.o, col=up?upc:dnc;
+      svg.appendChild(el('line',{x1:x,y1:Y(c.h),x2:x,y2:Y(c.l),stroke:col,'stroke-width':1}));
+      var yo=Y(c.o), yc=Y(c.c), top=Math.min(yo,yc), h=Math.max(1.5,Math.abs(yo-yc));
+      svg.appendChild(el('rect',{x:x-bodyW/2,y:top,width:bodyW,height:h,fill:col,rx:1}));
+    }
+
+    // EMAs
+    function line(arr,color,w){
+      var d='';
+      for(var i=0;i<k;i++){ d+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(arr[i]).toFixed(1)+' '; }
+      svg.appendChild(el('path',{d:d,fill:'none',stroke:color,'stroke-width':w,'stroke-linejoin':'round','stroke-linecap':'round',opacity:0.95}));
+    }
+    line(cur.e200, cssvar('--ema200'), 2);
+    line(cur.e21, cssvar('--ema21'), 1.6);
+    line(cur.e9, cssvar('--ema9'), 1.6);
+
+    // línea de decisión
+    var dx=X(cur.decision-0.5>0?cur.decision:0);
+    var dXpos = PAD.l + slot*cur.decision; // borde derecho de la última vela de contexto
+    svg.appendChild(el('line',{x1:dXpos,y1:PAD.t-4,x2:dXpos,y2:VB.h-PAD.b,stroke:cssvar('--muted'),'stroke-width':1,'stroke-dasharray':'4 4',opacity:0.9}));
+    var lbl=el('text',{x:dXpos-4,y:PAD.t+6,'text-anchor':'end','font-size':11,fill:cssvar('--muted')});
+    lbl.textContent = showAll ? 'decisión' : 'decide aquí →';
+    if(!showAll){ lbl.setAttribute('text-anchor','end'); }
+    svg.appendChild(lbl);
+
+    // al revelar: marcar entrada si era compra/venta
+    if(showAll && (cur.def.answer==='buy'||cur.def.answer==='sell')){
+      var di=cur.decision-1;
+      var ex=X(di), ey=Y(C[di].c);
+      var acc=cssvar('--accent');
+      svg.appendChild(el('circle',{cx:ex,cy:ey,r:4,fill:acc}));
+      var dir=cur.def.answer==='buy'?-1:1;
+      svg.appendChild(el('line',{x1:ex,y1:ey,x2:ex,y2:ey+dir*22,stroke:acc,'stroke-width':2}));
+      var ah=cur.def.answer==='buy'?'M'+(ex-4)+' '+(ey-14)+' L '+ex+' '+(ey-22)+' L '+(ex+4)+' '+(ey-14)
+                                   :'M'+(ex-4)+' '+(ey+14)+' L '+ex+' '+(ey+22)+' L '+(ex+4)+' '+(ey+14);
+      svg.appendChild(el('path',{d:ah,fill:'none',stroke:acc,'stroke-width':2,'stroke-linecap':'round','stroke-linejoin':'round'}));
+    }
+  }
+
+  // ---------- flujo de juego ----------
+  var btns=document.querySelectorAll('.btns button');
+  var feedback=document.getElementById('feedback'), verdict=document.getElementById('verdict'), explain=document.getElementById('explain');
+  var nextbtn=document.getElementById('nextbtn'), hintbtn=document.getElementById('hintbtn'), hintbox=document.getElementById('hintbox');
+  var labelMap={buy:'Comprar', sell:'Vender', wait:'Esperar'};
+
+  function newRound(){
+    if(op>=order.length){ order=shuffle(DEFS.map(function(_,i){return i;}), mulberry32((sessionSeed+=97))); op=0; }
+    var def=DEFS[order[op]];
+    var seed=(sessionSeed*131+op*7919+ (def.key.length))>>>0;
+    cur=buildScenario(def, seed);
+    answered=false;
+    draw(false);
+    feedback.style.display='none'; feedback.className='feedback';
+    hintbox.style.display='none'; hintbox.textContent='';
+    hintbtn.style.display='inline-block';
+    nextbtn.style.display='none';
+    btns.forEach(function(b){ b.disabled=false; b.classList.remove('pick-correct','pick-wrong'); });
+    document.getElementById('prompt').textContent='¿Qué harías en la línea marcada?';
+  }
+
+  function answer(a, btn){
+    if(answered) return;
+    answered=true; op++;
+    var correct=cur.def.answer;
+    var ok=(a===correct);
+    total++; if(ok){hits++; streak++; if(streak>best){best=streak; try{localStorage.setItem('sc_best',String(best));}catch(e){}}} else {streak=0;}
+    document.getElementById('hits').textContent=hits;
+    document.getElementById('total').textContent=total;
+    document.getElementById('streak').textContent=streak;
+    document.getElementById('best').textContent=best;
+
+    btns.forEach(function(b){
+      b.disabled=true;
+      if(b.getAttribute('data-a')===correct) b.classList.add('pick-correct');
+    });
+    if(!ok && btn) btn.classList.add('pick-wrong');
+
+    draw(true);
+    feedback.className='feedback '+(ok?'ok':'no');
+    feedback.style.display='block';
+    verdict.textContent = ok ? '✓ Bien visto — lo correcto era: '+labelMap[correct]
+                             : '✗ No era el mejor momento. Lo correcto era: '+labelMap[correct];
+    explain.textContent = cur.def.why;
+    hintbtn.style.display='none';
+    nextbtn.style.display='block';
+  }
+
+  btns.forEach(function(b){ b.addEventListener('click', function(){ answer(b.getAttribute('data-a'), b); }); });
+  nextbtn.addEventListener('click', newRound);
+  hintbtn.addEventListener('click', function(){
+    hintbox.textContent=cur.def.hint; hintbox.style.display='block'; hintbtn.style.display='none';
+  });
+
+  // tema
+  var themebtn=document.getElementById('themebtn');
+  function currentDark(){
+    var t=document.documentElement.getAttribute('data-theme');
+    if(t) return t==='dark';
+    return matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function refreshThemeLabel(){ themebtn.textContent=currentDark()?'Modo claro':'Modo oscuro'; }
+  themebtn.addEventListener('click', function(){
+    var dark=!currentDark();
+    document.documentElement.setAttribute('data-theme', dark?'dark':'light');
+    refreshThemeLabel();
+    if(cur) draw(answered);
+  });
+  refreshThemeLabel();
+
+  // arrancar
+  order=shuffle(DEFS.map(function(_,i){return i;}), mulberry32(sessionSeed));
+  newRound();
+})();
+</script>
+</body>
+</html>
