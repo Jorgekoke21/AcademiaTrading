@@ -951,6 +951,162 @@ body.naked .note,body.naked .qa,body.naked .vs-pts{opacity:1}
   .labmap{grid-template-columns:1fr}
 }
 /* @@LAB-CSS:END */
+/* @@NAV-CSS:BEGIN */
+/* ============================================================
+   RECORRIDO A–G · barra lateral en acordeón, portada, anchura
+   ============================================================ */
+.rail{overflow:hidden}
+.prog{padding:12px 18px 12px}
+.modesw{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:11px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.modesw button{font-size:11.6px;padding:6px 4px;color:var(--tx-3);transition:.15s}
+.modesw button+button{border-left:1px solid var(--line)}
+.modesw button.on{background:#1B222E;color:var(--gold)}
+.nav{padding:6px 10px 18px}
+.stg{border-bottom:1px solid #181E28;padding:4px 0 6px}
+.stg-hr{display:flex;align-items:center}
+.stg-h{flex:1;display:grid;grid-template-columns:12px 20px 1fr auto;gap:6px;align-items:center;padding:9px 6px 6px;text-align:left;border-radius:7px}
+.stg-h:hover{background:#151A23}
+.stg-h .car{color:var(--tx-3);font-size:10px;transition:transform .2s}
+.stg.open .stg-h .car{transform:rotate(90deg)}
+.stg-h .lt{font-family:var(--ff-m);font-size:11px;font-weight:700;color:var(--tx-3);border:1px solid var(--line-2);border-radius:5px;display:grid;place-items:center;height:19px}
+.stg-h .nm{font-family:var(--ff-d);font-size:13.8px;font-weight:600;color:var(--tx-2);letter-spacing:-.01em}
+.stg-h .ct{font-family:var(--ff-m);font-size:10.5px;color:var(--tx-3)}
+.stg.cur .stg-h .lt{color:#12161D;background:var(--gold);border-color:var(--gold)}
+.stg.cur .stg-h .nm{color:var(--tx)}
+.stg-i{width:20px;height:20px;border-radius:50%;border:1px solid var(--line);font-family:var(--ff-m);font-size:10px;color:var(--tx-3);margin-left:4px;flex:0 0 auto}
+.stg-i:hover{color:var(--gold);border-color:var(--gold-dim)}
+.stg-bar{height:2px;background:#1A202B;border-radius:99px;margin:0 6px 2px 44px;overflow:hidden}
+.stg-bar i{display:block;height:100%;background:var(--gold-dim);border-radius:99px;transition:width .4s}
+.stg-b{display:none;padding:4px 0 2px}
+.stg.open .stg-b{display:block}
+.stg-b .sub{font-family:var(--ff-m);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#4E586A;padding:9px 8px 3px 30px}
+.nav a{grid-template-columns:24px 1fr auto;padding:5px 8px 5px 6px;margin-left:18px;font-size:13.3px;gap:8px}
+.nav a .n{font-size:10px;text-align:left;color:#4E586A}
+.nav a.done{color:#7C889A}
+.nav a.done .n::after{content:none}
+.nav a.done .n{color:#2E7A57}
+.nav a.on{background:#1E2633;color:var(--tx);font-weight:500}
+.nav a.on .n{color:var(--gold)}
+.nav a.on::before{left:-8px;top:5px;bottom:5px;width:3px;border-radius:2px}
+.nav a .imp{width:5px;height:5px;border-radius:50%;flex:0 0 auto}
+.imp.esencial{background:var(--gold)}
+.imp.importante,.imp.complementario,.imp.avanzado{background:transparent}
+.nav a:hover .imp.importante{background:var(--info)}
+.stg-sum{margin:4px 6px 6px 18px;border:1px solid var(--line);border-radius:9px;padding:10px 11px;background:var(--panel);font-size:12.2px;color:var(--tx-2);line-height:1.45;animation:fade .2s both}
+.stg-sum p{margin:0 0 5px}
+.stg-sum b{color:var(--tx);font-weight:500}
+.btn.sm{padding:5px 12px;font-size:12px;display:inline-block;margin-top:3px}
+.stg-empty{font-size:12px;color:var(--tx-3);padding:6px 10px 6px 30px;margin:0}
+.tools-g{border-top:1px solid var(--line);padding:9px 12px 12px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.tg-h{width:100%;font-family:var(--ff-m);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#4E586A;padding:0 4px 3px}
+.tg-i{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--tx-2);border:1px solid var(--line);border-radius:99px;padding:4px 10px}
+.tg-i:hover,.tg-i.on{color:var(--gold);border-color:var(--gold-dim)}
+.tg-i .ic{font-size:11px;opacity:.8}
+
+/* cabecera del capítulo */
+.chead .kick{flex-wrap:wrap;gap:8px}
+.chead .kick .kd{color:var(--tx-3)}
+.chead .kick .kd::before{content:"/";margin-right:8px;color:var(--line-2)}
+.imp-p{font-family:var(--ff-m);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line-2);border-radius:99px;padding:2px 8px;color:var(--tx-3);position:relative;cursor:help;vertical-align:middle}
+.imp-p.esencial{color:var(--gold);border-color:var(--gold-dim)}
+.imp-p.importante{color:var(--info);border-color:#1F4E5C}
+.imp-p.avanzado{color:var(--liq);border-color:#3A3468}
+.imp-p:hover::after,.imp-p:focus::after{content:attr(data-tip);position:absolute;top:calc(100% + 8px);left:0;background:#080A0E;border:1px solid var(--line-2);border-radius:8px;padding:8px 11px;width:260px;font-size:12.2px;line-height:1.45;color:var(--tx-2);font-family:var(--ff-b);letter-spacing:0;text-transform:none;z-index:40;white-space:normal;box-shadow:0 8px 24px rgba(0,0,0,.6)}
+h3.sec .imp-p{margin-left:8px}
+.learned{display:flex;flex-wrap:wrap;gap:8px 26px;margin:-12px 0 20px;font-size:13px;color:var(--tx-2)}
+.learned div{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline}
+.learned span{font-family:var(--ff-m);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx-3)}
+.learned a{color:var(--tx-2)}
+.learned a.ok{color:var(--bull)}
+.learned b{color:var(--tx);font-weight:500}
+.practice-cta{display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;column-gap:16px;align-items:center;margin:46px 0 0;border:1px solid var(--gold-dim);border-radius:var(--r-l);padding:15px 18px;background:linear-gradient(90deg,rgba(232,180,74,.08),transparent 70%);color:var(--tx);transition:.18s;max-width:940px}
+.practice-cta:hover{background:linear-gradient(90deg,rgba(232,180,74,.14),transparent 70%)}
+.practice-cta span{grid-row:1/3;font-family:var(--ff-m);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.practice-cta b{font-family:var(--ff-d);font-size:16px}
+.practice-cta i{grid-column:2;font-style:normal;font-size:12.8px;color:var(--tx-2)}
+.practice-cta em{grid-row:1/3;grid-column:3;font-style:normal;font-size:13px;color:var(--gold);border:1px solid var(--gold-dim);border-radius:99px;padding:7px 14px;white-space:nowrap}
+
+/* portada */
+.dash{margin:26px 0 10px}
+.dash-top{display:grid;grid-template-columns:1.3fr 1fr;gap:12px}
+.dash-cta,.dash-rec{border-radius:var(--r-l);padding:16px 18px;display:flex;flex-direction:column;gap:3px;color:var(--tx);transition:.18s}
+.dash-cta{border:1px solid var(--gold);background:linear-gradient(135deg,rgba(232,180,74,.14),rgba(232,180,74,.03))}
+.dash-cta:hover{background:linear-gradient(135deg,rgba(232,180,74,.2),rgba(232,180,74,.05))}
+.dash-cta span,.dash-rec span{font-family:var(--ff-m);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.dash-cta b{font-family:var(--ff-d);font-size:22px;letter-spacing:-.02em}
+.dash-cta i{font-style:normal;font-size:12.6px;color:var(--tx-2)}
+.dash-cta em{font-style:normal;align-self:flex-start;margin-top:8px;background:var(--gold);color:#12161D;font-weight:600;border-radius:99px;padding:7px 16px;font-size:13.4px}
+.dash-rec{border:1px solid var(--line);background:var(--panel)}
+.dash-rec span{color:var(--info)}
+.dash-rec p{margin:4px 0 0;font-size:14px;color:var(--tx-2)}
+.dash-rec p b{color:var(--tx);font-weight:500}
+.dash-rec:hover{border-color:var(--line-2)}
+.dash-flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:18px 0 0}
+.dash-flow span{display:flex;align-items:center;gap:6px;font-family:var(--ff-d);font-size:13.5px;color:var(--tx-3);padding:5px 10px 5px 5px;border:1px solid var(--line);border-radius:99px}
+.dash-flow span i{font-style:normal;font-family:var(--ff-m);font-size:10.5px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--panel-2)}
+.dash-flow span.done{color:var(--bull);border-color:#1E4A38}
+.dash-flow span.cur{color:var(--gold);border-color:var(--gold-dim)}
+.dash-flow span.cur i{background:var(--gold);color:#12161D}
+.dash-flow b{color:var(--line-2);font-weight:400}
+.dash-st{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.ds{border:1px solid var(--line);border-radius:var(--r-m);padding:12px 14px;background:var(--panel);display:flex;flex-direction:column;gap:6px}
+.ds.cur{border-color:var(--gold-dim)}
+.ds-h{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center}
+.ds-h .lt{font-family:var(--ff-m);font-size:11px;font-weight:700;border:1px solid var(--line-2);border-radius:5px;display:grid;place-items:center;height:20px;color:var(--tx-3)}
+.ds.cur .ds-h .lt{background:var(--gold);color:#12161D;border-color:var(--gold)}
+.ds-h b{font-family:var(--ff-d);font-size:14.5px}
+.ds-h .ct{font-family:var(--ff-m);font-size:11px;color:var(--tx-3)}
+.ds .stg-bar{margin:0;height:4px}
+.ds .stg-bar i{background:linear-gradient(90deg,var(--gold-dim),var(--gold))}
+.ds p{margin:0;font-size:12.6px;color:var(--tx-3);line-height:1.45}
+.ds a{font-size:12.8px}
+.ds .ok{font-size:12.8px;color:var(--bull)}
+.route{list-style:none;margin:10px 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px;counter-reset:r}
+.route li{display:grid;grid-template-columns:24px 1fr;gap:9px;align-items:center;font-size:13.2px;padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--panel)}
+.route li .n{font-family:var(--ff-m);font-size:10.5px;color:var(--tx-3);border:1px solid var(--line-2);border-radius:50%;width:22px;height:22px;display:grid;place-items:center}
+.route li.ok .n{color:var(--bull);border-color:#1E4A38}
+.route li a{color:var(--tx)}
+.route li.ok a{color:var(--tx-2)}
+.route-sw{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12.4px;color:var(--tx-3);margin-top:10px}
+.route-sw button{border:1px solid var(--line);border-radius:99px;padding:5px 12px;font-size:12.2px;color:var(--tx-2)}
+.route-sw button.on{border-color:var(--gold);color:var(--gold)}
+
+/* glosario */
+.glos{position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.55);display:flex;justify-content:flex-end}
+.glos[hidden]{display:none}
+.glos-in{width:min(430px,100%);height:100%;background:var(--bg-2);border-left:1px solid var(--line-2);overflow:auto;animation:fade .2s both}
+.glos-h{display:flex;gap:8px;align-items:center;padding:13px 16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg-2)}
+.glos-h b{font-family:var(--ff-d);font-size:15px}
+.glos-h input{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line-2);border-radius:7px;color:var(--tx);font:inherit;font-size:13px;padding:5px 9px}
+.glos dl{margin:0;padding:8px 18px 30px}
+.glos dt{font-family:var(--ff-m);font-size:13px;color:var(--gold);margin-top:14px}
+.glos dd{margin:3px 0 0;font-size:13.2px;color:var(--tx-2);line-height:1.5}
+.glos dd a{font-size:12px;white-space:nowrap}
+
+/* anchura: texto contenido, gráficos y laboratorios anchos */
+.wrap.wide{max-width:1400px}
+.wrap.wide>.chead,.wrap.wide>.body,.wrap.wide>h3.sec,.wrap.wide>.sub,.wrap.wide>.note,.wrap.wide>.qa,.wrap.wide>.flow,.wrap.wide>ul.ticks,.wrap.wide>.lab-principle,.wrap.wide>.cyc,.wrap.wide>.learned,.wrap.wide>.lq,.wrap.wide>.kn,.wrap.wide>.knblk,.wrap.wide>.rulesno,.wrap.wide>.twoways,.wrap.wide>.hero-mantra,.wrap.wide>.plan-anat,.wrap.wide>.quad,.wrap.wide>.jlegend,.wrap.wide>.revenge,.wrap.wide>.simnote{max-width:940px}
+@media (min-width:1200px){.wrap.wide .modes .mtf{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1750px){.wrap.wide #mtfGrid,.wrap.wide .zoom.grid4 .zoom-body{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.zoom.grid4 .zoom-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px}
+.zoom.grid4 .zoom-body .chart{margin:0;border:1px solid var(--line);border-radius:var(--r-m)}
+.zoom.grid4 .zoom-tabs,.zoom.grid4 .zoom-txt{display:none}
+.zoom-bar .g4b{margin-left:auto}
+
+/* menos ruido: cajas dentro de cajas */
+.lab-side .lq-x{border-top:0;border-right:0;border-bottom:0;border-radius:0;background:transparent;padding:4px 0 4px 12px}
+.lab-side .lab-principle{border:0;background:transparent;padding:0 0 8px;border-bottom:1px solid var(--line);border-radius:0}
+
+@media (max-width:1000px){.dash-top{grid-template-columns:1fr}.zoom-bar .g4b{display:none}}
+@media (max-width:860px){.practice-cta{grid-template-columns:1fr}.practice-cta span,.practice-cta em{grid-row:auto;grid-column:auto}.practice-cta i{grid-column:auto}.practice-cta em{justify-self:start;margin-top:8px}.learned{margin-top:-6px}}
+/* ajustes de legibilidad */
+.hero-mantra>div div{border:0;background:none;padding:0;min-width:0;flex:none;border-radius:0}
+.hero-mantra>div div::after{content:none}
+.stg-h .nm{font-size:13.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stg-h{grid-template-columns:10px 19px minmax(0,1fr) auto;gap:6px}
+.nav a .imp.esencial{opacity:.55;width:4px;height:4px}
+.nav a.on .imp.esencial{opacity:1}
+/* @@NAV-CSS:END */
 </style>
 </head>
 <body>
@@ -965,8 +1121,18 @@ body.naked .note,body.naked .qa,body.naked .vs-pts{opacity:1}
     <div class="prog">
       <div class="row"><span>Progreso</span><b id="progTxt">0 / 15</b></div>
       <div class="bar"><i id="progBar" style="width:0%"></i></div>
+      <div class="modesw" id="modeSw" role="group" aria-label="Recorrido">
+        <button data-m="esencial" title="Esencial = ruta recomendada para construir la base. Puedes explorar cualquier capítulo cuando quieras.">Ruta esencial</button>
+        <button data-m="completo" title="Los 50 capítulos, en orden.">Curso completo</button>
+      </div>
     </div>
     <nav class="nav" id="nav"></nav>
+    <div class="tools-g" id="toolsG">
+      <div class="tg-h">Herramientas</div>
+      <a href="#/checklist" data-id="checklist" class="tg-i"><span class="ic">☑</span>Checklist</a>
+      <button class="tg-i" data-tool="glos"><span class="ic">≡</span>Glosario</button>
+      <button class="tg-i" data-tool="naked"><span class="ic">◐</span><span class="nk-l">Modo aprendizaje</span></button>
+    </div>
   </aside>
   <div class="main">
     <header class="topbar">
@@ -974,12 +1140,14 @@ body.naked .note,body.naked .qa,body.naked .vs-pts{opacity:1}
       <div class="crumb" id="crumb"></div>
       <div class="sp"></div>
       <button class="ghost" id="nakedBtn" title="Quitar todas las ayudas del gráfico">Modo aprendizaje</button>
+      <button class="ghost" id="glosBtn" title="Términos del curso">Glosario</button>
       <button class="ghost pin" id="pinBtn" title="Abrir el checklist flotante">Checklist</button>
     </header>
     <main class="wrap" id="view"></main>
   </div>
 </div>
 <div class="panel-float" id="pfloat"></div>
+<div class="glos" id="glos" hidden><div class="glos-in" role="dialog" aria-label="Glosario"><div class="glos-h"><b>Glosario</b><input type="search" placeholder="Buscar término…" aria-label="Buscar término"><button class="ghost" data-close>Cerrar</button></div><dl></dl></div></div>
 <script>
 /* ============================================================
    INDICADORES — todos se calculan a partir de la serie OHLC
@@ -1770,6 +1938,7 @@ function setNaked(v) {
   REG.forEach(r => { if (r.box.isConnected) r.render(false); });
   const b = document.querySelector('#nakedBtn');
   if (b) { b.textContent = v ? 'Modo desnudo' : 'Modo aprendizaje'; b.classList.toggle('nk', v); }
+  const l = document.querySelector('#toolsG .nk-l'); if (l) l.textContent = v ? 'Modo desnudo' : 'Modo aprendizaje';
 }
 
 let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => REG.forEach(r => { if (r.box.isConnected) r.render(false); }), 160); });
@@ -2007,10 +2176,10 @@ chapter({
       k: 'cards', n: 3, items: [
         { c: 'gold', t: 'Interruptores', d: ['Casi todos los gráficos traen un interruptor tipo <b>Mostrar estructura</b>. Apágalo e intenta leer el gráfico tú solo antes de encenderlo. Ese ejercicio es el que entrena el ojo.'] },
         { t: 'Seis preguntas', d: ['Bajo los conceptos clave hay seis pestañas: qué veo, cómo lo detecto, qué significa, dónde importa, qué <b>no</b> significa y qué observo después. La quinta es la más importante.'] },
-        { t: 'Orden recomendado', d: ['Capítulos 1 a 5 en orden, sin saltar. El resto puedes leerlo suelto. Al final tienes el modo <b>Entrena tu ojo</b> y la checklist flotante para usar mientras miras el oro en vivo.'] }
+        { t: 'Orden recomendado', d: ['La etapa A en orden, sin saltar. El resto puedes recorrerlo a tu ritmo o seguir la ruta esencial. Al final tienes el modo <b>Entrena tu ojo</b> y la checklist flotante para usar mientras miras el oro en vivo.'] }
       ]
     },
-    { k: 'note', t2: 'key', t: `<b>Itinerario completo.</b> Los bloques I–VII enseñan las piezas. El <a href="#/lab-ciclo">VIII · Laboratorio de mercado</a> enseña a unirlas y leer una historia completa del precio. IX y X enseñan a decidir, planificar, gestionar y revisar (resultado ≠ proceso). XI y XII son entrenamiento y examen.` },
+    { k: 'note', t2: 'key', t: `<b>Siete etapas.</b> Aprende a leer → entiende el contexto → añade herramientas → <a href="#/lab-ciclo">lee el mercado</a> → decide → gestiona → entrena. Los capítulos están dentro de cada etapa.` },
     {
       k: 'note', t2: 'warn', t: `<p><b>Antes de seguir.</b> Esto es material educativo sobre lectura de gráficos, no asesoramiento financiero ni un sistema de señales. Nada de lo que verás aquí predice el precio: solo describe escenarios, evidencias a favor y en contra, y las condiciones que invalidan cada lectura.</p><p style="margin:0">El lenguaje importa. En todo el curso leerás <i>“esto aumenta la evidencia de…”</i> y <i>“este escenario queda invalidado si…”</i>, nunca <i>“cuando aparece X el precio sube”</i>.</p>` }
   ])
@@ -6190,7 +6359,7 @@ function zoomOut(levels, o = {}) {
   const wrap = el(`<div class="zoom">
     <div class="zoom-tabs">${levels.map((l, i) => `<button data-i="${i}" class="${i ? '' : 'on'}">${l.tf}</button>`).join('')}</div>
     <div class="zoom-body"></div>
-    <div class="zoom-bar"><button data-a="in" class="sec">◂ ${o.inT || 'Acercar'}</button><button data-a="out">${o.outT || 'Alejar gráfico'} ▸</button></div></div>`);
+    <div class="zoom-bar"><button data-a="in" class="sec">◂ ${o.inT || 'Acercar'}</button><button data-a="out">${o.outT || 'Alejar gráfico'} ▸</button><button data-a="g4" class="sec g4b">Ver los ${levels.length} marcos a la vez</button></div></div>`);
   const body = wrap.querySelector('.zoom-body'); let cur = 0;
   const nodes = levels.map(l => lchart(l.cd, { title: 'XAUUSD', tf: l.tf + (l.role ? ' · ' + l.role : ''), ov: l.ov || [], h: 320 }).node);
   const show = i => {
@@ -6203,6 +6372,15 @@ function zoomOut(levels, o = {}) {
     if (o.onShow) o.onShow(i);
   };
   wrap.querySelectorAll('.zoom-tabs button').forEach(b => b.onclick = () => show(+b.dataset.i));
+  /* pantallas grandes: los marcos lado a lado (2×2, o en fila si hay sitio) */
+  wrap.querySelector('[data-a="g4"]').onclick = e => {
+    const on = !wrap.classList.contains('grid4'); wrap.classList.toggle('grid4', on);
+    e.target.textContent = on ? 'Volver a un marco' : `Ver los ${levels.length} marcos a la vez`;
+    if (!on) { show(cur); return; }
+    body.innerHTML = '';
+    levels.forEach(l => body.appendChild(lchart(l.cd, { title: l.tf, tf: l.role || '', ov: l.ov || [], h: 250, padR: 46 }).node));
+    REG.forEach(r => { if (r.box.isConnected) r.render('all'); });
+  };
   wrap.querySelector('[data-a="out"]').onclick = () => show(Math.min(levels.length - 1, cur + 1));
   wrap.querySelector('[data-a="in"]').onclick = () => show(Math.max(0, cur - 1));
   show(0);
@@ -8206,7 +8384,51 @@ function runSelfTest() {
   /* ---------- compatibilidad ---------- */
   const ORIG = ['inicio', 'estructura', 'niveles', 'rupturas', 'liquidez', 'bos-choch', 'impulso', 'supply-demand', 'fvg', 'velas', 'patrones', 'multitimeframe', 'sesiones', 'confluencias', 'ema', 'momentum', 'fuerza', 'volatilidad', 'canales', 'patrones-lab', 'wolfe', 'dxy', 'fractal', 'modos', 'regimen', 'concordancia', 'panel', 'practica', 'checklist', 'ahora', 'examen', 'scalping'];
   t('los capítulos originales siguen existiendo', () => { const miss = ORIG.filter(id => !CH.some(c => c.id === id)); return !miss.length || 'faltan ' + miss.join(','); });
-  t('itinerario I–XII completo y ordenado', () => { const g = [...new Set(CH.map(c => c.grp.split(' · ')[0]))]; return eq(g, ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']) || g.join(' '); });
+  /* ---------- navegación en etapas A–G ---------- */
+  const vis0 = [...visited], mode0 = navMode, hash0 = location.hash;
+  const setVisited = ids => { visited.clear(); ids.forEach(x => visited.add(x)); };
+  t('siguen existiendo los 50 capítulos, sin id duplicados', () => CH.length === 50 && new Set(CH.map(c => c.id)).size === 50 || CH.length + ' capítulos');
+  t('todos los capítulos pertenecen a una etapa A–G o a Herramientas', () => { const bad = CH.filter(c => !stageOf(c.id) && !TOOL_IDS.includes(c.id)).map(c => c.id); const g = STAGES.map(s => s.k).join(''); return !bad.length && g === 'ABCDEFG' && SEQ.length + TOOL_IDS.length === 50 || bad.join(','); });
+  t('la checklist es herramienta global (fuera del itinerario) y sigue accesible', () => { go('checklist'); return !SEQ.includes('checklist') && !!$('#pinBtn') && !!$('#toolsG a[href="#/checklist"]') && !!view.querySelector('.ck') && /Herramienta/.test(view.querySelector('.kick').textContent); });
+  t('concordancia aparece al comienzo de E · Decide', () => stageOf('concordancia').k === 'E' && stageIds(stageOf('concordancia'))[0] === 'concordancia' && !!$('#nav .stg[data-s="E"] a[data-id="concordancia"]'));
+  t('patrones y Wolfe Wave van después de los fundamentos (C, avanzado)', () => stageOf('wolfe').k === 'C' && impOf('wolfe') === 'avanzado' && SEQ.indexOf('patrones') > SEQ.indexOf('canales'));
+  t('progreso por etapa suma exactamente el progreso global', () => {
+    setVisited(['inicio', 'velas', 'estructura', 'multitimeframe', 'lab-ciclo', 'checklist', 'examen', 'id-inexistente']);
+    const sum = STAGES.reduce((a, s) => a + stageProg(s).d, 0) + TOOL_IDS.filter(isDone).length;
+    const A = stageProg(STAGES[0]);
+    return sum === CH.filter(c => isDone(c.id)).length && sum === 7 && A.d === 3 && A.t === 7 && A.p === 43 || `${sum} ${A.d}/${A.t} ${A.p}`;
+  });
+  t('«Continuar donde lo dejé» lleva al siguiente pendiente en orden pedagógico', () => {
+    setVisited(['inicio', 'velas', 'estructura']); const a = nextPending('completo');
+    setVisited(stageIds(STAGES[0])); const b = nextPending('completo');
+    setVisited(['inicio', 'velas', 'estructura', 'impulso', 'niveles', 'liquidez', 'rupturas', 'multitimeframe']); const c = nextPending('esencial');
+    go('inicio'); const href = view.querySelector('.dash-cta').getAttribute('href');
+    return a === 'impulso' && b === 'multitimeframe' && c === 'sesiones' && href === '#/' + nextPending() || `${a} ${b} ${c} ${href}`;
+  });
+  t('acordeón: abre la etapa actual y cierra la anterior al cambiar', () => {
+    openStages.clear(); curStage = null; go('velas'); const a = $('#nav .stg[data-s="A"]').classList.contains('open');
+    go('lab-liquidez'); const b = !$('#nav .stg[data-s="A"]').classList.contains('open') && $('#nav .stg[data-s="D"]').classList.contains('open');
+    $('#nav .stg-h[data-s="B"]').click(); const c = $('#nav .stg[data-s="B"]').classList.contains('open') && $('#nav .stg[data-s="D"]').classList.contains('open');
+    return a && b && c || `${a} ${b} ${c}`;
+  });
+  t('ruta esencial filtra la barra lateral; curso completo muestra todos', () => {
+    go('lab-liquidez'); STAGES.forEach(s => openStages.add(s.k)); setMode('esencial');
+    const ess = $$('#nav a[data-id]').map(a => a.dataset.id);
+    setMode('completo'); const all = $$('#nav a[data-id]').map(a => a.dataset.id);
+    const expE = SEQ.filter(id => ESS.has(id) || id === 'lab-liquidez');
+    return eq(ess, expE) && eq(all, SEQ) && ESS.size >= 15 || `${ess.length}/${expE.length} · ${all.length}`;
+  });
+  t('cambiar de modo no cambia el progreso', () => { let a; try { a = localStorage.getItem('xau_seen'); } catch (e) { } const n = visited.size; setMode('esencial'); setMode('completo'); let b; try { b = localStorage.getItem('xau_seen'); } catch (e) { } return a === b && visited.size === n; });
+  t('teoría → práctica: los enlaces llevan a laboratorios existentes', () => {
+    const bad = Object.entries(PRACT).filter(([a, [b]]) => !chOf(a) || !chOf(b)).map(x => x[0]).concat(Object.keys(LEARNED).filter(k => !chOf(k) || LEARNED[k][0].some(x => !chOf(x))));
+    go('liquidez'); const cta = view.querySelector('.practice-cta[href="#/lab-liquidez"]');
+    go('lab-liquidez'); const lb = view.querySelector('.learned a[href="#/liquidez"]');
+    return !bad.length && !!cta && !!lb || bad.join(',') + ` cta ${!!cta} learned ${!!lb}`;
+  });
+  t('etiquetas de importancia: cada capítulo del itinerario tiene una', () => { const bad = SEQ.filter(id => !impOf(id)); return !bad.length || bad.join(','); });
+  t('ningún hash anterior se rompe', () => { const bad = ORIG.concat(SEQ).filter(id => { go(id); return view.querySelector('.chead h2').textContent !== chOf(id).t.replace(/<[^>]+>/g, ''); }); return !bad.length || bad.join(','); });
+  t('glosario global usa definiciones existentes y enlaza a capítulos', () => { window.openGlossary(); const g = $('#glos'), ok = !g.hidden && g.querySelectorAll('dt').length >= 19 && GLOSS.every(([, d, id]) => d && chOf(id)); g.hidden = true; return ok; });
+  setVisited(vis0); setMode(mode0);
   t('todos los capítulos se construyen sin errores', () => {
     const bad = [];
     CH.forEach(c => { try { const f = c.build(); if (!f || !f.childNodes.length) bad.push(c.id + ' vacío'); } catch (e) { bad.push(c.id + ': ' + e.message); } });
@@ -8223,6 +8445,8 @@ function runSelfTest() {
   /* restaurar el estado del alumno */
   try { Object.keys(localStorage).filter(k => /^xau_/.test(k)).forEach(k => localStorage.removeItem(k)); Object.entries(snap).forEach(([k, v]) => localStorage.setItem(k, v)); } catch (e) { }
   host.remove();
+  try { history.replaceState(null, '', hash0 || '#/inicio'); } catch (e) { }
+  go((location.hash.replace('#/', '')) || CH[0].id);
   const ok = R.filter(r => r.ok).length;
   const out = el(`<div id="selftest" style="position:fixed;inset:20px;z-index:200;overflow:auto;background:#0B0E14;border:1px solid #2E3746;border-radius:14px;padding:18px;font:13px/1.5 JetBrains Mono,monospace;color:#DDE3EC">
     <h3 style="margin:0 0 10px;font-family:Space Grotesk">Pruebas: ${ok} / ${R.length} correctas</h3>
@@ -8237,71 +8461,249 @@ const view = $('#view'), nav = $('#nav'), crumb = $('#crumb');
 const visited = new Set();
 try { (JSON.parse(localStorage.getItem('xau_seen') || '[]')).forEach(x => visited.add(x)); } catch (e) { }
 
+/* @@NAV:BEGIN */
 /* ============================================================
-   ITINERARIO I–XII
-   Aprender las piezas → leer el mercado → decidir → gestionar → revisar.
-   Los id no cambian: el progreso guardado (xau_seen) sigue siendo válido.
+   RECORRIDO EN 7 ETAPAS (A–G)
+   Capa visual y pedagógica sobre los mismos capítulos. Los id no
+   cambian: rutas hash, xau_seen y referencias siguen intactas.
+   «Completado» = capítulo abierto al menos una vez (xau_seen).
    ============================================================ */
-const ITIN = [
-  ['I', 'Fundamentos', ['inicio', 'velas']],
-  ['II', 'Estructura y precio', ['estructura', 'impulso']],
-  ['III', 'Niveles y liquidez', ['niveles', 'liquidez', 'rupturas']],
-  ['IV', 'SMC / eventos', ['bos-choch', 'supply-demand', 'fvg']],
-  ['V', 'Patrones', ['patrones-lab', 'patrones', 'wolfe']],
-  ['VI', 'Indicadores', ['ema', 'momentum', 'fuerza', 'volatilidad', 'canales', 'concordancia']],
-  ['VII', 'Multi-timeframe y sesiones', ['multitimeframe', 'fractal', 'sesiones', 'dxy', 'regimen', 'modos']],
-  ['VIII', 'Laboratorio de mercado', ['lab-ciclo', 'lab-impulso', 'lab-poi', 'lab-liquidez', 'lab-sweep', 'lab-balance', 'lab-induccion', 'lab-micro', 'lab-sesiones', 'lab-historia']],
-  ['IX', 'De analizar a operar', ['confluencias', 'panel', 'op-hay', 'op-evidencia', 'op-plan']],
-  ['X', 'Ejecución y gestión', ['ges-proceso', 'ges-gestion', 'ges-sesgos', 'ges-diario']],
-  ['XI', 'Entrenamiento', ['practica', 'checklist', 'ahora', 'scalping', 'ent-sesion']],
-  ['XII', 'Examen final', ['examen']]
+const STAGES = [
+  { k: 'A', n: 'Aprende a leer', f: 'Aprende', goal: 'Aprender a interpretar lo que hace directamente el precio.', dom: ['velas', 'estructura', 'impulso y retroceso', 'niveles', 'liquidez', 'rupturas'],
+    subs: [['Fundamentos', ['inicio', 'velas']], ['Estructura y precio', ['estructura', 'impulso']], ['Niveles y liquidez', ['niveles', 'liquidez', 'rupturas']]] },
+  { k: 'B', n: 'Entiende el contexto', f: 'Contextualiza', goal: 'Situar lo que ves dentro de su marco temporal, su sesión y su entorno.', dom: ['multi-timeframe', 'fractalidad', 'sesiones', 'horizonte operativo', 'DXY', 'cambio de régimen'],
+    subs: [['Multi-timeframe', ['multitimeframe', 'fractal']], ['Sesiones y horizonte', ['sesiones', 'modos']], ['Contexto externo', ['dxy', 'regimen']]] },
+  { k: 'C', n: 'Añade herramientas', f: 'Herramientas', goal: 'Poner nombre a los eventos y medir lo que el precio ya muestra.', dom: ['BOS / CHoCH', 'oferta y demanda', 'FVG', 'EMA', 'RSI', 'ADX', 'ATR', 'Donchian y VWAP', 'patrones'],
+    subs: [['SMC / eventos', ['bos-choch', 'supply-demand', 'fvg']], ['Indicadores', ['ema', 'momentum', 'fuerza', 'volatilidad', 'canales']], ['Patrones · complementario / avanzado', ['patrones-lab', 'patrones', 'wolfe']]] },
+  { k: 'D', n: 'Lee el mercado', f: 'Lee', goal: 'Unir las piezas para leer una historia completa del precio sin conocer el futuro.', dom: ['ciclo del precio', 'empuje dominante', 'POI', 'liquidez y barridos', 'balance y expansión', 'microestructura'],
+    subs: [['Laboratorio', ['lab-ciclo', 'lab-impulso', 'lab-poi', 'lab-liquidez', 'lab-sweep', 'lab-balance', 'lab-induccion', 'lab-micro', 'lab-sesiones', 'lab-historia']]] },
+  { k: 'E', n: 'Decide', f: 'Decide', goal: 'Pasar de la lectura a una decisión: operar, esperar o no hacer nada.', dom: ['redundancia', 'confluencias', '¿hay escenario?', 'ordenar evidencias', 'planificar'],
+    subs: [['Evidencias', ['concordancia', 'confluencias', 'panel']], ['Decisión', ['op-hay', 'op-evidencia', 'op-plan']]] },
+  { k: 'F', n: 'Gestiona', f: 'Gestiona', goal: 'Gestionar sin reescribir el plan y evaluar el proceso, no solo el resultado.', dom: ['resultado frente a proceso', 'gestión del stop', 'sesgos', 'diario'],
+    subs: [['Gestión', ['ges-proceso', 'ges-gestion', 'ges-sesgos', 'ges-diario']]] },
+  { k: 'G', n: 'Entrena', f: 'Entrena', goal: 'Practicarlo todo junto, con gráficos sin ayudas.', dom: ['lectura sin ayudas', 'simuladores', 'sesión completa', 'examen'],
+    subs: [['Entrenamiento', ['practica', 'ahora', 'scalping', 'ent-sesion']], ['Examen', ['examen']]] }
 ];
+const TOOL_IDS = ['checklist'];
+/* importancia: no es una jerarquía de valor */
+const IMP = {
+  esencial: ['inicio', 'velas', 'estructura', 'impulso', 'niveles', 'liquidez', 'rupturas', 'multitimeframe', 'lab-ciclo', 'lab-liquidez', 'lab-micro', 'op-hay', 'ent-sesion'],
+  importante: ['bos-choch', 'supply-demand', 'fvg', 'momentum', 'fuerza', 'volatilidad', 'sesiones', 'modos', 'lab-impulso', 'lab-poi', 'lab-sweep', 'lab-balance', 'lab-historia', 'concordancia', 'confluencias', 'op-evidencia', 'op-plan', 'ges-proceso', 'ges-gestion', 'ges-sesgos', 'ges-diario', 'practica', 'ahora', 'examen'],
+  complementario: ['ema', 'canales', 'dxy', 'patrones-lab', 'patrones', 'fractal', 'regimen', 'panel', 'lab-sesiones', 'scalping'],
+  avanzado: ['wolfe', 'lab-induccion']
+};
+const IMP_TIP = {
+  esencial: 'Esencial = ruta recomendada para construir la base. Puedes explorar cualquier capítulo cuando quieras.',
+  importante: 'Importante: amplía la base con herramientas que usarás a menudo.',
+  complementario: 'Complementario: aporta matices; no es imprescindible para empezar a practicar.',
+  avanzado: 'Avanzado significa que requiere dominar conceptos anteriores, no que sea más importante.'
+};
+const impOf = id => Object.keys(IMP).find(k => IMP[k].includes(id)) || null;
+/* ruta esencial (orden pedagógico) */
+const ROUTE = [
+  ['Velas', ['velas']], ['Estructura', ['estructura']], ['Impulso / retroceso', ['impulso']], ['Niveles', ['niveles']], ['Liquidez', ['liquidez']],
+  ['Ruptura vs sweep', ['rupturas']], ['Multi-timeframe', ['multitimeframe']], ['Sesiones', ['sesiones']], ['BOS / CHoCH', ['bos-choch']],
+  ['RSI / ADX / ATR como apoyo', ['momentum', 'fuerza', 'volatilidad']], ['Ciclo del precio', ['lab-ciclo']], ['Detector de liquidez', ['lab-liquidez']],
+  ['Microestructura vs dominante', ['lab-micro']], ['¿Hay escenario?', ['op-hay']], ['Simulador completo', ['ent-sesion']]
+];
+const ESS = new Set(['inicio'].concat(...ROUTE.map(r => r[1])));
+/* teoría → práctica */
+const PRACT = {
+  liquidez: ['lab-liquidez', 'Detectarla sin ayudas'], impulso: ['lab-impulso', 'Reconocer quién domina el precio'],
+  sesiones: ['lab-sesiones', 'Ver qué hace Londres con el rango de Asia'], multitimeframe: ['lab-micro', 'Separar microestructura de estructura dominante'],
+  fractal: ['lab-micro', 'Alejar el gráfico de M1 a H1'], rupturas: ['lab-sweep', 'Distinguir barrido y ruptura en tiempo real'],
+  niveles: ['lab-liquidez', 'Encontrar los niveles evidentes en 100 velas'], 'supply-demand': ['lab-poi', 'Dibujar el POI y observar la reacción'],
+  fvg: ['lab-balance', 'Ver el paso de balance a desequilibrio'], 'bos-choch': ['lab-historia', 'Reconstruir una historia completa'],
+  estructura: ['lab-historia', 'Reconstruir una historia completa'], volatilidad: ['lab-balance', 'Medir balance y expansión'],
+  fuerza: ['lab-balance', 'Medir balance y expansión'], concordancia: ['op-evidencia', 'Ordenar evidencias sin redundancia'],
+  confluencias: ['op-evidencia', 'Ordenar evidencias sin redundancia'], modos: ['ges-gestion', 'Ver qué pasa cuando un scalp se convierte en swing'],
+  velas: ['practica', 'Leer gráficos sin anotaciones']
+};
+const LEARNED = {
+  'lab-liquidez': [['liquidez', 'niveles'], 'Detectarla sin ayudas.'], 'lab-impulso': [['impulso'], 'Reconocer quién domina el precio.'],
+  'lab-poi': [['supply-demand'], 'Observar la reacción, no el toque.'], 'lab-sweep': [['liquidez', 'rupturas'], 'Distinguir barrido y ruptura sin saber el final.'],
+  'lab-balance': [['fvg', 'volatilidad'], 'Ver el paso de lento a rápido antes que el indicador.'], 'lab-micro': [['multitimeframe', 'fractal'], 'Separar el ruido de M1 de la estructura de M15 y H1.'],
+  'lab-sesiones': [['sesiones'], 'Reconocer secuencias sin convertirlas en reglas.'], 'lab-historia': [['estructura', 'bos-choch'], 'Contar la historia completa de 130 velas.'],
+  'lab-ciclo': [['estructura', 'impulso', 'liquidez'], 'Situar cada momento dentro del ciclo.'], 'lab-induccion': [['rupturas', 'bos-choch'], 'Ver cuándo una estructura es demasiado evidente.'],
+  'op-evidencia': [['concordancia', 'confluencias'], 'Dar a cada evidencia su peso en un escenario concreto.']
+};
+const stageOf = id => STAGES.find(s => s.subs.some(([, ids]) => ids.includes(id))) || null;
+const subOf = id => { const s = stageOf(id); return s ? s.subs.find(([, ids]) => ids.includes(id))[0] : 'Herramientas'; };
+const stageIds = s => s.subs.flatMap(([, ids]) => ids);
+const SEQ = STAGES.flatMap(stageIds);           /* orden pedagógico (sin herramientas) */
+const WIDE = new Set(['multitimeframe', 'fractal', 'sesiones', 'modos'].concat(...['D', 'E', 'F', 'G'].map(k => stageIds(STAGES.find(s => s.k === k)))));
+
 (function sortCH() {
-  const pos = {}, grp = {};
-  ITIN.forEach(([r, name, ids], gi) => ids.forEach((id, k) => { pos[id] = gi * 100 + k; grp[id] = r + ' · ' + name; }));
-  CH.forEach(c => { if (grp[c.id]) c.grp = grp[c.id]; });
+  const pos = {}; SEQ.concat(TOOL_IDS).forEach((id, i) => pos[id] = i);
   CH.sort((a, b) => (pos[a.id] ?? 9999) - (pos[b.id] ?? 9999));
-  let k = 0;
-  CH.forEach(c => { if (c.n !== '★' && c.n !== '✓') c.n = String(k++).padStart(2, '0'); });
-})();
-
-(function buildNav() {
-  let last = '';
-  CH.forEach((c, i) => {
-    if (c.grp !== last) { nav.appendChild(el(`<div class="grp">${c.grp}</div>`)); last = c.grp; }
-    nav.appendChild(el(`<a href="#/${c.id}" data-id="${c.id}"><span class="n">${c.n}</span><span>${c.nav}</span></a>`));
+  CH.forEach(c => {
+    const s = stageOf(c.id);
+    if (s) { c.grp = s.k + ' · ' + s.n; c.n = s.k + (stageIds(s).indexOf(c.id) + 1); }
+    else { c.grp = 'Herramientas'; c.n = '✓'; }
   });
 })();
 
-function syncNav(id) {
-  $$('.nav a').forEach(a => {
-    a.classList.toggle('on', a.dataset.id === id);
-    a.classList.toggle('done', visited.has(a.dataset.id));
-  });
-  const pct = Math.round(visited.size / CH.length * 100);
-  $('#progBar').style.width = pct + '%';
-  $('#progTxt').textContent = visited.size + ' / ' + CH.length;
+let navMode = 'completo';
+try { navMode = localStorage.getItem('xau_mode') === 'esencial' ? 'esencial' : 'completo'; } catch (e) { }
+const openStages = new Set(); let curStage = null, curId = null, sumOpen = null;
+const isDone = id => visited.has(id);
+function stageProg(s, ids = stageIds(s)) { const d = ids.filter(isDone).length; return { d, t: ids.length, p: ids.length ? Math.round(d / ids.length * 100) : 0 }; }
+/* siguiente capítulo no completado según el orden pedagógico (y el modo) */
+function nextPending(mode = navMode) {
+  const seq = mode === 'esencial' ? SEQ.filter(id => ESS.has(id)) : SEQ;
+  return seq.find(id => !isDone(id)) || SEQ.find(id => !isDone(id)) || null;
+}
+const chOf = id => CH.find(c => c.id === id);
+function setMode(m) {
+  navMode = m === 'esencial' ? 'esencial' : 'completo';
+  try { localStorage.setItem('xau_mode', navMode); } catch (e) { }
+  renderNav();
+  if (curId === 'inicio' && view.querySelector('.dash')) mountDash();
 }
 
-function go(id, push) {
-  const idx = Math.max(0, CH.findIndex(c => c.id === id));
-  const c = CH[idx];
+function renderNav() {
+  const showId = id => navMode === 'completo' || ESS.has(id) || id === curId;
+  nav.innerHTML = STAGES.map(s => {
+    const all = stageIds(s), vis = all.filter(showId), pr = stageProg(s, navMode === 'completo' ? all : vis.length ? vis : all);
+    const open = openStages.has(s.k), isCur = curStage === s.k;
+    const nx = all.find(id => !isDone(id) && showId(id));
+    return `<section class="stg ${open ? 'open' : ''} ${isCur ? 'cur' : ''}" data-s="${s.k}">
+      <div class="stg-hr">
+        <button class="stg-h" data-s="${s.k}" aria-expanded="${open}"><span class="car">▸</span><span class="lt">${s.k}</span><span class="nm">${s.n}</span><span class="ct">${pr.d} / ${pr.t}</span></button>
+        <button class="stg-i" data-sum="${s.k}" title="Resumen de la etapa" aria-label="Resumen de ${s.n}">i</button>
+      </div>
+      <div class="stg-bar"><i style="width:${pr.p}%"></i></div>
+      <div class="stg-b">
+        ${sumOpen === s.k ? `<div class="stg-sum"><p><b>Objetivo:</b> ${s.goal}</p><p><b>Vas a dominar:</b> ${s.dom.join(' · ')}</p><p><b>Progreso:</b> ${stageProg(s).d} / ${stageProg(s).t}</p>${nx ? `<a class="btn sm" href="#/${nx}">Continuar →</a>` : '<span class="mut">Etapa completada ✓</span>'}</div>` : ''}
+        ${vis.length ? s.subs.map(([sub, ids]) => { const v = ids.filter(showId); return v.length ? `${s.subs.length > 1 ? `<div class="sub">${sub}</div>` : ''}${v.map(id => { const c = chOf(id); if (!c) return ''; const im = impOf(id); return `<a href="#/${id}" data-id="${id}" class="${id === curId ? 'on' : ''} ${isDone(id) ? 'done' : ''}" title="${isDone(id) ? 'Completado' : 'Pendiente'}${im ? ' · ' + im : ''}"><span class="n">${c.n.slice(1)}</span><span class="t">${c.nav}</span>${im ? `<i class="imp ${im}"></i>` : ''}</a>`; }).join('')}` : ''; }).join('') : `<p class="stg-empty">Sin capítulos de la ruta esencial en esta etapa. Cámbiate a <button class="lnk" data-mode="completo">Curso completo</button> para verla.</p>`}
+      </div></section>`;
+  }).join('');
+  $$('#modeSw button').forEach(b => b.classList.toggle('on', b.dataset.m === navMode));
+  const tl = $('#toolsG a[data-id="checklist"]'); if (tl) tl.classList.toggle('on', curId === 'checklist');
+  $('#progBar').style.width = Math.round(CH.filter(c => isDone(c.id)).length / CH.length * 100) + '%';
+  $('#progTxt').textContent = CH.filter(c => isDone(c.id)).length + ' / ' + CH.length;
+}
+nav.addEventListener('click', e => {
+  const h = e.target.closest('.stg-h'), i = e.target.closest('[data-sum]'), m = e.target.closest('[data-mode]');
+  if (m) { setMode(m.dataset.mode); return; }
+  if (i) { sumOpen = sumOpen === i.dataset.sum ? null : i.dataset.sum; openStages.add(i.dataset.sum); renderNav(); return; }
+  if (h) { const k = h.dataset.s; openStages.has(k) ? openStages.delete(k) : openStages.add(k); renderNav(); }
+});
+$('#modeSw').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setMode(b.dataset.m); });
+
+function syncNav(id) {
+  const s = stageOf(id), k = s ? s.k : null;
+  /* al cambiar de etapa: se cierra la anterior y se abre la nueva; las abiertas a mano se respetan */
+  if (k !== curStage) { if (curStage) openStages.delete(curStage); if (k) openStages.add(k); curStage = k; }
+  curId = id;
+  renderNav();
+}
+
+/* ---------- bloques de navegación dentro de las páginas ---------- */
+function impPill(id) { const im = impOf(id); return im ? `<span class="imp-p ${im}" tabindex="0" data-tip="${esc(IMP_TIP[im])}">${im}</span>` : ''; }
+function learnedBlock(id) {
+  const L = LEARNED[id]; if (!L) return null;
+  return el(`<div class="learned"><div><span>Ya aprendiste</span>${L[0].map(t => { const c = chOf(t); return c ? `<a href="#/${t}" class="${isDone(t) ? 'ok' : ''}">${c.nav} ${isDone(t) ? '✓' : '○'}</a>` : ''; }).join('')}</div><div><span>Ahora vas a</span><b>${L[1]}</b></div></div>`);
+}
+function practiceCta(id) {
+  const P = PRACT[id]; if (!P) return null; const c = chOf(P[0]); if (!c) return null;
+  return el(`<a class="practice-cta" href="#/${P[0]}"><span>Practica ahora</span><b>${c.nav}</b><i>${P[1]}</i><em>Practicar este concepto →</em></a>`);
+}
+/* recomendación basada solo en progreso */
+function recommend() {
+  const order = [...visited].reverse();
+  for (const t of order) { const P = PRACT[t]; if (P && !isDone(P[0]) && chOf(t)) return { txt: `Ya conoces <b>${chOf(t).nav}</b>. Practícalo en <b>${chOf(P[0]).nav}</b>.`, id: P[0] }; }
+  const n = nextPending(); return n ? { txt: `Continúa con <b>${chOf(n).nav}</b>.`, id: n } : { txt: 'Has recorrido todo. Repasa con el simulador de sesión.', id: 'ent-sesion' };
+}
+function mountDash() {
+  const old = view.querySelector('.dash'); if (old) old.remove();
+  const nx = nextPending(), ns = nx ? stageOf(nx) : null, rc = recommend();
+  const d = el(`<section class="dash">
+    <div class="dash-top">
+      <a class="dash-cta" href="#/${nx || 'ent-sesion'}"><span>Continuar donde lo dejé</span><b>${nx ? chOf(nx).nav : 'Todo recorrido'}</b><i>${ns ? ns.k + ' · ' + ns.n : ''}${navMode === 'esencial' ? ' · ruta esencial' : ''}</i><em>Continuar →</em></a>
+      <a class="dash-rec" href="#/${rc.id}"><span>Recomendado ahora</span><p>${rc.txt}</p></a>
+    </div>
+    <div class="dash-flow">${STAGES.map(s => { const p = stageProg(s); return `<span class="${p.p === 100 ? 'done' : ns && ns.k === s.k ? 'cur' : ''}"><i>${s.k}</i>${s.f}</span>`; }).join('<b>→</b>')}</div>
+    <h3 class="sec">¿Dónde estás?</h3>
+    <div class="dash-st">${STAGES.map(s => { const p = stageProg(s), n = stageIds(s).find(id => !isDone(id)); return `<div class="ds ${ns && ns.k === s.k ? 'cur' : ''}">
+      <div class="ds-h"><span class="lt">${s.k}</span><b>${s.n}</b><span class="ct">${p.d} / ${p.t}</span></div>
+      <div class="stg-bar"><i style="width:${p.p}%"></i></div>
+      <p>${s.goal}</p>
+      ${n ? `<a href="#/${n}">Continuar → ${chOf(n).nav}</a>` : '<span class="ok">Completada ✓</span>'}</div>`; }).join('')}</div>
+    <h3 class="sec">Ruta esencial <span class="imp-p esencial" tabindex="0" data-tip="${esc(IMP_TIP.esencial)}">qué es</span></h3>
+    <p class="sub">Quince pasos para construir la base y llegar a practicar pronto. Los demás capítulos siguen ahí como profundización.</p>
+    <ol class="route">${ROUTE.map(([t, ids], i) => { const ok = ids.every(isDone); return `<li class="${ok ? 'ok' : ''}"><span class="n">${ok ? '✓' : i + 1}</span><span class="t">${ids.length > 1 ? `${t}: ${ids.map(id => `<a href="#/${id}">${chOf(id).nav}</a>`).join(' · ')}` : `<a href="#/${ids[0]}">${t}</a>`}</span></li>`; }).join('')}</ol>
+    <div class="route-sw"><span>Barra lateral:</span><button data-m="esencial" class="${navMode === 'esencial' ? 'on' : ''}">Ruta esencial</button><button data-m="completo" class="${navMode === 'completo' ? 'on' : ''}">Curso completo</button></div>
+  </section>`);
+  d.querySelectorAll('.route-sw button').forEach(b => b.onclick = () => setMode(b.dataset.m));
+  const hm = view.querySelector('.hero-mantra');
+  if (hm) hm.after(d); else view.appendChild(d);
+}
+
+function go(id) {
+  let idx = CH.findIndex(c => c.id === id); if (idx < 0) idx = 0;
+  const c = CH[idx], s = stageOf(c.id), sub = subOf(c.id);
   visited.add(c.id);
   try { localStorage.setItem('xau_seen', JSON.stringify([...visited])); } catch (e) { }
   REG.length = 0;
   view.innerHTML = '';
-  view.appendChild(el(`<div class="chead"><div class="kick"><i></i>${c.grp} · ${c.n === '★' || c.n === '✓' ? c.nav : 'Capítulo ' + c.n}</div><h2>${c.t}</h2><p class="lede">${c.lede}</p></div>`));
+  view.classList.toggle('wide', WIDE.has(c.id));
+  view.appendChild(el(`<div class="chead"><div class="kick"><i></i>${s ? `<span>${s.k} · ${s.n}</span><span class="kd">${sub}</span><span class="kd">${c.n}</span>` : '<span>Herramienta global</span>'}${impPill(c.id)}</div><h2>${c.t}</h2><p class="lede">${c.lede}</p></div>`));
+  const lb = learnedBlock(c.id); if (lb) view.appendChild(lb);
   view.appendChild(c.build());
-  const foot = el('<div class="chapfoot"></div>');
-  if (idx > 0) { const b = el(`<button><small>← Anterior</small><b>${CH[idx - 1].nav}</b></button>`); b.addEventListener('click', () => location.hash = '#/' + CH[idx - 1].id); foot.appendChild(b); } else foot.appendChild(el('<span></span>'));
-  if (idx < CH.length - 1) { const b = el(`<button><small>Siguiente →</small><b>${CH[idx + 1].nav}</b></button>`); b.addEventListener('click', () => location.hash = '#/' + CH[idx + 1].id); foot.appendChild(b); }
+  const pc = practiceCta(c.id); if (pc) view.appendChild(pc);
+  /* anterior / siguiente siguen el orden pedagógico; la checklist queda fuera */
+  const si = SEQ.indexOf(c.id), foot = el('<div class="chapfoot"></div>');
+  const mk = (tid, lab) => { const t = chOf(tid), b = el(`<button><small>${lab}</small><b>${t.nav}</b></button>`); b.addEventListener('click', () => location.hash = '#/' + tid); return b; };
+  if (si > 0) foot.appendChild(mk(SEQ[si - 1], '← Anterior')); else foot.appendChild(el('<span></span>'));
+  if (si >= 0 && si < SEQ.length - 1) foot.appendChild(mk(SEQ[si + 1], 'Siguiente →'));
+  if (si < 0) { const n = nextPending(); if (n) foot.appendChild(mk(n, 'Continuar donde lo dejé →')); }
   view.appendChild(foot);
-  crumb.innerHTML = `<b>${c.grp}</b> / ${c.nav}`;
+  /* un solo recordatorio de principio por página (menos ruido) */
+  $$('.lab-principle:not(.alt)', view).slice(1).forEach(n => { if (!n.closest('.lab-side')) n.remove(); });
+  crumb.innerHTML = s ? `<b>${s.n}</b> / ${sub} / ${c.nav}` : `<b>Herramientas</b> / ${c.nav}`;
   syncNav(c.id);
+  if (c.id === 'inicio') mountDash();
   document.body.classList.remove('menu');
   try { scrollTo(0, 0); } catch (e) { }
 }
 
+/* ---------- glosario global: reutiliza las definiciones existentes ---------- */
+const GLOSS = [
+  ['HH', 'Higher High — máximo creciente: un máximo por encima del máximo anterior', 'estructura'],
+  ['HL', 'Higher Low — mínimo creciente: un mínimo por encima del mínimo anterior', 'estructura'],
+  ['LH', 'Lower High — máximo decreciente', 'estructura'], ['LL', 'Lower Low — mínimo decreciente', 'estructura'],
+  ['BOS', 'Break of Structure — rotura de estructura a favor de la tendencia', 'bos-choch'],
+  ['CHoCH', 'Change of Character — cambio de carácter: primera rotura en contra de la estructura vigente', 'bos-choch'],
+  ['MSS', 'Market Structure Shift — cambio de estructura con desplazamiento, normalmente tras un barrido', 'bos-choch'],
+  ['FVG', 'Fair Value Gap — hueco de valor justo: el espacio entre la vela 1 y la vela 3 de una secuencia de tres', 'fvg'],
+  ['OB', GLOS['Order Block'], 'supply-demand'], ['POI', GLOS.POI, 'lab-poi'], ['Sweep', GLOS.Sweep, 'lab-sweep'],
+  ['Inducción', GLOS['Inducción'], 'lab-induccion'], ['Balance', GLOS.Balance, 'lab-balance'], ['Imbalance', GLOS.Imbalance, 'lab-balance'],
+  ['Displacement', GLOS.Desplazamiento, 'lab-balance'], ['Liquidez', GLOS.Liquidez, 'liquidez'], ['Aceptación', GLOS['Aceptación'], 'lab-sweep'],
+  ['ATR', 'ATR y Bandas de Bollinger miden lo mismo desde dos ángulos: amplitud. Sirven para dimensionar lo que ves, no para decidir dirección.', 'volatilidad'],
+  ['ADX', 'El ADX mide la intensidad del movimiento direccional, sin decir el signo. Para la dirección están +DI y −DI, y sobre todo está el precio.', 'fuerza'],
+  ['RSI', 'El RSI compara la fuerza de las subidas con la de las bajadas recientes.', 'momentum'],
+  ['VWAP', 'VWAP es el precio medio ponderado de la sesión: es la referencia de quién va ganando dentro del día.', 'canales'],
+  ['R', GLOS.R, 'op-plan']
+];
+(function glosInit() {
+  const g = $('#glos'), dl = g.querySelector('dl'), inp = g.querySelector('input');
+  const paint = q => { q = (q || '').toLowerCase(); dl.innerHTML = GLOSS.filter(([t, d]) => !q || (t + ' ' + d).toLowerCase().includes(q)).map(([t, d, id]) => `<dt>${t}</dt><dd>${d} <a href="#/${id}">${chOf(id) ? chOf(id).nav : ''} →</a></dd>`).join('') || '<dd class="mut">Sin resultados.</dd>'; };
+  const open = () => { paint(''); inp.value = ''; g.hidden = false; setTimeout(() => inp.focus(), 30); };
+  const close = () => { g.hidden = true; };
+  inp.addEventListener('input', () => paint(inp.value));
+  g.addEventListener('click', e => { if (e.target === g || e.target.closest('[data-close]') || e.target.closest('dd a')) close(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && !g.hidden) close(); });
+  $('#glosBtn').addEventListener('click', open);
+  $('#toolsG').addEventListener('click', e => {
+    const b = e.target.closest('[data-tool]'); if (!b) { if (e.target.closest('a')) document.body.classList.remove('menu'); return; }
+    if (b.dataset.tool === 'glos') open();
+    if (b.dataset.tool === 'naked') setNaked(!document.body.classList.contains('naked'));
+  });
+  window.openGlossary = open;
+})();
+
+/* @@NAV:END */
 /* modo aprendizaje / modo desnudo */
 (function nakedInit() {
   const b = $('#nakedBtn'); if (!b) return;
