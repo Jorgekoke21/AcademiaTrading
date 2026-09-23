@@ -950,6 +950,40 @@ body.naked .note,body.naked .qa,body.naked .vs-pts{opacity:1}
   .ls-tools.big button{min-width:0}
   .labmap{grid-template-columns:1fr}
 }
+
+/* movimiento A → B */
+h3.sec .abn{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;background:var(--panel-2);border:1px solid var(--line-2);font-family:var(--ff-m);font-size:12px;color:var(--gold);margin-right:10px;vertical-align:3px}
+.abmotto{border:1px solid var(--gold-dim);border-radius:var(--r-l);padding:16px 20px;background:linear-gradient(135deg,rgba(232,180,74,.09),transparent 70%);margin:8px 0 10px}
+.abmotto p{font-family:var(--ff-d);font-size:clamp(17px,2.2vw,21px);font-weight:600;color:var(--tx);margin:0 0 10px;letter-spacing:-.01em}
+.abmotto ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:5px 16px}
+.abmotto li{font-size:13.4px;color:var(--tx-2);padding-left:14px;position:relative}
+.abmotto li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.abt{display:flex;flex-direction:column;gap:6px}
+.abt .chart{margin:0}
+.abt p{margin:0;font-size:13px;color:var(--tx-2)}
+.abt-h b{font-family:var(--ff-d);font-size:14.5px}
+.abt-h.ok b{color:var(--bull)}.abt-h.part b{color:var(--warn)}.abt-h.no b{color:var(--bear)}
+.abrules3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.abrules3 div{border:1px solid var(--line);border-radius:var(--r-m);padding:10px 12px;background:var(--panel);display:flex;flex-direction:column}
+.abrules3 b{font-size:13.4px}
+.abrules3 span{font-family:var(--ff-m);font-size:12px}
+.abrules3 .part span{color:var(--warn)}.abrules3 .no span{color:var(--bear)}
+.abno{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin:12px 0}
+.abno div{border:1px solid #4E2427;border-radius:var(--r-m);padding:13px 14px;background:rgba(229,72,77,.04);display:flex;flex-direction:column;gap:4px}
+.abno i{font-style:normal;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(229,72,77,.12);color:var(--bear);font-family:var(--ff-m);font-size:13px}
+.abno b{font-family:var(--ff-d);font-size:14.5px}
+.abno span{font-size:12.6px;color:var(--tx-2)}
+.abpsy{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin:12px 0}
+.abpsy div{border:1px solid var(--line);border-left:3px solid var(--liq);border-radius:var(--r-m);padding:11px 13px;background:var(--panel);display:flex;flex-direction:column;gap:3px}
+.abpsy b{font-size:13.6px}
+.abpsy span{font-size:12.6px;color:var(--tx-2)}
+.relgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin:12px 0}
+.relgrid a{border:1px solid var(--line);border-radius:var(--r-m);padding:12px 14px;background:var(--panel);display:flex;flex-direction:column;gap:3px;color:var(--tx);transition:.16s}
+.relgrid a:hover{border-color:var(--gold-dim);background:var(--panel-2)}
+.relgrid b{font-family:var(--ff-d);font-size:14px}
+.relgrid span{font-size:12.4px;color:var(--tx-2)}
+.relgrid i{font-style:normal;font-size:12px;color:var(--gold);margin-top:2px}
+@media (max-width:860px){.abrules3{grid-template-columns:1fr}}
 /* @@LAB-CSS:END */
 /* @@NAV-CSS:BEGIN */
 /* ============================================================
@@ -1085,7 +1119,7 @@ h3.sec .imp-p{margin-left:8px}
 
 /* anchura: texto contenido, gráficos y laboratorios anchos */
 .wrap.wide{max-width:1400px}
-.wrap.wide>.chead,.wrap.wide>.body,.wrap.wide>h3.sec,.wrap.wide>.sub,.wrap.wide>.note,.wrap.wide>.qa,.wrap.wide>.flow,.wrap.wide>ul.ticks,.wrap.wide>.lab-principle,.wrap.wide>.cyc,.wrap.wide>.learned,.wrap.wide>.lq,.wrap.wide>.kn,.wrap.wide>.knblk,.wrap.wide>.rulesno,.wrap.wide>.twoways,.wrap.wide>.hero-mantra,.wrap.wide>.plan-anat,.wrap.wide>.quad,.wrap.wide>.jlegend,.wrap.wide>.revenge,.wrap.wide>.simnote{max-width:940px}
+.wrap.wide>.chead,.wrap.wide>.body,.wrap.wide>h3.sec,.wrap.wide>.sub,.wrap.wide>.note,.wrap.wide>.qa,.wrap.wide>.flow,.wrap.wide>ul.ticks,.wrap.wide>.lab-principle,.wrap.wide>.cyc,.wrap.wide>.learned,.wrap.wide>.lq,.wrap.wide>.kn,.wrap.wide>.knblk,.wrap.wide>.rulesno,.wrap.wide>.twoways,.wrap.wide>.hero-mantra,.wrap.wide>.plan-anat,.wrap.wide>.quad,.wrap.wide>.jlegend,.wrap.wide>.revenge,.wrap.wide>.simnote,.wrap.wide>.abmotto,.wrap.wide>.abrules3,.wrap.wide>.abpsy{max-width:940px}
 @media (min-width:1200px){.wrap.wide .modes .mtf{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (min-width:1750px){.wrap.wide #mtfGrid,.wrap.wide .zoom.grid4 .zoom-body{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .zoom.grid4 .zoom-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px}
@@ -1431,7 +1465,7 @@ const LAY = {
   level: 'lvl', zone: 'lvl', stops: 'liq', vzone: 'liq',
   fvg: 'evt', hi: 'evt', mark: 'evt',
   line: 'ind', ribbon: 'ind',
-  note: 'int', band: 'int', txt: 'int'
+  note: 'int', band: 'int', txt: 'int', arrow: 'int'
 };
 const layerOf = o => o.L || LAY[o.k] || 'evt';
 const NAKED = () => document.body.classList.contains('naked');
@@ -1622,6 +1656,14 @@ function mkChart(spec) {
         case 'zig': {
           const d = o.pts.map(([i, sd]) => `${x(i).toFixed(1)},${(sd === 'H' ? y(spec.candles[i].h) - 2 : y(spec.candles[i].l) + 2).toFixed(1)}`).join(' ');
           return `<polyline points="${d}" fill="none" stroke="${A}" stroke-width="${o.lw || 1.5}" stroke-opacity="${o.op ?? .75}" ${o.dash ? `stroke-dasharray="${o.dash}"` : ''} stroke-linejoin="round"/>`;
+        }
+        case 'arrow': { /* recorrido esperado A → B */
+          const x1 = x(o.i1), y1 = y(o.p1), x2 = x(o.i2), y2 = y(o.p2), ang = Math.atan2(y2 - y1, x2 - x1), hl = o.head || 10;
+          const hx = a => (x2 - hl * Math.cos(ang + a)).toFixed(1) + ',' + (y2 - hl * Math.sin(ang + a)).toFixed(1);
+          let s = `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${A}" stroke-width="${o.lw || 2}" ${o.dash ? `stroke-dasharray="${o.dash}"` : ''} opacity="${o.op ?? .9}"/>`;
+          s += `<polygon points="${x2.toFixed(1)},${y2.toFixed(1)} ${hx(.45)} ${hx(-.45)}" fill="${A}" opacity="${o.op ?? .9}"/>`;
+          if (o.label) s += pill((x1 + x2) / 2, (y1 + y2) / 2 - 12, o.label, A, 'middle', { fs: o.fs || 10 });
+          return s;
         }
         case 'trend': {
           return `<line x1="${x(o.i1).toFixed(1)}" y1="${y(o.p1).toFixed(1)}" x2="${x(o.i2).toFixed(1)}" y2="${y(o.p2).toFixed(1)}" stroke="${A}" stroke-width="${o.lw || 1.4}" ${o.dash ? `stroke-dasharray="${o.dash}"` : ''} opacity="${o.op ?? .85}"/>`;
@@ -5824,7 +5866,7 @@ const LAB = (() => {
     if (ctx.entry === 'aburrimiento') hit(FLAG.OVER, 20, 'La razón declarada fue el aburrimiento, no la información del gráfico.');
     const mg = tr.orig.mgmt;
     tr.log.forEach(d => {
-      if (d.act === 'sl_away') hit(FLAG.SL, 40, `Alejaste el stop (${fmt(d.from)} → ${fmt(d.to)}) con la operación en ${sgn(d.r)}R. La invalidación original dejó de existir.`);
+      if (d.act === 'sl_away') hit(FLAG.SL, 55, `Alejaste el stop (${fmt(d.from)} → ${fmt(d.to)}) con la operación en ${sgn(d.r)}R. La invalidación original dejó de existir.`);
       if (d.act === 'tf' && d.r < 0) hit(FLAG.TF, 30, `Cambiaste el horizonte a ${d.to} cuando la operación iba en ${sgn(d.r)}R.`);
       if (d.act === 'add' && d.r < 0) hit(FLAG.ADD, 30, `Añadiste posición con la operación en contra (${sgn(d.r)}R).`);
       if (d.act === 'tp_remove' && d.why !== 'plan' && d.why !== 'mercado') hit(FLAG.PLAN, 15, 'Quitaste el objetivo sin que el plan lo previera.');
@@ -6049,7 +6091,7 @@ function quizSeq(items, o = {}) {
     body.innerHTML = '';
     const it = list[i], cd = typeof it.cd === 'function' ? it.cd() : it.cd, L4 = (it.lv || lv) === 4;
     const card = el(`<div class="quiz lab-card">
-      <div class="quiz-top"><span class="q">${o.label || 'Ejercicio'} ${i + 1} de ${list.length}</span>${lv ? `<span class="lvb">${LV4[lv - 1][1]}</span>` : ''}<span style="flex:1"></span><div class="score">Razonables <b>${sc}</b> de ${dn}</div></div>
+      <div class="quiz-top"><span class="q">${o.label || 'Ejercicio'} ${i + 1} de ${list.length}</span>${o.levels ? `<span class="lvb">${LV4[lv - 1][1]}</span>` : ''}<span style="flex:1"></span><div class="score">Razonables <b>${sc}</b> de ${dn}</div></div>
       <div class="qchart"></div><div class="qbody"></div><div class="quiz-act"></div></div>`);
     const ch = lchart(cd, { title: it.title || 'XAUUSD', tf: it.tf || 'M5', ov: (it.ov || []).slice(), h: it.h || 290, padR: it.padR, panes: it.panes0 ? it.panes0(cd) : undefined });
     if (it.ctx) card.querySelector('.qchart').appendChild(el(`<div class="qctx">${it.ctx}</div>`));
@@ -6509,6 +6551,7 @@ function storyRebuild(cfg) {
     paintList(); paintMarks((cfg.ov || []).map(o => ({ ...o, force: true })));
     wrap.querySelector('.ls-x').innerHTML = `<div class="lq-x"><b class="vd ${ok >= cfg.items.length * .7 ? 'ok' : ok >= cfg.items.length * .4 ? 'part' : 'no'}">${ok} de ${cfg.items.length} piezas coinciden con la lectura de referencia.</b><p class="mut">Algunas piezas admiten más de una lectura: si tu marca está cerca y sabes justificarla, cuenta.</p></div>`;
     wrap.querySelector('[data-a="play"]').disabled = false;
+    if (cfg.onCheck) cfg.onCheck(ok);
   };
   wrap.querySelector('[data-a="play"]').onclick = () => {
     const host = el('<div class="story-play"></div>');
@@ -7249,6 +7292,7 @@ chapter({
       ['lab-sweep', 'Liquidez vs barrido', 'Sweep ≠ reversión', [5, 6]],
       ['lab-balance', 'Balance y expansión', 'Lento → rápido', [3, 7, 8]],
       ['lab-induccion', 'Inducción y 2 de 3', 'Estructuras evidentes', [5]],
+      ['lab-ab', 'Movimiento A → B', 'Objetivo · inducción · momentum · timing', [2, 4, 5, 7, 8]],
       ['lab-micro', 'Microestructura', 'M1 ruido dentro de M15', [2, 3]],
       ['lab-sesiones', 'Sesiones y ciclo intradía', 'Asia · Londres · Nueva York', [3, 4, 5, 8]],
       ['lab-historia', 'Historia completa', 'Reconstruir 130 velas', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]
@@ -8222,6 +8266,224 @@ chapter({
 });
 
 /* ============================================================
+   D · MOVIMIENTO A → B — objetivo, inducción, momentum y timing
+   «Saber a dónde puede ir el precio no significa que ya puedas entrar.»
+   Colores del bloque: rojo oferta · azul demanda · gris objetivo ·
+   morado inducción · verde/rojo recorrido · amarillo impulso.
+   ============================================================ */
+const ABC = { sup: C.bear, dem: '#5B8DEF', obj: '#9AA6B8', ind: C.liq, up: C.bull, dn: C.bear, imp: C.gold };
+const QK_AB = [['Qué veo', '01'], ['Cómo detectarlo', '02'], ['Qué significa', '03'], ['Cuándo importa', '04'], ['Qué NO significa', '05'], ['Qué observar después', '06']];
+const ABS = lazy(() => {
+  /* serie principal (M5): B = máximos iguales arriba · A = demanda · inducción = barrido del mínimo · desplazamiento · llegada a B */
+  const S = M5([[0, 4366], [10, 4380, 1.8], [18, 4368, 1.8], [27, 4380.4, 1.8], [40, 4352, 2.2], [48, 4358, 1.8], [56, 4342, 2], [62, 4351, 1.8], [69, 4346, 1.4], [72, 4343, 1.6], [73, 4348, 3], [77, 4360, 3.6], [81, 4355, 2], [89, 4372, 2.4], [97, 4383, 2.4], [104, 4374, 2], [112, 4378, 1.8]], 1201, { spikes: [{ i: 72, l: 4336.5 }] });
+  const B = xt(S, 5, 30, 'H'), A = xt(S, 50, 62, 'L'), sw = 72;
+  const reachB = firstTouch(S, 82, k => k.h >= B.p);
+  /* mismo recorrido entendible, SIN inducción: rebota en A sin barrer y acaba atravesándola */
+  const N = M5([[0, 4366], [10, 4380, 1.8], [18, 4368, 1.8], [27, 4380.4, 1.8], [40, 4352, 2.2], [48, 4358, 1.8], [56, 4342, 2], [62, 4351, 1.8], [69, 4345, 1.4], [74, 4352, 1.6], [80, 4347, 1.5], [86, 4334, 2.6], [96, 4326, 2.2], [108, 4330, 1.8]], 1202);
+  /* ejemplo completo (bajista): B = mínimos iguales abajo · A = oferta · inducción = barrido de un máximo menor */
+  const Q = M5([[0, 4412], [10, 4398, 1.8], [18, 4410, 1.8], [27, 4397.6, 1.8], [40, 4426, 2.2], [48, 4420, 1.8], [56, 4436, 2], [62, 4427, 1.8], [69, 4432, 1.4], [72, 4435, 1.6], [73, 4430, 3], [77, 4418, 3.6], [81, 4423, 2], [89, 4406, 2.4], [97, 4395, 2.4], [104, 4404, 2], [112, 4400, 1.8]], 1203, { spikes: [{ i: 72, h: 4441.5 }] });
+  const QB = xt(Q, 5, 30, 'L'), QA = xt(Q, 50, 62, 'H');
+  /* momentum: indecisión · vela grande sin continuidad · impulso con decisión */
+  const M1 = M5([[0, 4350], [6, 4353, 1.1], [12, 4348, 1.1], [18, 4353, 1.1], [24, 4349, 1.1], [30, 4352, 1.1], [36, 4349, 1.1], [42, 4351, 1]], 1211);
+  const M2 = M5([[0, 4350], [8, 4352, 1.2], [16, 4348, 1.2], [18, 4362, 4.5], [22, 4358, 2], [30, 4351, 1.6], [36, 4349, 1.4], [42, 4351, 1.2]], 1212);
+  const M3 = M5([[0, 4350], [8, 4352, 1.2], [16, 4348, 1.2], [19, 4362, 3.8], [22, 4358, 2], [28, 4374, 3.2], [32, 4370, 2], [42, 4384, 2.6]], 1213);
+  return { S, B, A, sw, reachB, N, Q, QB, QA, M1, M2, M3 };
+});
+/* overlays del caso principal (con `at`: aparecen cuando existen) */
+function abOv(o = {}) {
+  const { S, B, A, sw, reachB } = ABS(), g = o.g;
+  const ov = [
+    { k: 'zone', p1: B.p - 2.2, p2: B.p + 1.2, from: 3, color: ABC.obj, fo: .12, label: 'B · objetivo', L: 'liq', at: 30, g },
+    { k: 'stops', p: B.p + 3.2, from: 8, to: 28, n: 5, color: ABC.obj, L: 'liq', at: 30, g },
+    { k: 'zone', p1: A.p, p2: A.p + 6, from: A.i - 1, color: ABC.dem, fo: .14, label: 'A · demanda', L: 'poi', at: 62, g },
+    { k: 'mark', i: sw, side: 'L', text: 'inducción', color: ABC.ind, L: 'swp', at: sw, g },
+    { k: 'mark', i: 75, side: 'L', text: 'momentum', color: ABC.imp, L: 'dsp', at: 76, g, dx: 22 },
+    { k: 'arrow', i1: 81, p1: S[81].l + 2, i2: reachB, p2: B.p - 1, color: ABC.up, label: 'recorrido esperado', L: 'int', at: 82, g }
+  ];
+  return o.only ? ov.filter(x => o.only.includes(x.L)) : ov;
+}
+function relatedBlock(ids) {
+  return el(`<div class="relgrid">${ids.map(([id, why]) => { const c = CH.find(x => x.id === id); return c ? `<a href="#/${id}"><b>${c.nav}</b><span>${why}</span><i>Ir →</i></a>` : ''; }).join('')}</div>`);
+}
+
+chapter({
+  id: 'lab-ab', grp: 'VIII', n: '', nav: 'Movimiento A → B', t: 'Movimiento A → B: objetivo, inducción, momentum y timing',
+  lede: 'El precio suele ir de una zona A a una zona B. Entender ese recorrido es leer el mercado. Pero saber a dónde puede ir el precio no significa que ya puedas entrar.',
+  build: () => {
+    const { S, B, A, sw, reachB, N, Q, QB, QA, M1, M2, M3 } = ABS();
+    const SEC = (n, t, d) => ({ k: 'h', t: `<span class="abn">${n}</span>${t}`, d });
+    /* snapshot sin futuro: la serie se CORTA en la vela u */
+    const cut = u => S.slice(0, u);
+    const qCut = u => Q.slice(0, u);
+    const qOv = [
+      { k: 'zone', p1: QB.p - 1.2, p2: QB.p + 2.2, from: 3, color: ABC.obj, fo: .12, label: 'B · objetivo' },
+      { k: 'zone', p1: QA.p - 6, p2: QA.p, from: QA.i - 1, color: ABC.sup, fo: .14, label: 'A · oferta' },
+      { k: 'mark', i: 72, side: 'H', text: 'inducción', color: ABC.ind }];
+    return build([
+      cycleStrip([4, 5, 6, 7, 8]),
+      el(`<div class="abmotto"><p>«Saber a dónde puede ir el precio no significa que ya puedas entrar.»</p>
+        <p class="abfw">Esto es un <b>framework de lectura</b>, no una ley del mercado: ordena lo que observamos y decide cuándo consideramos que hay evidencia suficiente.</p>
+        <ul>${['Sin un objetivo claro, no planteamos trade.', 'Sin una inducción clara, todavía no consideramos validada la entrada.', 'Sin momentum, todavía no hay confirmación.', 'Si dudas entre compras o ventas, espera.', 'No todo movimiento entendible merece una operación.', 'Entrar bien es acertar la dirección y también el momento.'].map(t => `<li>${t}</li>`).join('')}</ul></div>`),
+
+      /* 1 · IDEA BASE */
+      SEC('1', 'Idea base: de A a B', 'El precio se mueve de un punto A a un punto B. A es donde empezó la reacción. B es un posible objetivo: un nivel evidente que, en este framework, tratamos como destino probable del recorrido.'),
+      { k: 'chart', title: 'Movimiento A → B', tf: 'XAUUSD · M5', h: 340, sim: true, revl: LREVL, candles: S, naked: true,
+        tlabel: function (i) { return LAB.tlabel(this.candles[i].t); },
+        ov: abOv().map((o, k) => ({ ...o, at: undefined, s: [0, 0, 1, 2, 3, 4][k] })),
+        steps: [
+          { t: 'B: el objetivo', upto: 44, d: 'Dos máximos casi iguales arriba. Son evidentes: encima <b>podría</b> haber liquidez. Es un posible objetivo, no una promesa.' },
+          { t: 'A: la zona de origen', upto: 63, d: 'El precio cae hasta una zona de demanda. Aquí puede empezar una reacción… o no.' },
+          { t: 'Inducción', upto: 73, d: 'Un barrido rápido por debajo del mínimo de A, que vuelve dentro. En este modelo lo interpretamos como inducción: por sí sola <b>no es la entrada</b>.' },
+          { t: 'Momentum', upto: 78, d: 'Velas amplias y seguidas hacia arriba. <b>Aumenta la evidencia</b> de intención compradora.' },
+          { t: 'Recorrido hacia B', upto: reachB + 2, d: 'El precio recorre desde A hasta B. Después de B, el recorrido ya está consumido.' }],
+        caption: 'Azul = demanda (A). Gris = objetivo (B). Morado = inducción. Amarillo = impulso. Verde = recorrido esperado.' },
+      { k: 'qa', keys: QK_AB, items: [
+        'Una zona de la que salió una reacción (A) y un nivel evidente hacia el que el precio parece dirigirse (B).',
+        'Primero B: ¿qué nivel evidente queda por delante? Después A: ¿de dónde tendría que salir el movimiento?',
+        'Te da un marco: hacia dónde podría ir el precio y desde dónde. Nada más.',
+        'Cuando el precio está en A o cerca de A, con B lejos. Si ya está cerca de B, el recorrido está casi consumido.',
+        '<b>No</b> significa que el precio vaya a llegar a B. <b>No</b> significa que haya que entrar en A.',
+        'Qué hace el precio en A: ¿induce?, ¿aparece momentum?, ¿o atraviesa la zona sin reaccionar?'] },
+
+      /* 2 · OBJETIVO */
+      SEC('2', 'El objetivo B', 'B suele ser algo que muchos ven. Cuatro formas habituales.'),
+      { k: 'grid', n: 2, items: [
+        lchart(S.slice(0, 44), { title: 'Liquidez sobre máximos iguales', tf: 'M5', h: 210, padR: 40, flat: true, naked: false, ov: [{ k: 'zone', p1: B.p - 2.2, p2: B.p + 1.2, from: 3, color: ABC.obj, fo: .14, label: 'B' }, { k: 'stops', p: B.p + 3, from: 8, to: 28, n: 5, color: ABC.obj }] }).node,
+        lchart(Q.slice(0, 44), { title: 'Mínimo previo', tf: 'M5', h: 210, padR: 40, flat: true, naked: false, ov: [{ k: 'level', p: QB.p, color: ABC.obj, dash: '4 3', label: 'B', lab: 'in' }] }).node,
+        (() => { const h = HIS().cd.slice(0, 72), o = xt(h, 10, 14, 'H'); return lchart(h, { title: 'Zona de oferta previa', tf: 'M15', h: 210, padR: 40, flat: true, naked: false, ov: [{ k: 'zone', p1: o.p - 7, p2: o.p, from: o.i - 1, color: ABC.obj, fo: .14, label: 'B · origen de la caída' }] }).node; })(),
+        lchart(LIQ()[3].cd, { title: 'Sensibilidad previa del precio', tf: 'M5', h: 210, padR: 40, flat: true, naked: false, ov: [{ k: 'zone', p1: LIQ()[3].zones[0].p - 3, p2: LIQ()[3].zones[0].p + 1, from: 8, color: ABC.obj, fo: .14, label: 'B · el precio ya reaccionó aquí' }] }).node
+      ] },
+      { k: 'qa', keys: QK_AB, items: [
+        'Un nivel que destaca: máximos o mínimos iguales, un extremo previo, una zona de la que salió un movimiento, un sitio donde el precio ya reaccionó varias veces.',
+        'Pregúntate qué nivel evidente queda por delante del precio en la dirección que estás estudiando. Si no encuentras ninguno, no hay objetivo.',
+        'B te da un «para qué»: el sentido del movimiento y el espacio disponible.',
+        'Siempre antes de plantear nada. Sin objetivo claro, en este modelo no hay trade que valorar.',
+        '<b>No</b> significa que el precio tenga que llegar. B es una hipótesis de destino, no una orden pendiente del mercado.',
+        'La distancia que queda hasta B. Si es poca, el movimiento ya está casi hecho.'] },
+
+      /* 3 · INDUCCIÓN */
+      SEC('3', 'La inducción', 'En este framework interpretamos determinadas zonas de liquidez e inducciones como parte del recorrido A → B. Antes de ir a B, a menudo observamos un movimiento previo breve: un barrido, un amago, una trampa aparente, un mini retroceso que «carga» el movimiento.'),
+      { k: 'vs', items: [
+        { tag: 'Caso malo · sin inducción', t: 'Rebota en A sin barrer nada… y la atraviesa', c: 'bear', chart: { candles: N, sim: true, ov: [{ k: 'zone', p1: A.p, p2: A.p + 6, from: 55, color: ABC.dem, fo: .14, label: 'A' }, { k: 'zone', p1: B.p - 2.2, p2: B.p + 1.2, from: 3, color: ABC.obj, fo: .12, label: 'B' }, { k: 'mark', i: 74, side: 'H', text: 'rebote sin inducción', color: C.mut }] }, pts: ['El recorrido A → B se entiende igual.', 'Pero no hubo barrido ni momentum: nada nuevo que confirmara.', 'Entrar en el rebote era <b>anticipar</b>.'] },
+        { tag: 'Caso bueno · con inducción', t: 'Barre por debajo de A, vuelve y se desplaza', c: 'bull', chart: { candles: S, sim: true, ov: abOv().map(o => ({ ...o, at: undefined })) }, pts: ['Barrido por debajo de A (morado).', 'Momentum inmediato (amarillo).', 'Ahora sí hay información nueva que <b>sugiere</b> intención.'] }
+      ], key: '<b>Un movimiento entendible no siempre da entrada.</b> Lo que cambia entre los dos casos no es el objetivo: es lo que ocurre en A.' },
+      { k: 'qa', keys: QK_AB, items: [
+        'Una perforación breve de un extremo cercano (o un amago en la dirección contraria) que vuelve rápido.',
+        `Busca un mínimo (o máximo) evidente dentro o junto a A. ¿El precio lo supera con mecha y vuelve dentro? Eso es una posible ${G('Inducción')}.`,
+        'En este modelo, que el precio ha atravesado una zona donde inferimos liquidez antes de moverse. Aumenta la evidencia, no la garantiza.',
+        'En A, justo antes de que empiece el recorrido. Una inducción en mitad de la nada no significa lo mismo.',
+        '<b>No</b> es la entrada por sí sola. Tampoco demuestra que nadie haya «engañado» a nadie: es una etiqueta para algo observable.',
+        'El momentum: ¿aparecen velas con decisión alejándose de la zona?'] },
+
+      /* 4 · TIMING */
+      SEC('4', 'Timing: pronto, correcto, tarde', 'La misma dirección, tres momentos distintos. Solo uno tiene sentido.'),
+      { k: 'grid', n: 3, items: [
+        el(`<div class="abt"></div>`), el(`<div class="abt"></div>`), el(`<div class="abt"></div>`)
+      ].map((n, k) => {
+        const T = [
+          { u: 70, t: 'Demasiado pronto', c: 'part', d: 'Aún no hay inducción ni momentum. Entrar aquí es <b>anticipar</b>.' },
+          { u: 82, t: 'Correcto', c: 'ok', d: 'Tras la inducción y el momentum, en el primer retroceso. Queda recorrido hasta B.' },
+          { u: 92, t: 'Demasiado tarde', c: 'no', d: 'El precio ya está cerca de B. Entrar aquí es <b>perseguir</b>: poco recorrido para mucho riesgo.' }][k];
+        n.appendChild(el(`<div class="abt-h ${T.c}"><b>${T.t}</b></div>`));
+        n.appendChild(snap(S, T.u, { title: 'vela ' + T.u, tf: 'M5', h: 200, padR: 40, flat: true, naked: false, ov: abOv().filter(o => o.L !== 'int').concat([{ k: 'vzone', from: T.u - 1, to: T.u - 1, color: T.c === 'ok' ? C.bull : T.c === 'part' ? C.warn : C.bear, fo: .28, label: 'decisión', L: 'user', at: T.u - 1 }]) }).node);
+        n.appendChild(el(`<p>${T.d}</p>`));
+        return n;
+      }) },
+      el(`<div class="abrules3"><div class="part"><b>Antes de confirmación</b><span>= anticipar</span></div><div class="no"><b>Demasiado tarde</b><span>= perseguir</span></div><div class="no"><b>Cerca de B</b><span>= mala relación momento / recorrido</span></div></div>`),
+      { k: 'h', t: 'Ejercicio: ¿pronto, correcto o tarde?', d: 'Cada gráfico termina en el momento de la decisión. No hay velas futuras.' },
+      quizSeq([
+        { cd: () => cut(66), q: 'Quieres operar al alza hacia B. ¿Cómo es este momento?', opts: [{ t: 'Pronto', v: 'ok' }, { t: 'Correcto', v: 'no' }, { t: 'Tarde', v: 'no' }], why: '<b>Todavía no.</b> El precio está en A, pero no hay inducción ni momentum. Falta confirmación.', ov: [{ k: 'zone', p1: B.p - 2.2, p2: B.p + 1.2, from: 3, color: ABC.obj, fo: .12, label: 'B' }] },
+        { cd: () => cut(74), q: 'Acaba de barrer el mínimo de A y ha vuelto. ¿Cómo es este momento?', opts: [{ t: 'Pronto', v: 'ok' }, { t: 'Correcto', v: 'part' }, { t: 'Tarde', v: 'no' }], why: '<b>Sí hay objetivo e inducción, pero aún no hay entrada:</b> falta momentum que confirme la intención.', ov: [{ k: 'zone', p1: B.p - 2.2, p2: B.p + 1.2, from: 3, color: ABC.obj, fo: .12, label: 'B' }] },
+        { cd: () => cut(82), q: '¿Y ahora?', opts: [{ t: 'Pronto', v: 'no' }, { t: 'Correcto', v: 'ok' }, { t: 'Tarde', v: 'part' }], why: 'Inducción + momentum y un primer retroceso. Queda recorrido hasta B. La evidencia es razonable (nunca garantía).', ov: [{ k: 'zone', p1: B.p - 2.2, p2: B.p + 1.2, from: 3, color: ABC.obj, fo: .12, label: 'B' }] },
+        { cd: () => cut(92), q: '¿Y ahora?', opts: [{ t: 'Pronto', v: 'no' }, { t: 'Correcto', v: 'no' }, { t: 'Tarde', v: 'ok' }], why: '<b>Ya es tarde.</b> Aquí el recorrido ya está demasiado consumido: B está muy cerca.', ov: [{ k: 'zone', p1: B.p - 2.2, p2: B.p + 1.2, from: 3, color: ABC.obj, fo: .12, label: 'B' }] }
+      ], { label: 'Momento' }),
+
+      /* 5 · MOMENTUM */
+      SEC('5', 'Momentum', 'No toda vela grande es intención. Lo que cuenta es la decisión y la continuidad.'),
+      { k: 'grid', n: 3, items: [
+        lchart(M1, { title: 'Velas indecisas', tf: 'M5', h: 190, padR: 36, flat: true }).node,
+        lchart(M2, { title: 'Vela grande sin continuidad', tf: 'M5', h: 190, padR: 36, flat: true, naked: false, ov: [{ k: 'mark', i: 18, side: 'L', color: C.mut, text: 'y se devuelve' }] }).node,
+        lchart(M3, { title: 'Impulso con decisión', tf: 'M5', h: 190, padR: 36, flat: true, naked: false, ov: [{ k: 'mark', i: 18, side: 'L', color: ABC.imp, text: 'momentum' }, { k: 'mark', i: 27, side: 'L', color: ABC.imp }] }).node
+      ] },
+      { k: 'qa', keys: QK_AB, items: [
+        'Varias velas amplias, seguidas, con cuerpos grandes y pocas mechas en contra, que no se devuelven enseguida.',
+        'Compara el tamaño con las velas normales (ATR) y mira las siguientes velas: ¿continúa, o se lo come el retroceso?',
+        'Momentum = evidencia de intención, decisión y continuidad probable (no una certeza).',
+        'Justo después de la inducción, saliendo de A. Ahí es donde confirma.',
+        '<b>Momentum ≠ dirección garantizada.</b> Y una vela grande aislada que se devuelve no es momentum: es ruido con tamaño.',
+        'El primer retroceso: ¿respeta el origen del impulso o lo devuelve entero?'] },
+      { k: 'h', t: 'Ejercicio: ¿hay momentum?', d: 'Decide mirando solo las velas. Después se muestran las medidas.' },
+      quizSeq([
+        { cd: M1, q: '¿Hay momentum?', opts: [{ t: 'Sí', v: 'no' }, { t: 'No', v: 'ok' }], why: 'Velas pequeñas que van y vienen: no hay decisión.', metrics: cd => domMetrics(cd, 0, cd.length - 1) },
+        { cd: M2, q: '¿Hay momentum?', opts: [{ t: 'Sí', v: 'no' }, { t: 'No', v: 'ok' }, { t: 'Lo hubo un instante, pero sin continuidad', v: 'ok' }], why: 'Una vela grande no es entrada. El precio la devuelve: no hubo continuidad.', metrics: cd => domMetrics(cd, 0, cd.length - 1) },
+        { cd: M3, q: '¿Hay momentum?', opts: [{ t: 'Sí', v: 'ok' }, { t: 'No', v: 'no' }], why: 'Dos empujes amplios y retrocesos cortos que no devuelven el impulso. Aumenta la evidencia de intención alcista.', metrics: cd => domMetrics(cd, 0, cd.length - 1) }
+      ], { label: 'Fragmento' }),
+
+      /* 6 · ¿QUÉ ESTÁ PASANDO AQUÍ? */
+      SEC('6', '¿Qué está pasando aquí?', 'Ejemplo completo. El gráfico termina en la vela 74: no ves lo que viene. Marca las piezas y decide.'),
+      storyRebuild({
+        cd: qCut(74), tf: 'M5',
+        items: [
+          { t: 'Marca A: la zona de origen (clic a su altura)', mode: 'p', truth: QA.p - 3, tol: 6, why: `A es la zona de oferta de arriba (~${QA.p.toFixed(0)}), de donde tendría que salir el movimiento.` },
+          { t: 'Marca el objetivo B (clic a su altura)', mode: 'p', truth: QB.p, tol: 4, why: `B son los mínimos iguales de abajo (~${QB.p.toFixed(0)}): un nivel evidente con posible liquidez.` },
+          { t: 'Marca la inducción (clic en la vela)', mode: 'i', truth: 72, tol: 1, why: 'La vela 73 perfora un máximo cercano y vuelve dentro: posible inducción (morado).' },
+          { t: '¿Hay trade ahora mismo?', mode: 'choice', opts: ['Sí, escenario bajista', 'Sí, escenario alcista', 'Todavía no', 'No hay nada'], truth: [2], why: '<b>Sí hay objetivo, pero aún no hay entrada.</b> Hay inducción, pero falta momentum: todavía no hay confirmación.' }
+        ],
+        ov: qOv.map(o => ({ ...o, L: 'user' })), storyOv: qOv.map((o, k) => ({ ...o, s: k })),
+        story: [{ t: 'B', upto: 44, d: 'Mínimos iguales abajo: objetivo posible.' }, { t: 'A', upto: 64, d: 'Subida hasta una zona de oferta.' }, { t: 'Inducción', upto: 74, d: 'Barrido de un máximo cercano. Todavía sin momentum.' }],
+        onCheck: () => { const c = view.querySelector('.ab-cont'); if (c && c.hidden) { c.hidden = false; view.querySelector('.ab-lock').remove(); REG.forEach(r => { if (c.contains(r.box)) r.render('all'); }); } }
+      }),
+      el('<p class="ab-lock mut">Pulsa <b>Comprobar</b> para continuar el gráfico vela a vela (la continuación muestra la solución).</p>'),
+      (() => { const w = el('<div class="ab-cont" hidden></div>'); w.appendChild(build([{ k: 'h', t: 'Y ahora, vela a vela', d: 'Continúa el mismo gráfico. En cada pausa, decide.' }, phaseReplay({
+        cd: Q, from: 74, tf: 'M5', q: '¿Qué haces ahora?', p: 'Avanza con ▶. El replay se para en cada momento de decisión.',
+        labels: ['Todavía no', 'Hay confirmación', 'Ya es tarde', 'No operar'],
+        ov: qOv.map(o => ({ ...o, L: 'user', at: 73 })).concat([{ k: 'mark', i: 75, side: 'H', text: 'momentum', color: ABC.imp, at: 76, L: 'dsp' }, { k: 'arrow', i1: 81, p1: Q[81].h - 2, i2: 97, p2: QB.p + 1, color: ABC.dn, label: 'recorrido esperado', at: 82, L: 'int' }]),
+        checks: [
+          { at: 75, ok: ['Todavía no'], part: ['No operar'], why: 'Falta confirmación: una vela no basta.' },
+          { at: 79, ok: ['Hay confirmación'], part: ['Todavía no'], why: 'Velas amplias y seguidas hacia abajo desde A: el momentum aumenta la evidencia bajista.' },
+          { at: 83, ok: ['Hay confirmación'], part: ['Todavía no'], why: 'Primer retroceso que no devuelve el impulso, con recorrido amplio hasta B. Es el momento con mejor relación momento / recorrido.' },
+          { at: 90, ok: ['Ya es tarde', 'No operar'], why: '<b>Ya es tarde:</b> el recorrido hasta B está casi consumido.' }
+        ]
+      })])); return w; })(),
+
+      /* 7 · CUÁNDO NO OPERAR */
+      SEC('7', 'Cuándo NO operar', 'No entrar también es una lectura correcta.'),
+      el(`<div class="abno">${[
+        ['?', 'No sé quién manda', 'Si dudas entre compras y ventas, espera.'],
+        ['B', 'No hay objetivo', 'Sin un nivel evidente por delante, el modelo no tiene recorrido que valorar.'],
+        ['◇', 'No hay inducción', 'Sin información nueva en A, en este modelo la entrada todavía no está validada: sería anticipar.'],
+        ['⚡', 'No hay momentum', 'Sin decisión y continuidad, todavía no hay confirmación.'],
+        ['⌛', 'Ya estoy cerca de B', 'El recorrido está consumido: sería perseguir.']].map(([i, t, d]) => `<div><i>${i}</i><b>${t}</b><span>${d}</span></div>`).join('')}</div>`),
+      { k: 'h', t: 'No todo lo que entiendes se opera', d: 'En todos estos casos el objetivo del precio se entiende. ¿Hay entrada válida?' },
+      quizSeq([
+        { cd: () => N.slice(0, 76), q: 'B arriba, precio rebotando en A. ¿Hay entrada?', opts: [{ t: 'Hay entrada', v: 'no' }, { t: 'Todavía no', v: 'ok' }, { t: 'No operar', v: 'ok' }], why: 'Objetivo claro, pero <b>sin inducción ni momentum</b>. Falta confirmación.', ov: [{ k: 'zone', p1: B.p - 2.2, p2: B.p + 1.2, from: 3, color: ABC.obj, fo: .12, label: 'B' }, { k: 'zone', p1: A.p, p2: A.p + 6, from: 55, color: ABC.dem, fo: .14, label: 'A' }] },
+        { cd: () => M2, q: 'Vela grande alcista con B por encima. ¿Hay entrada?', opts: [{ t: 'Hay entrada', v: 'no' }, { t: 'No: la vela no tuvo continuidad', v: 'ok' }], why: 'Una vela grande no es momentum si el precio la devuelve. <b>Sin momentum, todavía no hay confirmación.</b>' },
+        { cd: () => cut(93), q: 'El movimiento A → B está en marcha. ¿Hay entrada?', opts: [{ t: 'Hay entrada', v: 'no' }, { t: 'No: ya es tarde', v: 'ok' }], why: '<b>Aquí el recorrido ya está demasiado consumido.</b> Entender el movimiento no es tener setup.', ov: [{ k: 'zone', p1: B.p - 2.2, p2: B.p + 1.2, from: 3, color: ABC.obj, fo: .12, label: 'B' }] },
+        { cd: () => LIQ()[5].cd, q: 'Hay máximos y mínimos a ambos lados. ¿Hay entrada?', opts: [{ t: 'Escenario alcista', v: 'no' }, { t: 'Escenario bajista', v: 'no' }, { t: 'Espero: no sé quién manda', v: 'ok' }], why: '<b>Si dudas entre compras y ventas, espera.</b> Aquí ningún lado domina.' },
+        { cd: () => cut(82), q: 'Y este: B arriba, inducción en A, momentum y primer retroceso. ¿Hay entrada?', opts: [{ t: 'Hay entrada posible', v: 'ok' }, { t: 'Todavía no', v: 'part' }, { t: 'No operar', v: 'part' }], why: 'Aquí sí coinciden objetivo, inducción, momentum y timing. Aun así, esperar o no operar también son decisiones defendibles.', ov: abOv().filter(o => o.L !== 'int').map(o => ({ ...o, at: undefined })) }
+      ], { label: 'Caso' }),
+
+      /* 8 · PSICOLOGÍA */
+      SEC('8', 'Psicología: errores típicos', 'Cinco errores que no están en el gráfico, sino en quien lo mira.'),
+      el(`<div class="abpsy">${[
+        ['Miedo a perder el movimiento', 'Si ya se ha ido, se ha ido. Habrá otro A → B.'],
+        ['«Un impulso fuerte ya es entrada»', 'El impulso confirma intención; el timing decide si todavía tiene sentido.'],
+        ['Comprar alto, vender bajo', 'Cuanto más cerca de B, peor la relación momento / recorrido.'],
+        ['Falta de paciencia', 'Inducción y momentum llegan cuando llegan. Esperar es parte del plan.'],
+        ['Entender el recorrido = tener setup', 'Leer bien el mercado y no entrar puede ser la mejor decisión del día.']].map(([a, b]) => `<div><b>${a}</b><span>${b}</span></div>`).join('')}</div>`),
+
+      { k: 'h', t: 'Relaciona este concepto con…', d: 'Todo lo de este capítulo ya existe en piezas. Aquí lo has visto funcionando junto.' },
+      relatedBlock([
+        ['liquidez', 'Por qué B suele estar en máximos y mínimos evidentes.'], ['supply-demand', 'Cómo dibujar A: oferta, demanda y order blocks.'],
+        ['fvg', 'Qué deja el momentum a su paso.'], ['lab-impulso', 'Quién manda: el lado que desplaza más.'],
+        ['lab-micro', 'No confundir una inducción de M1 con un cambio de H1.'], ['sesiones', 'En qué horas suele aparecer el desplazamiento.'],
+        ['confluencias', 'Sumar evidencias sin contar dos veces lo mismo.']]),
+      principle(), el(NOTE_SIM)
+    ]);
+  }
+});
+
+/* ============================================================
    PRUEBAS AUTOMÁTICAS — abrir index.html?selftest=1
    (o ejecutar: node tests/run-selftest.mjs). Guardan y restauran
    el localStorage de la Academia: no tocan el progreso real.
@@ -8229,7 +8491,7 @@ chapter({
 function runSelfTest() {
   const R = [], snap = {};
   try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (/^xau_/.test(k)) snap[k] = localStorage.getItem(k); } } catch (e) { }
-  const t = (name, fn) => { try { const r = fn(); R.push({ name, ok: r !== false, info: typeof r === 'string' ? r : '' }); } catch (e) { R.push({ name, ok: false, info: String(e && e.stack || e).slice(0, 400) }); } };
+  const t = (name, fn) => { try { const r = fn(); R.push({ name, ok: r === true || r === undefined, info: typeof r === 'string' ? r : r === true ? '' : String(r) }); } catch (e) { R.push({ name, ok: false, info: String(e && e.stack || e).slice(0, 400) }); } };
   const eq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
   const host = el('<div id="st-host" style="position:absolute;left:-12000px;top:0;width:1100px"></div>');
   document.body.appendChild(host);
@@ -8361,7 +8623,7 @@ function runSelfTest() {
 
   /* ---------- coherencia de los datos de los ejercicios ---------- */
   t('datos: el barrido del ciclo perfora el balance y cierra dentro', () => { const { cd: c, bal, sw } = CYC(); const k = c[sw.i]; return k.l < bal.l + 1 && k.c > bal.l || `l ${k.l} c ${k.c} bal ${bal.l}`; });
-  t('datos: POI — el precio toca la zona antes de los puntos de control', () => { const { B, poi, fork } = POIS(); const t0 = firstTouch(B, 47, k => k.l <= poi.p2); return t0 > 46 && t0 + 1 < fork + 3 && B[fork + 1].l < poi.p1 && B[fork + 1].c > poi.p1 || `toque ${t0} fork ${fork}`; });
+  t('datos: POI — el precio toca la zona antes de los puntos de control', () => { const { B, poi, fork } = POIS(); const t0 = firstTouch(B, 47, k => k.l <= poi.p2); return t0 > 46 && t0 + 1 < fork + 3 && B[fork + 1].l < poi.p1 && B[fork + 2].c > poi.p1 || `toque ${t0} fork ${fork} barrido ${B[fork + 1].l} cierre ${B[fork + 2].c} poi ${poi.p1}`; });
   t('datos: sweep≠reversión — la vela que supera el máximo existe y deja margen', () => { const { H } = SWP(); const pH = xt(H, 52, 60, 'H'), pr = firstTouch(H, 66, k => k.h > pH.p); return pr > 0 && pr + 5 < 90 || String(pr); });
   t('datos: sesión — Londres barre el mínimo de Asia y cierra dentro', () => { const { m1, as } = SESS(); const k = m1[1166]; return k.l < as.l && LAB.aggUpto(m1, 5, 1170).slice(-1)[0].c > as.l || `${k.l} ${as.l}`; });
   t('datos: detector nivel 4 — los controles van en orden creciente', () => LIQ().filter(c => c.cont).every(c => c.cont.every((k, i) => !i || k.at > c.cont[i - 1].at)));
@@ -8387,8 +8649,8 @@ function runSelfTest() {
   /* ---------- navegación en etapas A–G ---------- */
   const vis0 = [...visited], mode0 = navMode, hash0 = location.hash;
   const setVisited = ids => { visited.clear(); ids.forEach(x => visited.add(x)); };
-  t('siguen existiendo los 50 capítulos, sin id duplicados', () => CH.length === 50 && new Set(CH.map(c => c.id)).size === 50 || CH.length + ' capítulos');
-  t('todos los capítulos pertenecen a una etapa A–G o a Herramientas', () => { const bad = CH.filter(c => !stageOf(c.id) && !TOOL_IDS.includes(c.id)).map(c => c.id); const g = STAGES.map(s => s.k).join(''); return !bad.length && g === 'ABCDEFG' && SEQ.length + TOOL_IDS.length === 50 || bad.join(','); });
+  t('51 capítulos (50 anteriores + Movimiento A → B), sin id duplicados', () => CH.length === 51 && new Set(CH.map(c => c.id)).size === 51 || CH.length + ' capítulos');
+  t('todos los capítulos pertenecen a una etapa A–G o a Herramientas', () => { const bad = CH.filter(c => !stageOf(c.id) && !TOOL_IDS.includes(c.id)).map(c => c.id); const g = STAGES.map(s => s.k).join(''); return !bad.length && g === 'ABCDEFG' && SEQ.length + TOOL_IDS.length === CH.length || bad.join(','); });
   t('la checklist es herramienta global (fuera del itinerario) y sigue accesible', () => { go('checklist'); return !SEQ.includes('checklist') && !!$('#pinBtn') && !!$('#toolsG a[href="#/checklist"]') && !!view.querySelector('.ck') && /Herramienta/.test(view.querySelector('.kick').textContent); });
   t('concordancia aparece al comienzo de E · Decide', () => stageOf('concordancia').k === 'E' && stageIds(stageOf('concordancia'))[0] === 'concordancia' && !!$('#nav .stg[data-s="E"] a[data-id="concordancia"]'));
   t('patrones y Wolfe Wave van después de los fundamentos (C, avanzado)', () => stageOf('wolfe').k === 'C' && impOf('wolfe') === 'avanzado' && SEQ.indexOf('patrones') > SEQ.indexOf('canales'));
@@ -8428,6 +8690,65 @@ function runSelfTest() {
   t('etiquetas de importancia: cada capítulo del itinerario tiene una', () => { const bad = SEQ.filter(id => !impOf(id)); return !bad.length || bad.join(','); });
   t('ningún hash anterior se rompe', () => { const bad = ORIG.concat(SEQ).filter(id => { go(id); return view.querySelector('.chead h2').textContent !== chOf(id).t.replace(/<[^>]+>/g, ''); }); return !bad.length || bad.join(','); });
   t('glosario global usa definiciones existentes y enlaza a capítulos', () => { window.openGlossary(); const g = $('#glos'), ok = !g.hidden && g.querySelectorAll('dt').length >= 19 && GLOSS.every(([, d, id]) => d && chOf(id)); g.hidden = true; return ok; });
+  /* ---------- Movimiento A → B ---------- */
+  t('A→B: capítulo nuevo en D, justo después de Inducción, con progreso y etiqueta', () => { const d = stageIds(stageOf('lab-ab')); return stageOf('lab-ab').k === 'D' && d.indexOf('lab-ab') === d.indexOf('lab-induccion') + 1 && impOf('lab-ab') === 'esencial' && ESS.has('lab-ab') && chOf('lab-ab').n === 'D8'; });
+  t('ruta esencial: A→B va tras Detector de liquidez y antes de Microestructura', () => { const r = ROUTE.map(x => x[1][0]); const i = r.indexOf('lab-ab'); return ROUTE.length === 16 && r[i - 1] === 'lab-liquidez' && r[i + 1] === 'lab-micro' && SEQ.filter(id => ESS.has(id)).indexOf('lab-ab') > SEQ.filter(id => ESS.has(id)).indexOf('lab-ciclo') || r.join(','); });
+  t('A→B: marcador de decisión del timing sin etiquetas solapadas', () => { go('lab-ab'); REG.forEach(r => { if (r.box.isConnected) r.render('all'); }); const t = [...view.querySelectorAll('.abt svg')].map(s => s.textContent); return t.length === 3 && t.every(x => /decisión/.test(x) && !/aquí/.test(x)) || t.length + ' ' + t.map(x => x.slice(0, 40)).join(' | '); });
+  t('A→B: se construye con los 8 bloques en el orden didáctico', () => {
+    go('lab-ab'); const h = $$('h3.sec', view).map(x => x.textContent);
+    const want = ['Idea base', 'objetivo B', 'inducción', 'Timing', 'Momentum', '¿Qué está pasando aquí?', 'Cuándo NO operar', 'Psicología'];
+    let last = -1; const ok = want.every(w => { const i = h.findIndex(x => x.includes(w)); const r = i > last; last = i; return r; });
+    return ok && !!view.querySelector('.abmotto') && !!view.querySelector('.learned') || h.join(' | ');
+  });
+  t('A→B: la secuencia paso a paso revela A, B, inducción y momentum en orden', () => {
+    go('lab-ab'); const api = REG.find(r => r.api.spec.steps).api; api.render('all');
+    const txt = () => api.node.querySelector('svg').textContent;
+    const s0 = /B · objetivo/.test(txt()) && !/A · demanda/.test(txt()) && !/inducción/.test(txt());
+    api.step(2); api.render('all'); const s2 = /inducción/.test(txt()) && !/momentum/.test(txt());
+    api.step(4); api.render('all'); const s4 = /recorrido esperado/.test(txt());
+    return s0 && s2 && s4;
+  });
+  t('A→B: modo desnudo oculta las ayudas y se pueden revelar', () => {
+    go('lab-ab'); setNaked(true); const api = REG.find(r => r.api.spec.steps).api; api.step(4); api.render('all');
+    const hidden = !/B · objetivo/.test(api.node.querySelector('svg').textContent);
+    api.node.querySelector('.reveal [data-r="liq"]').click(); const shown = /B · objetivo/.test(api.node.querySelector('svg').textContent);
+    setNaked(false); return hidden && shown;
+  });
+  t('A→B: los ejercicios de timing cortan la serie (sin velas futuras)', () => {
+    const { S, B, reachB } = ABS();
+    go('lab-ab'); const q = [...view.querySelectorAll('.lqz')].find(x => /pronto, correcto o tarde|Quieres operar al alza/.test(x.textContent));
+    const api = REG.find(r => r.box.isConnected && q.contains(r.box)).api;
+    const mx = Math.max(...api.spec.candles.slice(31).map(k => k.h)); return api.spec.candles.length === 66 && mx < B.p && reachB > 92 || `${api.spec.candles.length} ${mx} ${B.p} ${reachB}`;
+  });
+  t('A→B: pregunta de timing con solución solo tras responder', () => {
+    go('lab-ab'); const q = [...view.querySelectorAll('.lqz')].find(x => /Quieres operar al alza/.test(x.textContent));
+    const before = /Todavía no\./.test(q.textContent); q.querySelector('.lq-o button').click();
+    return !before && /Todavía no\./.test(q.textContent) && /Falta confirmación|falta confirmación/.test(q.textContent);
+  });
+  t('A→B: «¿qué está pasando aquí?» — marca B, inducción y decide', () => {
+    go('lab-ab'); const w = view.querySelector('.story-lab'), api = REG.find(r => w.contains(r.box)).api; api.render('all');
+    const { Q } = ABS(); const before = !/Sí hay objetivo, pero aún no hay entrada/.test(w.textContent), hid0 = view.querySelector('.ab-cont').hidden;
+    const box = api.box, r = box.getBoundingClientRect(), sc = api.scale();
+    const clickAt = (i, p) => box.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: r.left + 6 + sc.x(i), clientY: r.top + 4 + sc.y(p) }));
+    clickAt(60, ABS().QA.p - 3); clickAt(20, ABS().QB.p); clickAt(72, Q[72].h);
+    w.querySelector('.sr-list li:last-child').click(); w.querySelector('.sr-list li:last-child button[data-j="2"]').click();
+    w.querySelector('[data-a="chk"]').click();
+    const ok = w.querySelectorAll('.sr-list li.ok').length;
+    return before && ok === 4 && /Sí hay objetivo, pero aún no hay entrada/.test(w.textContent) && api.spec.candles.length === 74 && hid0 && !view.querySelector('.ab-cont').hidden || 'ok ' + ok + ' oculto antes ' + hid0;
+  });
+  t('A→B: replay posterior se detiene en cada decisión (sin saltarse pausas)', () => {
+    go('lab-ab'); const lab = [...view.querySelectorAll('.lab')].find(x => /¿Qué haces ahora\?/.test(x.textContent));
+    const api = REG.find(r => lab.contains(r.box)).api; api.render('all');
+    const svg0 = api.node.querySelector('svg').textContent;
+    api.next(); const u1 = api.cur(); api.next(); const u2 = api.cur();
+    lab.querySelector('.ls-lab button').click(); api.next();
+    return api.cur() === 76 && u1 === 75 && u2 === 75 && !/recorrido esperado/.test(svg0) || `${u1} ${u2} ${api.cur()}`;
+  });
+  t('A→B: «relaciona este concepto con…» enlaza a capítulos existentes', () => {
+    go('lab-ab'); const hs = $$('.relgrid a', view).map(a => a.getAttribute('href').slice(2));
+    const need = ['liquidez', 'supply-demand', 'fvg', 'lab-impulso', 'lab-micro', 'sesiones', 'confluencias'];
+    return need.every(id => hs.includes(id) && chOf(id)) || hs.join(',');
+  });
   setVisited(vis0); setMode(mode0);
   t('todos los capítulos se construyen sin errores', () => {
     const bad = [];
@@ -8475,8 +8796,8 @@ const STAGES = [
     subs: [['Multi-timeframe', ['multitimeframe', 'fractal']], ['Sesiones y horizonte', ['sesiones', 'modos']], ['Contexto externo', ['dxy', 'regimen']]] },
   { k: 'C', n: 'Añade herramientas', f: 'Herramientas', goal: 'Poner nombre a los eventos y medir lo que el precio ya muestra.', dom: ['BOS / CHoCH', 'oferta y demanda', 'FVG', 'EMA', 'RSI', 'ADX', 'ATR', 'Donchian y VWAP', 'patrones'],
     subs: [['SMC / eventos', ['bos-choch', 'supply-demand', 'fvg']], ['Indicadores', ['ema', 'momentum', 'fuerza', 'volatilidad', 'canales']], ['Patrones · complementario / avanzado', ['patrones-lab', 'patrones', 'wolfe']]] },
-  { k: 'D', n: 'Lee el mercado', f: 'Lee', goal: 'Unir las piezas para leer una historia completa del precio sin conocer el futuro.', dom: ['ciclo del precio', 'empuje dominante', 'POI', 'liquidez y barridos', 'balance y expansión', 'microestructura'],
-    subs: [['Laboratorio', ['lab-ciclo', 'lab-impulso', 'lab-poi', 'lab-liquidez', 'lab-sweep', 'lab-balance', 'lab-induccion', 'lab-micro', 'lab-sesiones', 'lab-historia']]] },
+  { k: 'D', n: 'Lee el mercado', f: 'Lee', goal: 'Unir las piezas para leer una historia completa del precio sin conocer el futuro.', dom: ['ciclo del precio', 'empuje dominante', 'POI', 'liquidez y barridos', 'balance y expansión', 'movimiento A → B', 'microestructura'],
+    subs: [['Laboratorio', ['lab-ciclo', 'lab-impulso', 'lab-poi', 'lab-liquidez', 'lab-sweep', 'lab-balance', 'lab-induccion', 'lab-ab', 'lab-micro', 'lab-sesiones', 'lab-historia']]] },
   { k: 'E', n: 'Decide', f: 'Decide', goal: 'Pasar de la lectura a una decisión: operar, esperar o no hacer nada.', dom: ['redundancia', 'confluencias', '¿hay escenario?', 'ordenar evidencias', 'planificar'],
     subs: [['Evidencias', ['concordancia', 'confluencias', 'panel']], ['Decisión', ['op-hay', 'op-evidencia', 'op-plan']]] },
   { k: 'F', n: 'Gestiona', f: 'Gestiona', goal: 'Gestionar sin reescribir el plan y evaluar el proceso, no solo el resultado.', dom: ['resultado frente a proceso', 'gestión del stop', 'sesgos', 'diario'],
@@ -8487,7 +8808,7 @@ const STAGES = [
 const TOOL_IDS = ['checklist'];
 /* importancia: no es una jerarquía de valor */
 const IMP = {
-  esencial: ['inicio', 'velas', 'estructura', 'impulso', 'niveles', 'liquidez', 'rupturas', 'multitimeframe', 'lab-ciclo', 'lab-liquidez', 'lab-micro', 'op-hay', 'ent-sesion'],
+  esencial: ['inicio', 'velas', 'estructura', 'impulso', 'niveles', 'liquidez', 'rupturas', 'multitimeframe', 'lab-ciclo', 'lab-liquidez', 'lab-ab', 'lab-micro', 'op-hay', 'ent-sesion'],
   importante: ['bos-choch', 'supply-demand', 'fvg', 'momentum', 'fuerza', 'volatilidad', 'sesiones', 'modos', 'lab-impulso', 'lab-poi', 'lab-sweep', 'lab-balance', 'lab-historia', 'concordancia', 'confluencias', 'op-evidencia', 'op-plan', 'ges-proceso', 'ges-gestion', 'ges-sesgos', 'ges-diario', 'practica', 'ahora', 'examen'],
   complementario: ['ema', 'canales', 'dxy', 'patrones-lab', 'patrones', 'fractal', 'regimen', 'panel', 'lab-sesiones', 'scalping'],
   avanzado: ['wolfe', 'lab-induccion']
@@ -8504,7 +8825,7 @@ const ROUTE = [
   ['Velas', ['velas']], ['Estructura', ['estructura']], ['Impulso / retroceso', ['impulso']], ['Niveles', ['niveles']], ['Liquidez', ['liquidez']],
   ['Ruptura vs sweep', ['rupturas']], ['Multi-timeframe', ['multitimeframe']], ['Sesiones', ['sesiones']], ['BOS / CHoCH', ['bos-choch']],
   ['RSI / ADX / ATR como apoyo', ['momentum', 'fuerza', 'volatilidad']], ['Ciclo del precio', ['lab-ciclo']], ['Detector de liquidez', ['lab-liquidez']],
-  ['Microestructura vs dominante', ['lab-micro']], ['¿Hay escenario?', ['op-hay']], ['Simulador completo', ['ent-sesion']]
+  ['Movimiento A → B', ['lab-ab']], ['Microestructura vs dominante', ['lab-micro']], ['¿Hay escenario?', ['op-hay']], ['Simulador completo', ['ent-sesion']]
 ];
 const ESS = new Set(['inicio'].concat(...ROUTE.map(r => r[1])));
 /* teoría → práctica */
@@ -8525,6 +8846,7 @@ const LEARNED = {
   'lab-balance': [['fvg', 'volatilidad'], 'Ver el paso de lento a rápido antes que el indicador.'], 'lab-micro': [['multitimeframe', 'fractal'], 'Separar el ruido de M1 de la estructura de M15 y H1.'],
   'lab-sesiones': [['sesiones'], 'Reconocer secuencias sin convertirlas en reglas.'], 'lab-historia': [['estructura', 'bos-choch'], 'Contar la historia completa de 130 velas.'],
   'lab-ciclo': [['estructura', 'impulso', 'liquidez'], 'Situar cada momento dentro del ciclo.'], 'lab-induccion': [['rupturas', 'bos-choch'], 'Ver cuándo una estructura es demasiado evidente.'],
+  'lab-ab': [['liquidez', 'supply-demand', 'lab-impulso'], 'Unir objetivo, inducción, momentum y timing, y decidir si hay entrada o no.'],
   'op-evidencia': [['concordancia', 'confluencias'], 'Dar a cada evidencia su peso en un escenario concreto.']
 };
 const stageOf = id => STAGES.find(s => s.subs.some(([, ids]) => ids.includes(id))) || null;
@@ -8631,7 +8953,7 @@ function mountDash() {
       <p>${s.goal}</p>
       ${n ? `<a href="#/${n}">Continuar → ${chOf(n).nav}</a>` : '<span class="ok">Completada ✓</span>'}</div>`; }).join('')}</div>
     <h3 class="sec">Ruta esencial <span class="imp-p esencial" tabindex="0" data-tip="${esc(IMP_TIP.esencial)}">qué es</span></h3>
-    <p class="sub">Quince pasos para construir la base y llegar a practicar pronto. Los demás capítulos siguen ahí como profundización.</p>
+    <p class="sub">Dieciséis pasos para construir la base y llegar a practicar pronto. Los demás capítulos siguen ahí como profundización.</p>
     <ol class="route">${ROUTE.map(([t, ids], i) => { const ok = ids.every(isDone); return `<li class="${ok ? 'ok' : ''}"><span class="n">${ok ? '✓' : i + 1}</span><span class="t">${ids.length > 1 ? `${t}: ${ids.map(id => `<a href="#/${id}">${chOf(id).nav}</a>`).join(' · ')}` : `<a href="#/${ids[0]}">${t}</a>`}</span></li>`; }).join('')}</ol>
     <div class="route-sw"><span>Barra lateral:</span><button data-m="esencial" class="${navMode === 'esencial' ? 'on' : ''}">Ruta esencial</button><button data-m="completo" class="${navMode === 'completo' ? 'on' : ''}">Curso completo</button></div>
   </section>`);
