@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Comprobación de maquetación</title>
+<!-- Abre ../index.html en iframes de varios anchos y mide desbordamientos y el hero de la portada.
+     Lo ejecuta tests/run-selftest.mjs (Chrome con --allow-file-access-from-files). -->
+<body style="margin:0">
+<pre id="layout-json" hidden></pre>
+<script>
+const WIDTHS = [1920, 1600, 1440, 1366, 1024, 768, 390];
+const PAGES = ['inicio', 'momentum', 'lab-ab', 'ent-sesion'];
+const jobs = []; WIDTHS.forEach(w => PAGES.forEach(p => jobs.push([w, p])));
+const R = [];
+function next() {
+  if (!jobs.length) { document.getElementById('layout-json').textContent = JSON.stringify(R); return; }
+  const [w, p] = jobs.shift();
+  const f = document.createElement('iframe');
+  f.style.cssText = `width:${w}px;height:900px;border:0`;
+  f.src = '../index.html#/' + p;
+  document.body.appendChild(f);
+  f.onload = () => setTimeout(() => {
+    let r;
+    try {
+      const d = f.contentDocument, de = d.documentElement;
+      r = { w, p, client: de.clientWidth, scroll: de.scrollWidth, ok: de.scrollWidth <= de.clientWidth };
+      if (p === 'inicio') {
+        const h = d.querySelector('.home-hero'), cp = d.querySelector('.hh-copy'), le = d.querySelector('.home-hero .lede'), cta = d.querySelector('.hh-cta .dash-cta');
+        const main = d.querySelector('.main').getBoundingClientRect(), hr = h.getBoundingClientRect(), lr = le.getBoundingClientRect();
+        const lh = parseFloat(getComputedStyle(le).lineHeight) || 24;
+        r.heroFull = Math.abs(hr.width - main.width) < 2 && hr.right <= de.clientWidth + 1;
+        r.copyW = Math.round(cp.getBoundingClientRect().width);
+        r.ledeLines = Math.round((lr.height - 20) / lh);
+        r.ctaW = Math.round(cta.getBoundingClientRect().width);
+        r.ok = r.ok && r.heroFull && r.copyW >= (w >= 1200 ? 480 : 300) && r.ledeLines <= (w >= 1024 ? 4 : 8) && r.ctaW >= 260;
+      }
+    } catch (e) { r = { w, p, ok: false, err: String(e) }; }
+    R.push(r); f.remove(); next();
+  }, 700);
+}
+next();
+</script>
+</body>
